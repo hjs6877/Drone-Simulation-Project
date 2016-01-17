@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <resourceExtensions />
+    <wildcardResourcePatterns>
+      <entry name="!?*.java" />
+      <entry name="!?*.form" />
+      <entry name="!?*.class" />
+      <entry name="!?*.groovy" />
+      <entry name="!?*.scala" />
+      <entry name="!?*.flex" />
+      <entry name="!?*.kt" />
+      <entry name="!?*.clj" />
+      <entry name="!?*.aj" />
+    </wildcardResourcePatterns>
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="Controller" />
+        <module name="Mercy" />
+        <module name="Venus" />
+        <module name="ZTestControllerServer" />
+        <module name="ZTestDrone1Server" />
+        <module name="ZTestDrone2Client" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Controller" target="1.5" />
+      <module name="Mercy" target="1.5" />
+      <module name="Venus" target="1.5" />
+      <module name="ZTestControllerServer" target="1.5" />
+      <module name="ZTestDrone1Server" target="1.5" />
+      <module name="ZTestDrone2Client" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
