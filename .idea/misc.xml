@@ -7,8 +7,12 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/Controller/pom.xml" />
-        <option value="$PROJECT_DIR$/Mercy/pom.xml" />
+        <option value="$PROJECT_DIR$/ControllerServer/pom.xml" />
+        <option value="$PROJECT_DIR$/Drone1Server/pom.xml" />
+        <option value="$PROJECT_DIR$/Drone2Client/pom.xml" />
+        <option value="$PROJECT_DIR$/Mercury/pom.xml" />
         <option value="$PROJECT_DIR$/Venus/pom.xml" />
+        <option value="$PROJECT_DIR$/Mercy/pom.xml" />
         <option value="$PROJECT_DIR$/ZTestControllerServer/pom.xml" />
         <option value="$PROJECT_DIR$/ZTestDrone1Server/pom.xml" />
         <option value="$PROJECT_DIR$/ZTestDrone2Client/pom.xml" />

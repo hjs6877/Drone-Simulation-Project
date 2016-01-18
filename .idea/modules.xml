@@ -5,9 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/Controller/Controller.iml" filepath="$PROJECT_DIR$/Controller/Controller.iml" />
       <module fileurl="file://$PROJECT_DIR$/Mercy/Mercy.iml" filepath="$PROJECT_DIR$/Mercy/Mercy.iml" />
       <module fileurl="file://$PROJECT_DIR$/Venus/Venus.iml" filepath="$PROJECT_DIR$/Venus/Venus.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ZTestControllerServer/src/ZTestControllerServer/ZTestControllerServer.iml" filepath="$PROJECT_DIR$/ZTestControllerServer/src/ZTestControllerServer/ZTestControllerServer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ZTestDrone1Server/src/ZTestDrone1Server/ZTestDrone1Server.iml" filepath="$PROJECT_DIR$/ZTestDrone1Server/src/ZTestDrone1Server/ZTestDrone1Server.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ZTestDrone2Client/src/ZTestDrone2Client/ZTestDrone2Client.iml" filepath="$PROJECT_DIR$/ZTestDrone2Client/src/ZTestDrone2Client/ZTestDrone2Client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ZTestControllerServer/ZTestControllerServer.iml" filepath="$PROJECT_DIR$/ZTestControllerServer/ZTestControllerServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ZTestDrone1Server/ZTestDrone1Server.iml" filepath="$PROJECT_DIR$/ZTestDrone1Server/ZTestDrone1Server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ZTestDrone2Client/ZTestDrone2Client.iml" filepath="$PROJECT_DIR$/ZTestDrone2Client/ZTestDrone2Client.iml" />
     </modules>
   </component>
 </project>

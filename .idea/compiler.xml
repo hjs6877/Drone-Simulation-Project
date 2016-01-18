@@ -23,6 +23,8 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="Controller" />
+        <module name="ControllerServer" />
+        <module name="Drone2Client" />
         <module name="Mercy" />
         <module name="Venus" />
         <module name="ZTestControllerServer" />
@@ -32,6 +34,10 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Controller" target="1.5" />
+      <module name="ControllerServer" target="1.5" />
+      <module name="Drone1Server" target="1.5" />
+      <module name="Drone2Client" target="1.5" />
+      <module name="Mercury" target="1.5" />
       <module name="Mercy" target="1.5" />
       <module name="Venus" target="1.5" />
       <module name="ZTestControllerServer" target="1.5" />
