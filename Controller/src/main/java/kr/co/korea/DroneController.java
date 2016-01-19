@@ -82,6 +82,9 @@ public class DroneController {
             e.printStackTrace();
         }
 
+        /**
+         * 비행 환경 설정.
+         */
         controller.setQuestionForConfiguration();
         controller.setNumberOfDrone(setting);
         controller.setDroneInfo(setting);

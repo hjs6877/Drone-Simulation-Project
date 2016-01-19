@@ -22,9 +22,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="CommonModule" />
         <module name="Controller" />
         <module name="ControllerServer" />
         <module name="Drone2Client" />
+        <module name="Mercury" />
         <module name="Mercy" />
         <module name="Venus" />
         <module name="ZTestControllerServer" />
@@ -33,6 +35,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="CommonModule" target="1.5" />
       <module name="Controller" target="1.5" />
       <module name="ControllerServer" target="1.5" />
       <module name="Drone1Server" target="1.5" />

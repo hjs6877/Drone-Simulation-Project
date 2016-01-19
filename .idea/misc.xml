@@ -16,6 +16,7 @@
         <option value="$PROJECT_DIR$/ZTestControllerServer/pom.xml" />
         <option value="$PROJECT_DIR$/ZTestDrone1Server/pom.xml" />
         <option value="$PROJECT_DIR$/ZTestDrone2Client/pom.xml" />
+        <option value="$PROJECT_DIR$/CommonModule/pom.xml" />
       </list>
     </option>
   </component>

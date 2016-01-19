@@ -1,11 +1,12 @@
 package kr.co.korea.domain;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Created by kjs on 2016-01-15.
  */
-public class DroneSetting {
+public class DroneSetting implements Serializable {
     private int numberOfDrone;
     private Map<String, Drone> droneMap;
     private int formationType;
@@ -78,4 +79,6 @@ public class DroneSetting {
     public void setSpeed(int speed) {
         this.speed = speed;
     }
+
+
 }

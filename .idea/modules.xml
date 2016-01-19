@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/CommonModule/CommonModule.iml" filepath="$PROJECT_DIR$/CommonModule/CommonModule.iml" />
       <module fileurl="file://$PROJECT_DIR$/Controller/Controller.iml" filepath="$PROJECT_DIR$/Controller/Controller.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Mercy/Mercy.iml" filepath="$PROJECT_DIR$/Mercy/Mercy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Mercury/Mercury.iml" filepath="$PROJECT_DIR$/Mercury/Mercury.iml" />
       <module fileurl="file://$PROJECT_DIR$/Venus/Venus.iml" filepath="$PROJECT_DIR$/Venus/Venus.iml" />
       <module fileurl="file://$PROJECT_DIR$/ZTestControllerServer/ZTestControllerServer.iml" filepath="$PROJECT_DIR$/ZTestControllerServer/ZTestControllerServer.iml" />
       <module fileurl="file://$PROJECT_DIR$/ZTestDrone1Server/ZTestDrone1Server.iml" filepath="$PROJECT_DIR$/ZTestDrone1Server/ZTestDrone1Server.iml" />
