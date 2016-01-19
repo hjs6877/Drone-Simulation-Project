@@ -1,7 +1,10 @@
 package kr.co.korea.socket;
 
+import kr.co.korea.domain.Drone;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
@@ -9,14 +12,15 @@ import java.net.Socket;
  */
 public class ClientSenderForController extends Thread {
     Socket socket;
-    DataOutputStream dos;
-    String name;
+    ObjectOutputStream oos;
+    Drone drone;
 
-    public ClientSenderForController(Socket socket, String name){
+    public ClientSenderForController(Socket socket, Drone drone){
         this.socket = socket;
-        this.name = name;
+        this.drone = drone;
+
         try {
-            dos = new DataOutputStream(socket.getOutputStream());
+            oos = new ObjectOutputStream(socket.getOutputStream());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -26,14 +30,14 @@ public class ClientSenderForController extends Thread {
 
     public void run(){
 
-        if(dos != null){
+        if(oos != null){
             try {
                 /**
                  * Drone client 가동 시, Drone 이름 전송.
                  */
-                dos.writeUTF(name);
+                oos.writeObject(drone);
 
-                while(dos != null){
+                while(oos != null){
                     // TODO Drone의 메시지 전송 프로세스 구현.
                 }
             } catch (IOException e) {

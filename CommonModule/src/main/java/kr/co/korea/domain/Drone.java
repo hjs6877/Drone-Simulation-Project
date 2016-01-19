@@ -1,9 +1,11 @@
 package kr.co.korea.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by kjs on 2016-01-15.
  */
-public class Drone {
+public class Drone implements Serializable {
     private String name;
     private String leaderOrFollower;
 

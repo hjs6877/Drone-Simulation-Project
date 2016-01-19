@@ -1,8 +1,8 @@
 package kr.co.korea.socket;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import kr.co.korea.domain.Drone;
+
+import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -14,33 +14,37 @@ public class ControllerServerReceiver extends Thread {
     private LinkedHashMap clients = null;
 
     private Socket socket;
-    private DataInputStream dis;
-    private DataOutputStream dos;
+    private ObjectInputStream ois;
+    private ObjectOutputStream oos;
 
     public ControllerServerReceiver(Socket socket, LinkedHashMap clients) {
         this.clients = clients;
         this.socket = socket;
         try {
-            dis = new DataInputStream(socket.getInputStream());
-            dos = new DataOutputStream(socket.getOutputStream());
+            ois = new ObjectInputStream(socket.getInputStream());
+            oos = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void run(){
+        Drone drone = null;
         String name = "";
-
         try {
-            name = dis.readUTF();
-            clients.put(name, dos);
+            drone = (Drone) ois.readObject();
+            name = drone.getName();
 
-            while(dis != null){
+            clients.put(name, oos);
+
+            while(ois != null){
                 /**
                  * TODO Drone의 메시지를 전송 받아서 처리.
                  */
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             System.out.println("#" + name + "Drone이 접속 종료하였습니다.-");

@@ -1,5 +1,6 @@
 package kr.co.korea;
 
+import kr.co.korea.domain.Drone;
 import kr.co.korea.socket.ClientReceiverForController;
 import kr.co.korea.socket.ClientSenderForController;
 
@@ -22,7 +23,10 @@ public class VenusClient {
             Socket socket = new Socket(serverIp, 5555);
             System.out.println("Venus clietn --> Controller에 연결되었습니다.");
 
-            Thread sender = new Thread(new ClientSenderForController(socket, "venus"));
+            Drone drone = new Drone();
+            drone.setName("venus");
+
+            Thread sender = new Thread(new ClientSenderForController(socket, drone));
             Thread receiver = new Thread(new ClientReceiverForController(socket));
 
             sender.start();

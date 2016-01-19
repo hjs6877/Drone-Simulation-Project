@@ -8,5 +8,11 @@
     <artifactId>venus</artifactId>
     <version>1.0</version>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>kr.co.korea</groupId>
+            <artifactId>commonModule</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
 </project>
