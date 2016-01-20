@@ -1,8 +1,8 @@
 package kr.co.korea;
 
 import kr.co.korea.domain.Drone;
-import kr.co.korea.socket.ClientReceiverForController;
-import kr.co.korea.socket.ClientSenderForController;
+import kr.co.korea.thread.ClientReceiver;
+import kr.co.korea.thread.ClientSender;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -13,10 +13,10 @@ import java.net.Socket;
 public class MercuryClient {
     public static void main(String[] args){
         MercuryClient mercuryClient = new MercuryClient();
-        mercuryClient.startForController();
+        mercuryClient.connectToController();
     }
 
-    public void startForController(){
+    public void connectToController(){
         String serverIp = "127.0.0.1";
 
         try {
@@ -25,8 +25,8 @@ public class MercuryClient {
 
             Drone drone = new Drone();
             drone.setName("mercury");
-            Thread sender = new Thread(new ClientSenderForController(socket, drone));
-            Thread receiver = new Thread(new ClientReceiverForController(socket));
+            Thread sender = new Thread(new ClientSender(socket, drone));
+            Thread receiver = new Thread(new ClientReceiver(socket));
 
             sender.start();
             receiver.start();

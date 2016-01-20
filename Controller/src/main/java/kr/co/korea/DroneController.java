@@ -3,12 +3,16 @@ package kr.co.korea;
 import kr.co.korea.domain.Coordination;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
+import kr.co.korea.domain.Order;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.socket.ControllerServer;
+import kr.co.korea.socket.ControllerServerSender;
 import kr.co.korea.validator.StringValidator;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.*;
 
 /**
@@ -65,10 +69,12 @@ public class DroneController {
         clients = new LinkedHashMap();
         Collections.synchronizedMap(clients);
     }
+
     public static void main(String[] args){
 
         DroneController controller = new DroneController();
         DroneSetting setting = new DroneSetting();
+
 
         /**
          * ControllerServer Thread 가동.
@@ -94,7 +100,7 @@ public class DroneController {
         controller.setSpeed(setting);
 
 
-
+        controller.sendDroneSetting(setting);
 
 
         int formationType = setting.getFormationType();
@@ -114,6 +120,18 @@ public class DroneController {
         System.out.println("목적지: " + destination);
         System.out.println("목적지 좌표: " + destinationLongitude + ", " + destinationLatitude);
         System.out.println("비행 속도: " + speed);
+    }
+
+    private void sendDroneSetting(DroneSetting setting) {
+        Iterator iterator = clients.keySet().iterator();
+
+        while(iterator.hasNext()){
+            String droneName = (String) iterator.next();
+            ObjectOutputStream objectOutputStream = (ObjectOutputStream) clients.get(droneName);
+
+            ControllerServerSender serverSender = new ControllerServerSender(objectOutputStream, setting);
+            serverSender.start();
+        }
     }
 
     /**
@@ -165,9 +183,11 @@ public class DroneController {
                 while(iterator.hasNext()){
                     String droneName = (String) iterator.next();
                     System.out.println("droneName: " + droneName);
-                    DataOutputStream dos = (DataOutputStream) clients.get(droneName);
+                    ObjectOutputStream objectOutputStream = (ObjectOutputStream) clients.get(droneName);
                     try {
-                        dos.writeUTF("exit");
+                        Order order = new Order();
+                        order.setProcessOrder(Order.PROCESS_EXIT);
+                        objectOutputStream.writeObject(order);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

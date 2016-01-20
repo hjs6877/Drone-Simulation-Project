@@ -1,21 +1,20 @@
-package kr.co.korea.socket;
+package kr.co.korea.thread;
 
 import kr.co.korea.domain.Drone;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- * Created by ideapad on 2016-01-17.
+ * Created by ideapad on 2016-01-20.
  */
-public class ClientSenderForController extends Thread {
+public class ClientSender extends Thread {
     Socket socket;
     ObjectOutputStream oos;
     Drone drone;
 
-    public ClientSenderForController(Socket socket, Drone drone){
+    public ClientSender(Socket socket, Drone drone){
         this.socket = socket;
         this.drone = drone;
 
@@ -33,12 +32,12 @@ public class ClientSenderForController extends Thread {
         if(oos != null){
             try {
                 /**
-                 * Drone client ê°€ë™ ì‹œ, Drone ì´ë¦„ ì „ì†¡.
+                 * Drone client °¡µ¿ ½Ã, Drone ÀÌ¸§ Àü¼Û.
                  */
                 oos.writeObject(drone);
 
                 while(oos != null){
-                    // TODO Droneì˜ ë©”ì‹œì§€ ì „ì†¡ í”„ë¡œì„¸ìŠ¤ êµ¬í˜„.
+                    // TODO DroneÀÇ ¸Ş½ÃÁö Àü¼Û ÇÁ·Î¼¼½º ±¸Çö.
                 }
             } catch (IOException e) {
                 e.printStackTrace();

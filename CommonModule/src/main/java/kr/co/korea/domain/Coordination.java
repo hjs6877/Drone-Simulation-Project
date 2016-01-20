@@ -1,9 +1,11 @@
 package kr.co.korea.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by ideapad on 2016-01-16.
  */
-public class Coordination {
+public class Coordination implements Serializable {
     double longitude;
     double latitude;
 
