@@ -32,12 +32,13 @@ public class ClientSender extends Thread {
         if(oos != null){
             try {
                 /**
-                 * Drone client °¡µ¿ ½Ã, Drone ÀÌ¸§ Àü¼Û.
+                 * Drone client ì´ë¦„ì„ ì €ì¥í•œ drone ê°ì²´ ì „ì†¡.
                  */
                 oos.writeObject(drone);
 
                 while(oos != null){
-                    // TODO DroneÀÇ ¸Ş½ÃÁö Àü¼Û ÇÁ·Î¼¼½º ±¸Çö.
+                    // TODO DroneControllerë¡œ ì •ë³´ë¥¼ ì „ì†¡.
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();

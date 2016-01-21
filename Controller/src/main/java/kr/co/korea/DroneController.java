@@ -4,6 +4,8 @@ import kr.co.korea.domain.Coordination;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.Order;
+import kr.co.korea.proecessor.ExitProcessor;
+import kr.co.korea.proecessor.Processor;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.socket.ControllerServer;
 import kr.co.korea.socket.ControllerServerSender;
@@ -185,9 +187,8 @@ public class DroneController {
                     System.out.println("droneName: " + droneName);
                     ObjectOutputStream objectOutputStream = (ObjectOutputStream) clients.get(droneName);
                     try {
-                        Order order = new Order();
-                        order.setProcessOrder(Order.PROCESS_EXIT);
-                        objectOutputStream.writeObject(order);
+                        Processor processor = new ExitProcessor();
+                        objectOutputStream.writeObject(processor);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

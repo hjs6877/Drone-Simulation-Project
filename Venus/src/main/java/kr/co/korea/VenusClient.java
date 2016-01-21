@@ -5,12 +5,15 @@ import kr.co.korea.thread.ClientReceiver;
 import kr.co.korea.thread.ClientSender;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
  * Created by ideapad on 2016-01-17.
  */
 public class VenusClient {
+    ObjectOutputStream oos;
+
     public static void main(String[] args){
         VenusClient mercuryClient = new VenusClient();
         mercuryClient.connectToController();
@@ -26,10 +29,10 @@ public class VenusClient {
             Drone drone = new Drone();
             drone.setName("venus");
 
-            Thread sender = new Thread(new ClientSender(socket, drone));
-            Thread receiver = new Thread(new ClientReceiver(socket));
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(drone);
+            Thread receiver = new Thread(new ClientReceiver(socket, drone));
 
-            sender.start();
             receiver.start();
 
         } catch (IOException e) {
