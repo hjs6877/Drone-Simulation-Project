@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- * Created by ideapad on 2016-01-20.
+ * Created by ideapad on 2016-01-20. 현재 사용 안함.
  */
 public class ControllerServerSender extends Thread {
     private ObjectOutputStream objectOutputStream;

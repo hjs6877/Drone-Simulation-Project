@@ -19,7 +19,6 @@ public class ClientReceiver extends Thread {
     Socket socket;
     ObjectInputStream objectInputStream;
     Drone drone;
-    DroneSetting setting;
 
     public ClientReceiver(Socket socket, Drone drone){
         this.socket = socket;
@@ -43,12 +42,7 @@ public class ClientReceiver extends Thread {
                  */
                 if(object instanceof Processor){
                     Processor processor = (Processor) object;
-                    processor.doProcess();
-                }else if(object instanceof DroneSetting){
-                    System.out.println("Controller부터 DroneSetting 정보를 전달 받았습니다.");
-                    setting = (DroneSetting) object;
-
-                    boolean isLeader = this.isLeader(setting);
+                    processor.doProcess(socket);
                 }
 
             } catch (IOException e) {
@@ -59,17 +53,5 @@ public class ClientReceiver extends Thread {
         }
     }
 
-    /**
-     * 해당 드론 프로세스가 리더인지 확인.
-     *
-     * @param setting
-     * @return
-     */
-    private boolean isLeader(DroneSetting setting){
-        String droneName = drone.getName();
-        Map<String, Drone> droneMap = setting.getDroneMap();
-
-        return droneMap.get(droneName).getLeaderOrFollower().equals("L");
-    }
 
 }

@@ -5,6 +5,7 @@ import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.Order;
 import kr.co.korea.proecessor.ExitProcessor;
+import kr.co.korea.proecessor.FlightProcessor;
 import kr.co.korea.proecessor.Processor;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.socket.ControllerServer;
@@ -102,7 +103,7 @@ public class DroneController {
         controller.setSpeed(setting);
 
 
-        controller.sendDroneSetting(setting);
+        controller.chooseStartFlightOrNot(setting);
 
 
         int formationType = setting.getFormationType();
@@ -124,15 +125,59 @@ public class DroneController {
         System.out.println("비행 속도: " + speed);
     }
 
-    private void sendDroneSetting(DroneSetting setting) {
+    private void chooseStartFlightOrNot(DroneSetting setting) {
+        Iterator iterator = clients.keySet().iterator();
+
+        while(true){
+            System.out.print("비행을 시작하시겠습니까? 시작하시려면 'y'를 중단하시려면 'n'을 입력하세요: ");
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+
+            if(StringValidator.isEmpty(input)){
+                System.out.println("'y' 또는 'n'을 입력해주세요");
+                continue;
+            }
+
+
+
+            if(!input.toLowerCase().equals("y")){
+                System.out.println("비행 프로세스를 중단합니다.");
+
+
+                while(iterator.hasNext()){
+                    String droneName = (String) iterator.next();
+                    ObjectOutputStream objectOutputStream = (ObjectOutputStream) clients.get(droneName);
+
+                    try {
+                        objectOutputStream.writeObject(new ExitProcessor());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                System.exit(-1);;
+            }
+
+            break;
+        }
+
+        this.sendFlightOrder(setting);
+
+
+    }
+
+    private void sendFlightOrder(DroneSetting setting) {
         Iterator iterator = clients.keySet().iterator();
 
         while(iterator.hasNext()){
             String droneName = (String) iterator.next();
             ObjectOutputStream objectOutputStream = (ObjectOutputStream) clients.get(droneName);
 
-            ControllerServerSender serverSender = new ControllerServerSender(objectOutputStream, setting);
-            serverSender.start();
+            try {
+                objectOutputStream.writeObject(new FlightProcessor(droneName, setting));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -160,7 +205,7 @@ public class DroneController {
 
             if(!input.toLowerCase().equals("y")){
                 System.out.println("Drone 프로세스 가동 후 Controller를 재 가동해주세요.");
-                System.exit(-1);;
+                System.exit(-1);
             }
 
             break;
