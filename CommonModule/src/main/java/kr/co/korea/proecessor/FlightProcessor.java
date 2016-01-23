@@ -2,6 +2,9 @@ package kr.co.korea.proecessor;
 
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
+import kr.co.korea.domain.FlightStatus;
+import kr.co.korea.role.Follower;
+import kr.co.korea.role.Leader;
 
 import java.io.Serializable;
 import java.net.Socket;
@@ -23,12 +26,20 @@ public class FlightProcessor implements Processor, Serializable {
         System.out.println("droneName: " + droneName);
         System.out.println("출발지: " + setting.getDeparture());
         System.out.println("목적지: " + setting.getDestination());
-        // TODO 리더와 팔로워를 구분해서 해당 클래스의 프로세스를 실행시키도록 구현.
+
+        FlightStatus status = null;
+        /**
+         * 리더와 프로세스를 확인 한뒤 비행 진행.
+         */
         if(this.isLeader()){
-
+            Leader leader = new Leader(setting);
+            status = leader.doLeaderProcess();
         }else{
-
+            Follower follower = new Follower(setting);
+            status = follower.doFollowerProcess();
         }
+
+        // TODO 컨트롤러쪽으로 비행 상태 객체를 전송하여 다음 프로세스 진행에 대한 결정을 위임한다.
     }
 
     /**
