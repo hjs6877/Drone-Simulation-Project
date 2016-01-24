@@ -32,10 +32,10 @@ public class FlightProcessor implements Processor, Serializable {
          * 리더와 프로세스를 확인 한뒤 비행 진행.
          */
         if(this.isLeader()){
-            Leader leader = new Leader(setting);
+            Leader leader = new Leader(droneName, setting);
             status = leader.doLeaderProcess();
         }else{
-            Follower follower = new Follower(setting);
+            Follower follower = new Follower(droneName, setting);
             status = follower.doFollowerProcess();
         }
 

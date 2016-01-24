@@ -7,9 +7,11 @@ import kr.co.korea.domain.FlightStatus;
  * Created by ideapad on 2016-01-21.
  */
 public class Follower {
+    private String droneName;
     private DroneSetting setting;
 
-    public Follower(DroneSetting setting){
+    public Follower(String droneName, DroneSetting setting){
+        this.droneName = droneName;
         this.setting = setting;
     }
 
