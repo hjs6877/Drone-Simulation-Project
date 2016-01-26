@@ -10,6 +10,7 @@ import kr.co.korea.proecessor.Processor;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.socket.ControllerServer;
 import kr.co.korea.socket.ControllerServerSender;
+import kr.co.korea.util.MathUtils;
 import kr.co.korea.validator.StringValidator;
 
 import java.io.DataOutputStream;
@@ -101,7 +102,7 @@ public class DroneController {
         controller.setDeparture(setting);
         controller.setDestination(setting);
         controller.setSpeed(setting);
-
+        controller.setDistance(setting);
 
         controller.chooseStartFlightOrNot(setting);
 
@@ -115,6 +116,7 @@ public class DroneController {
         double destinationLongitude = setting.getDestinationCoordination().get(destination).getLongitude();
         double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
         int speed = setting.getSpeed();
+        double distance = setting.getDistance();
 
         System.out.println("드론 비행 대수: " + numberOfDrone);
         System.out.println("포메이션 타입: " + formationType);
@@ -122,8 +124,10 @@ public class DroneController {
         System.out.println("출발지 좌표: " + departureLongitude + ", " + departureLatitude);
         System.out.println("목적지: " + destination);
         System.out.println("목적지 좌표: " + destinationLongitude + ", " + destinationLatitude);
+        System.out.println("비행 거리: " + distance);
         System.out.println("비행 속도: " + speed);
     }
+
 
     private void chooseStartFlightOrNot(DroneSetting setting) {
         Iterator iterator = clients.keySet().iterator();
@@ -451,6 +455,23 @@ public class DroneController {
     }
 
 
+    private void setDistance(DroneSetting setting) {
+        Map<String, Coordination> departureCoordinationMap = setting.getDepartureCoordination();
+        Map<String, Coordination> destinationCoordinationMap = setting.getDestinationCoordination();
+
+        Coordination departureCoordination = departureCoordinationMap.get(setting.getDeparture());
+        Coordination destinationCoordination = destinationCoordinationMap.get(setting.getDestination());
+
+        double departureLongitude = departureCoordination.getLongitude();
+        double departureLatitude = departureCoordination.getLatitude();
+
+        double destinationLongitude = destinationCoordination.getLongitude();
+        double destinationLatitude = destinationCoordination.getLatitude();
+
+        double distance = MathUtils.calculateDistanceByLngLat(departureLongitude, departureLatitude, destinationLongitude, destinationLatitude);
+
+        setting.setDistance(distance);
+    }
 
 
 

@@ -51,7 +51,7 @@ public class MathUtilTest {
         System.out.println("목적지 좌표: " + destinationCoordination.getLongitude() + ", " + destinationCoordination.getLatitude());
 
         System.out.println(departure + " --> " + destination + " : " +
-                MathUtils.calculateDistanceByLngLat(departureCoordination.getLatitude(), departureCoordination.getLongitude(),
-                destinationCoordination.getLatitude(), destinationCoordination.getLongitude()));
+                MathUtils.calculateDistanceByLngLat(departureCoordination.getLongitude(), departureCoordination.getLatitude(),
+                        destinationCoordination.getLongitude(), destinationCoordination.getLatitude()));
     }
 }

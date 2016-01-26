@@ -24,8 +24,8 @@ public class MathUtils {
     }
 
     //거리 구하는 부분
-    public static double calculateDistanceByLngLat(double P1_latitude, double P1_longitude,
-                           double P2_latitude, double P2_longitude) {
+    public static double calculateDistanceByLngLat(double P1_longitude, double P1_latitude,
+                                                   double P2_longitude, double P2_latitude) {
         if ((P1_latitude == P2_latitude) && (P1_longitude == P2_longitude)) {
             return 0;
         }
