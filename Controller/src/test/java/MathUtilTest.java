@@ -7,6 +7,8 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.Scanner;
 
+import static org.junit.Assert.*;
+
 /**
  * Created by ideapad on 2016-01-24.
  */
@@ -53,5 +55,10 @@ public class MathUtilTest {
         System.out.println(departure + " --> " + destination + " : " +
                 MathUtils.calculateDistanceByLngLat(departureCoordination.getLongitude(), departureCoordination.getLatitude(),
                         destinationCoordination.getLongitude(), destinationCoordination.getLatitude()));
+    }
+
+    @Test
+    public void calculateSecondsByDistanceAndSpeed(){
+        assertEquals(MathUtils.calculateSecondsByDistanceAndSpeed(1000, 20), 80, 1);
     }
 }

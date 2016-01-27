@@ -23,7 +23,15 @@ public class MathUtils {
 
     }
 
-    //거리 구하는 부분
+    /**
+     * 경/위도를 좌표로 가지는 2개 지역의 거리 계산.
+     *
+     * @param P1_longitude
+     * @param P1_latitude
+     * @param P2_longitude
+     * @param P2_latitude
+     * @return
+     */
     public static double calculateDistanceByLngLat(double P1_longitude, double P1_latitude,
                                                    double P2_longitude, double P2_latitude) {
         if ((P1_latitude == P2_latitude) && (P1_longitude == P2_longitude)) {
@@ -133,5 +141,13 @@ public class MathUtils {
             true_bearing = radian_bearing * (180 / 3.141592);
         }
         return (short) true_bearing;
+    }
+
+    public static double calculateSecondsByDistanceAndSpeed(double distance, double speed){
+        /**
+         * (거리 / (시속*1000)) * 3600 = 비행 시간(초)
+         */
+        double seconds = (distance / (speed * 1000)) * 3600;
+        return seconds;
     }
 }
