@@ -53,7 +53,45 @@ public class Leader {
      * @return
      */
     public FlightStatus doLeaderProcess(){
+        System.out.println("droneName: " + droneName);
+        System.out.println("리더 여부: " + setting.getDroneMap().get(droneName).getLeaderOrFollower());
+        System.out.println("출발지: " + setting.getDeparture());
+        System.out.println("목적지: " + setting.getDestination());
+        System.out.println("비행시간: " + setting.getFlightTime());
+
         FlightStatus status = new FlightStatus();
+
+        int countDown = 10;
+        long flightTime = setting.getFlightTime();
+
+        System.out.println("######### Take off and now hovering..");
+        try {
+            Thread.sleep(3000);
+
+            System.out.println(countDown + "초 후에 비행을 시작합니다..");
+
+            for(long i=countDown; i>0; i--){
+                System.out.println(i);
+                Thread.sleep(1000);
+            }
+
+            int startTime = 1;
+            for(long i=flightTime; i>0; i--){
+                Thread.sleep(1000);
+                System.out.println("###### " + startTime + "초 비행");
+                startTime++;
+            }
+
+            System.out.println("###### 목적지 도착. Now landing...");
+            Thread.sleep(3000);
+            System.out.println("###### 비행 종료..");
+            System.exit(-1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        System.out.println(countDown + "초 후에 비행을 시작합니다..");
         return status;
     }
 }

@@ -114,7 +114,7 @@ public class DroneController {
         double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
         int speed = setting.getSpeed();
         double distance = setting.getDistance();
-        double flightTime = setting.getFlightTime();
+        long flightTime = setting.getFlightTime();
 
         System.out.println("드론 비행 대수: " + numberOfDrone);
         System.out.println("포메이션 타입: " + formationType);
@@ -124,7 +124,7 @@ public class DroneController {
         System.out.println("목적지 좌표: " + destinationLongitude + ", " + destinationLatitude);
         System.out.println("비행 거리: " + distance);
         System.out.println("비행 속도: " + speed);
-        System.out.println("비행 시간: " + flightTime);
+        System.out.println("비행 시간: " + flightTime + "초");
     }
 
 
@@ -474,13 +474,18 @@ public class DroneController {
         setting.setDistance(distance);
     }
 
+    /**
+     * 비행 시간 계산 및 설정.
+     *
+     * @param setting
+     */
     private void setFilghtTime(DroneSetting setting) {
         int speed = setting.getSpeed();
         double distance = setting.getDistance();
 
         double flightTime = MathUtils.calculateSecondsByDistanceAndSpeed(speed, distance);
 
-        setting.setFlightTime(flightTime);
+        setting.setFlightTime(Math.round(flightTime));
 
     }
 

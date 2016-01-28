@@ -17,6 +17,8 @@ public class Follower {
 
     public FlightStatus doFollowerProcess() {
         FlightStatus status = new FlightStatus();
+
+        System.exit(-1);
         return status;
     }
 }

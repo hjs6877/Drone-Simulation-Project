@@ -23,9 +23,6 @@ public class FlightProcessor implements Processor, Serializable {
     }
 
     public void doProcess(Socket socket) {
-        System.out.println("droneName: " + droneName);
-        System.out.println("출발지: " + setting.getDeparture());
-        System.out.println("목적지: " + setting.getDestination());
 
         FlightStatus status = null;
         /**
