@@ -3,20 +3,16 @@ package kr.co.korea;
 import kr.co.korea.domain.Coordination;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
-import kr.co.korea.domain.Order;
 import kr.co.korea.proecessor.ExitProcessor;
 import kr.co.korea.proecessor.FlightProcessor;
 import kr.co.korea.proecessor.Processor;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.socket.ControllerServer;
-import kr.co.korea.socket.ControllerServerSender;
 import kr.co.korea.util.MathUtils;
 import kr.co.korea.validator.StringValidator;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.*;
 
 /**
@@ -103,6 +99,7 @@ public class DroneController {
         controller.setDestination(setting);
         controller.setSpeed(setting);
         controller.setDistance(setting);
+        controller.setFilghtTime(setting);
 
         controller.chooseStartFlightOrNot(setting);
 
@@ -117,6 +114,7 @@ public class DroneController {
         double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
         int speed = setting.getSpeed();
         double distance = setting.getDistance();
+        double flightTime = setting.getFlightTime();
 
         System.out.println("드론 비행 대수: " + numberOfDrone);
         System.out.println("포메이션 타입: " + formationType);
@@ -126,7 +124,10 @@ public class DroneController {
         System.out.println("목적지 좌표: " + destinationLongitude + ", " + destinationLatitude);
         System.out.println("비행 거리: " + distance);
         System.out.println("비행 속도: " + speed);
+        System.out.println("비행 시간: " + flightTime);
     }
+
+
 
 
     private void chooseStartFlightOrNot(DroneSetting setting) {
@@ -473,7 +474,15 @@ public class DroneController {
         setting.setDistance(distance);
     }
 
+    private void setFilghtTime(DroneSetting setting) {
+        int speed = setting.getSpeed();
+        double distance = setting.getDistance();
 
+        double flightTime = MathUtils.calculateSecondsByDistanceAndSpeed(speed, distance);
+
+        setting.setFlightTime(flightTime);
+
+    }
 
 
     /**

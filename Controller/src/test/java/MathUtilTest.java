@@ -1,13 +1,11 @@
 import kr.co.korea.domain.Coordination;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.util.MathUtils;
-import kr.co.korea.validator.StringValidator;
 import org.junit.Test;
 
 import java.util.Map;
-import java.util.Scanner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by ideapad on 2016-01-24.
@@ -57,8 +55,12 @@ public class MathUtilTest {
                         destinationCoordination.getLongitude(), destinationCoordination.getLatitude()));
     }
 
+    /**
+     * 비행 시간 계산 테스트
+     * (거리 / (시속*1000)) * 3600 = 비행 시간(초)
+     */
     @Test
     public void calculateSecondsByDistanceAndSpeed(){
-        assertEquals(MathUtils.calculateSecondsByDistanceAndSpeed(1000, 20), 80, 1);
+        assertEquals(MathUtils.calculateSecondsByDistanceAndSpeed(20, 800), 160, 1);
     }
 }

@@ -143,7 +143,7 @@ public class MathUtils {
         return (short) true_bearing;
     }
 
-    public static double calculateSecondsByDistanceAndSpeed(double distance, double speed){
+    public static double calculateSecondsByDistanceAndSpeed(double speed, double distance){
         /**
          * (거리 / (시속*1000)) * 3600 = 비행 시간(초)
          */
