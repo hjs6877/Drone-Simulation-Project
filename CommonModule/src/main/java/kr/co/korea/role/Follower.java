@@ -1,12 +1,13 @@
 package kr.co.korea.role;
 
+import kr.co.korea.behavior.Flight;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlightStatus;
 
 /**
  * Created by ideapad on 2016-01-21.
  */
-public class Follower {
+public class Follower implements AerialVehicle {
     private String droneName;
     private DroneSetting setting;
 
@@ -15,10 +16,10 @@ public class Follower {
         this.setting = setting;
     }
 
-    public FlightStatus doFollowerProcess() {
-        FlightStatus status = new FlightStatus();
+    public FlightStatus fly() {
+        Flight flight = new Flight(droneName, setting);
+        FlightStatus status = flight.flyWithoutError();
 
-        System.exit(-1);
         return status;
     }
 }

@@ -3,6 +3,7 @@ package kr.co.korea.proecessor;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlightStatus;
+import kr.co.korea.role.AerialVehicle;
 import kr.co.korea.role.Follower;
 import kr.co.korea.role.Leader;
 
@@ -29,11 +30,11 @@ public class FlightProcessor implements Processor, Serializable {
          * 리더와 프로세스를 확인 한뒤 비행 진행.
          */
         if(this.isLeader()){
-            Leader leader = new Leader(droneName, setting);
-            status = leader.doLeaderProcess();
+            AerialVehicle leader = new Leader(droneName, setting);
+            status = leader.fly();
         }else{
-            Follower follower = new Follower(droneName, setting);
-            status = follower.doFollowerProcess();
+            AerialVehicle follower = new Follower(droneName, setting);
+            status = follower.fly();
         }
 
         // TODO 컨트롤러쪽으로 비행 상태 객체를 전송하여 다음 프로세스 진행에 대한 결정을 위임한다.
