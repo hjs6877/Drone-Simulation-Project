@@ -63,7 +63,7 @@ public class DroneController {
      * 최종 목적지까지로의 비행 임무를 완수할 가능성이 높아진다는것이다. 이부분을 적극 주장하자.
      */
 
-    LinkedHashMap clients = null;
+    LinkedHashMap<String, Drone> clients = null;
 
     DroneController(){
         clients = new LinkedHashMap();
@@ -99,7 +99,9 @@ public class DroneController {
         controller.setDestination(setting);
         controller.setSpeed(setting);
         controller.setDistance(setting);
+        controller.setAngle(setting);
         controller.setFilghtTime(setting);
+
 
         controller.chooseStartFlightOrNot(setting);
 
@@ -114,6 +116,8 @@ public class DroneController {
         double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
         int speed = setting.getSpeed();
         double distance = setting.getDistance();
+        double angle = setting.getAngle();
+
         long flightTime = setting.getFlightTime();
 
         System.out.println("드론 비행 대수: " + numberOfDrone);
@@ -124,6 +128,7 @@ public class DroneController {
         System.out.println("목적지 좌표: " + destinationLongitude + ", " + destinationLatitude);
         System.out.println("비행 거리: " + distance);
         System.out.println("비행 속도: " + speed);
+        System.out.println("각도: " + angle);
         System.out.println("비행 시간: " + flightTime + "초");
     }
 
@@ -151,7 +156,8 @@ public class DroneController {
 
                 while(iterator.hasNext()){
                     String droneName = (String) iterator.next();
-                    ObjectOutputStream objectOutputStream = (ObjectOutputStream) clients.get(droneName);
+                    Drone drone = clients.get(droneName);
+                    ObjectOutputStream objectOutputStream = drone.getOutputStream();
 
                     try {
                         objectOutputStream.writeObject(new ExitProcessor());
@@ -176,10 +182,12 @@ public class DroneController {
 
         while(iterator.hasNext()){
             String droneName = (String) iterator.next();
-            ObjectOutputStream objectOutputStream = (ObjectOutputStream) clients.get(droneName);
+            Drone drone = clients.get(droneName);
+            drone.setDroneSetting(setting);
+            ObjectOutputStream objectOutputStream = drone.getOutputStream();
 
             try {
-                objectOutputStream.writeObject(new FlightProcessor(droneName, setting));
+                objectOutputStream.writeObject(new FlightProcessor(droneName, drone));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -234,8 +242,8 @@ public class DroneController {
                 Iterator iterator = clients.keySet().iterator();
                 while(iterator.hasNext()){
                     String droneName = (String) iterator.next();
-                    System.out.println("droneName: " + droneName);
-                    ObjectOutputStream objectOutputStream = (ObjectOutputStream) clients.get(droneName);
+                    Drone drone = clients.get(droneName);
+                    ObjectOutputStream objectOutputStream = drone.getOutputStream();
                     try {
                         Processor processor = new ExitProcessor();
                         objectOutputStream.writeObject(processor);
@@ -291,10 +299,7 @@ public class DroneController {
         int i = 1;
         while(iterator.hasNext()){
             String droneName = (String) iterator.next();
-
-            Drone drone = new Drone();
-            drone.setName(droneName);
-
+            Drone drone = clients.get(droneName);
             System.out.println("## " + droneName + "의 정보 설정 시작.");
             /**
              * 리더 및 팔로워 구분 입력.
@@ -456,6 +461,11 @@ public class DroneController {
     }
 
 
+    /**
+     * 목적지 까지의 거리 설정
+     *
+     * @param setting
+     */
     private void setDistance(DroneSetting setting) {
         Map<String, Coordination> departureCoordinationMap = setting.getDepartureCoordination();
         Map<String, Coordination> destinationCoordinationMap = setting.getDestinationCoordination();
@@ -475,6 +485,23 @@ public class DroneController {
     }
 
     /**
+     * 목적지까지의 방위각 설정.
+     *
+     * @param setting
+     */
+    private void setAngle(DroneSetting setting) {
+        String departure = setting.getDeparture();
+        String destination = setting.getDestination();
+        double departureLongitude = setting.getDepartureCoordination().get(departure).getLongitude();
+        double departureLatitude = setting.getDepartureCoordination().get(departure).getLatitude();
+        double destinationLongitude = setting.getDestinationCoordination().get(destination).getLongitude();
+        double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
+
+        double angle = MathUtils.calculateAzimuthByCoordinate(departureLongitude, departureLatitude, destinationLongitude, destinationLatitude);
+        setting.setAngle(angle);
+    }
+
+    /**
      * 비행 시간 계산 및 설정.
      *
      * @param setting
@@ -483,7 +510,7 @@ public class DroneController {
         int speed = setting.getSpeed();
         double distance = setting.getDistance();
 
-        double flightTime = MathUtils.calculateSecondsByDistanceAndSpeed(speed, distance);
+        double flightTime = MathUtils.calculateSecondsBySpeedAndDistance(speed, distance);
 
         setting.setFlightTime(Math.round(flightTime));
 

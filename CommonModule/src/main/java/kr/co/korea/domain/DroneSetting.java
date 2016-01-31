@@ -16,6 +16,7 @@ public class DroneSetting implements Serializable {
     private Map<String, Coordination> destinationCoordination;
     private int speed;
     private double distance;
+    private double angle;
     private long flightTime;
 
 
@@ -91,6 +92,15 @@ public class DroneSetting implements Serializable {
     public void setDistance(double distance) {
         this.distance = distance;
     }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+
     public long getFlightTime() {
         return flightTime;
     }

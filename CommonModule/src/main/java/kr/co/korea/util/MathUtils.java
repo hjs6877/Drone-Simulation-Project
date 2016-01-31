@@ -1,5 +1,8 @@
 package kr.co.korea.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by ideapad on 2016-01-24.
  */
@@ -110,8 +113,8 @@ public class MathUtils {
     }
 
     //방위각 구하는 부분
-    public static short bearingP1toP2(double P1_latitude, double P1_longitude,
-                               double P2_latitude, double P2_longitude) {
+    public static short calculateAzimuthByCoordinate(double P1_longitude, double P1_latitude,
+                                                     double P2_longitude, double P2_latitude) {
         // 현재 위치 : 위도나 경도는 지구 중심을 기반으로 하는 각도이기 때문에
         //라디안 각도로 변환한다.
         double Cur_Lat_radian = P1_latitude * (3.141592 / 180);
@@ -143,11 +146,104 @@ public class MathUtils {
         return (short) true_bearing;
     }
 
-    public static double calculateSecondsByDistanceAndSpeed(double speed, double distance){
+    /**
+     * 거리와 속도를 이용해 총 비행 시간 구하기.
+     *
+     * @param speed
+     * @param distance
+     * @return
+     */
+    public static double calculateSecondsBySpeedAndDistance(double speed, double distance){
         /**
+         *  거리: 단위 - m(미터)
+         *  비행시간: 단위 - seconds(초)
          * (거리 / (시속*1000)) * 3600 = 비행 시간(초)
          */
         double seconds = (distance / (speed * 1000)) * 3600;
         return seconds;
+    }
+
+    /**
+     * 두 지점간의 각도 구하기.
+     *
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return
+     */
+    public static double calculateAngle(double x1,double y1, double x2,double y2){
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+
+        double rad= Math.atan2(dx, dy);
+        double degree = (rad*180)/Math.PI ;
+
+        return degree;
+    }
+
+    /**
+     * 해당 시간(초)동안에 이동한 거리 계산.
+     *
+     * @param totalDistance
+     * @param totalSeconds
+     * @param atSeconds
+     * @return
+     */
+    public static double calculateDistanceAtSeconds(double totalDistance, double totalSeconds, double atSeconds){
+        double distanceAtSeconds = (totalDistance / totalSeconds) * atSeconds;
+
+        return distanceAtSeconds;
+    }
+
+    /**
+     * 해당 시간(초)동안에 이동한 좌표 계산. 평면 좌표계에서의 시뮬레이터용 계산. 실제 비행에는 사용하지 못함.
+     *
+     * @param departureX
+     * @param departureY
+     * @param destinationX
+     * @param destinationY
+     * @param totalSeconds
+     * @param atSeconds
+     * @return
+     */
+    public static Map<String, Double> calculateCoordinateAtSeconds(double departureX, double departureY,
+                                                                   double destinationX, double destinationY,
+                                                                   double totalSeconds, double atSeconds){
+        Map<String, Double> coordinationMap = new HashMap<String, Double>();
+
+        double differencesX = Math.abs(destinationX - departureX);
+        double differencesY = Math.abs(destinationY - departureY);
+
+        double longitudePerSecond = differencesX / totalSeconds;
+        double latitudePerSecond = differencesY / totalSeconds;
+
+        double longitudeAtSeconds = longitudePerSecond * atSeconds;
+        double latitudeAtSeconds = latitudePerSecond * atSeconds;
+
+        double newDepartureX = 0.0;
+        double newDepartureY = 0.0;
+
+        if((destinationX > departureX) && (destinationY > departureY)){
+            newDepartureX = departureX + longitudeAtSeconds;
+            newDepartureY = departureY + latitudeAtSeconds;
+        }else if((destinationX > departureX) && (destinationY < departureY)){
+            newDepartureX = departureX + longitudeAtSeconds;
+            newDepartureY = departureY - latitudeAtSeconds;
+        }else if((destinationX < departureX) && (destinationY < departureY)){
+            newDepartureX = departureX - longitudeAtSeconds;
+            newDepartureY = departureY - latitudeAtSeconds;
+        }else if((destinationX < departureX) && (destinationY > departureY)){
+            newDepartureX = departureX - longitudeAtSeconds;
+            newDepartureY = departureY + latitudeAtSeconds;
+        }
+
+        double longitude = Double.parseDouble(String.format("%.9f", newDepartureX));
+        double latitude = Double.parseDouble(String.format("%.9f", newDepartureY));
+
+        coordinationMap.put("longitude", longitude);
+        coordinationMap.put("latitude", latitude);
+
+        return coordinationMap;
     }
 }

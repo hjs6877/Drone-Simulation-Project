@@ -1,7 +1,12 @@
 package kr.co.korea.behavior;
 
+import kr.co.korea.domain.Coordination;
+import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlightStatus;
+import kr.co.korea.util.MathUtils;
+
+import java.util.Map;
 
 /**
  * 리더의 비행 시작(without error)시, 시나리오
@@ -39,16 +44,28 @@ import kr.co.korea.domain.FlightStatus;
  *          - 누적 장애 포인트
  *          - 리더 교체 시점
  */
+// TODO 인터페이스로 바꾸고, LeaderFlight, FollowerFlight을 구현하는것으로 변경.
 public class Flight {
     private String droneName;
+    private Drone drone;
     private DroneSetting setting;
 
-    public Flight(String droneName, DroneSetting setting){
+    public Flight(String droneName, Drone drone){
         this.droneName = droneName;
-        this.setting = setting;
+        this.drone = drone;
     }
 
     public FlightStatus flyWithoutError(){
+        setting = drone.getDroneSetting();
+
+        String departure = setting.getDeparture();
+        String destination = setting.getDestination();
+        double departureLongitude = setting.getDepartureCoordination().get(departure).getLongitude();
+        double departureLatitude = setting.getDepartureCoordination().get(departure).getLatitude();
+        double destinationLongitude = setting.getDestinationCoordination().get(destination).getLongitude();
+        double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
+        long flightTime = setting.getFlightTime();
+
         System.out.println("droneName: " + droneName);
         System.out.println("리더 여부: " + setting.getDroneMap().get(droneName).getLeaderOrFollower());
         System.out.println("출발지: " + setting.getDeparture());
@@ -58,7 +75,7 @@ public class Flight {
         FlightStatus status = new FlightStatus();
 
         int countDown = 10;
-        long flightTime = setting.getFlightTime();
+
 
         System.out.println("######### Take off and now hovering..");
         try {
@@ -72,10 +89,23 @@ public class Flight {
             }
 
             int startTime = 1;
+
+            /**
+             * 실제 비행하는 부분. 리더일때와 팔로워 일때의 프로세스가 달라야 함.
+             */
             for(long i=flightTime; i>0; i--){
                 Thread.sleep(1000);
                 System.out.println("###### " + startTime + "초 비행");
+
+                Map<String, Double> coordinationMapAtSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
+                        destinationLongitude, destinationLatitude, flightTime, startTime);
+
+                double longitude = coordinationMapAtSeconds.get("longitude");
+                double latitude = coordinationMapAtSeconds.get("latitude");
+                System.out.println(startTime + " 비행 시 좌표: " + longitude + ", " + latitude);
+
                 startTime++;
+
             }
 
             System.out.println("###### 목적지 도착. Now landing...");
@@ -86,8 +116,6 @@ public class Flight {
             e.printStackTrace();
         }
 
-
-        System.out.println(countDown + "초 후에 비행을 시작합니다..");
         return status;
     }
 }
