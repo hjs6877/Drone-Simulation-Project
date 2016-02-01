@@ -1,5 +1,7 @@
 package kr.co.korea.socket;
 
+import kr.co.korea.domain.Drone;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,7 +12,7 @@ import java.util.LinkedHashMap;
  * Created by ideapad on 2016-01-17.
  */
 public class ControllerServer extends Thread {
-    LinkedHashMap clients;
+    LinkedHashMap<String, Drone> clients;
     public ControllerServer(LinkedHashMap clients){
         this.clients = clients;
     }
@@ -31,6 +33,7 @@ public class ControllerServer extends Thread {
 //                System.out.println("[" + socket.getInetAddress() + ":" + socket.getPort() + "]" + "에서 접속하였습니다.");
 
                 ControllerServerReceiver receiver = new ControllerServerReceiver(socket, clients);
+
                 receiver.start();
             }
         } catch (IOException e) {

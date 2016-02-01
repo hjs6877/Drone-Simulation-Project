@@ -1,6 +1,8 @@
 package kr.co.korea;
 
 import kr.co.korea.domain.Drone;
+import kr.co.korea.domain.DroneSetting;
+import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.thread.ClientReceiver;
 import kr.co.korea.thread.ClientSender;
 
@@ -26,8 +28,7 @@ public class VenusClient {
             Socket socket = new Socket(serverIp, 5555);
             System.out.println("Venus client --> Controller에 연결되었습니다.");
 
-            Drone drone = new Drone();
-            drone.setName("venus");
+            Drone drone = new Drone("venus", new DroneSetting(), new FlyingInfo());
 
             oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(drone);

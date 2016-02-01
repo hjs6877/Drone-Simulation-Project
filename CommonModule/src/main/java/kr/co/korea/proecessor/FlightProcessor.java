@@ -16,11 +16,12 @@ import java.util.Map;
  */
 public class FlightProcessor implements Processor, Serializable {
     private String droneName;
+    private Drone drone;
     private DroneSetting setting;
 
-    public FlightProcessor(String droneName, DroneSetting setting){
+    public FlightProcessor(String droneName, Drone drone){
         this.droneName = droneName;
-        this.setting = setting;
+        this.drone = drone;
     }
 
     public void doProcess(Socket socket) {
@@ -30,10 +31,10 @@ public class FlightProcessor implements Processor, Serializable {
          * 리더와 프로세스를 확인 한뒤 비행 진행.
          */
         if(this.isLeader()){
-            AerialVehicle leader = new Leader(droneName, setting);
+            AerialVehicle leader = new Leader(droneName, drone);
             status = leader.fly();
         }else{
-            AerialVehicle follower = new Follower(droneName, setting);
+            AerialVehicle follower = new Follower(droneName, drone);
             status = follower.fly();
         }
 
@@ -47,9 +48,7 @@ public class FlightProcessor implements Processor, Serializable {
      */
     private boolean isLeader(){
 
-        Map<String, Drone> droneMap = setting.getDroneMap();
-
-        return droneMap.get(droneName).getLeaderOrFollower().equals("L");
+        return drone.getLeaderOrFollower().equals("L");
     }
 
 }

@@ -11,13 +11,13 @@ import java.util.LinkedHashMap;
  * Created by ideapad on 2016-01-17.
  */
 public class ControllerServerReceiver extends Thread {
-    private LinkedHashMap clients = null;
+    private LinkedHashMap<String, Drone> clients = null;
 
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
 
-    public ControllerServerReceiver(Socket socket, LinkedHashMap clients) {
+    public ControllerServerReceiver(Socket socket, LinkedHashMap<String, Drone> clients) {
         this.clients = clients;
         this.socket = socket;
         try {
@@ -35,7 +35,9 @@ public class ControllerServerReceiver extends Thread {
             drone = (Drone) ois.readObject();
             name = drone.getName();
 
-            clients.put(name, oos);
+            drone.setOutputStream(oos);
+
+            clients.put(name, drone);
 
             while(ois != null){
                 /**
