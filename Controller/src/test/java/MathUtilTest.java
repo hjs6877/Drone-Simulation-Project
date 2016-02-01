@@ -139,4 +139,15 @@ public class MathUtilTest {
         System.out.println(atSeconds + "초 동안 이동한 좌표2: " + longitude2 + ", " + latitude2);
     }
 
+    @Test
+    public void getRandomLongNumberTest(){
+        long min = 0;
+        long max = 5;
+
+        for(int i=0; i < 50; i++){
+            long randomNumber = MathUtils.getRandomLongNumber(min, max);
+            System.out.print(randomNumber + ", ");
+        }
+
+    }
 }
