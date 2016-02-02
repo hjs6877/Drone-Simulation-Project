@@ -1,4 +1,5 @@
 import kr.co.korea.error.ErrorEventProvider;
+import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
 import org.junit.Test;
 
@@ -11,7 +12,7 @@ public class ErrorEventProviderTest {
     @Test
     public void createRandomErrorEventTest(){
         ErrorEventProvider errorEventProvider = new ErrorEventProvider();
-        Map<Long, ErrorType> errorEventMap = errorEventProvider.createRandomErrorEvent(100, 30, 15);
+        Map<Long, ErrorType> errorEventMap = errorEventProvider.createRandomErrorEvent(500, ErrorLevel.ORDINARY);
 
         System.out.println(errorEventMap);
     }

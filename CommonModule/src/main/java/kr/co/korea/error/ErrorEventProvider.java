@@ -5,17 +5,46 @@ import kr.co.korea.util.MathUtils;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by ideapad on 2016-02-01.
  */
 public class ErrorEventProvider {
+    /**
+     *  장애 타입을 weak, ordinary, strong 순으로 구분하여 생성. 높은 장애 등급이 많을 수록 strong. 갯수는 적절히 조정.
+     *  - errorTypesWeak : 4, 3, 2, 1, 0
+     *  - errorTypesOrdinary : 4, 4, 3, 3, 1
+     *  - errorTypesStrong : 3, 3, 3, 3, 3
+     */
+    private ErrorType[] errorTypesWeak = {
+            ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL,
+            ErrorType.MINOR, ErrorType.MINOR, ErrorType.MINOR,
+            ErrorType.MAJOR, ErrorType.MAJOR,
+            ErrorType.CRITICAL
+    };
+    private ErrorType[] errorTypesOrdinary = {
+            ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL,
+            ErrorType.MINOR, ErrorType.MINOR, ErrorType.MINOR, ErrorType.MINOR,
+            ErrorType.MAJOR, ErrorType.MAJOR, ErrorType.MAJOR,
+            ErrorType.CRITICAL, ErrorType.CRITICAL, ErrorType.CRITICAL,
+            ErrorType.BLOCK
+    };
+    private ErrorType[] errorTypesStrong = {
+            ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL,
+            ErrorType.MINOR, ErrorType.MINOR, ErrorType.MINOR,
+            ErrorType.MAJOR, ErrorType.MAJOR, ErrorType.MAJOR,
+            ErrorType.CRITICAL, ErrorType.CRITICAL, ErrorType.CRITICAL,
+            ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK
+    };
 
-    public Map<Long, ErrorType> createRandomErrorEvent(long flightTime, int errorEventSize, int errorEventCount){
+    private final int errorEventSize = 30;
+    private final int errorEventCount = 15;
+
+    public Map<Long, ErrorType> createRandomErrorEvent(long flightTime, ErrorLevel errorLevel){
         Map<Long, ErrorType> errorEventMap = new HashMap<Long, ErrorType>();
 
-        // TODO 장애 타입을 low, medium, high 순으로 구분하여 생성할 수 있도록 수정. 높은 장애 등급이 많을 수록 high. 갯수는 적절히 조정.
-        ErrorType[] errorTypes = {ErrorType.TRIVIAL, ErrorType.MINOR, ErrorType.MAJOR, ErrorType.CRITICAL, ErrorType.BLOCK};
+        ErrorType[] errorTypes = this.getErrorTypes(errorLevel);
 
         ErrorType[] errorEvents = new ErrorType[errorEventSize];
         Arrays.fill(errorEvents, ErrorType.NORMAL);
@@ -65,8 +94,28 @@ public class ErrorEventProvider {
 
         }
 
+        /**
+         * 비행 시간 순으로 정렬.
+         */
+        TreeMap<Long, ErrorType> treeMap = new TreeMap<Long, ErrorType>(errorEventMap);
 
-        return errorEventMap;
+        return treeMap;
+    }
+
+    private ErrorType[] getErrorTypes(ErrorLevel errorLevel) {
+        ErrorType[] errorTypes = null;
+
+        if(errorLevel == ErrorLevel.WEAK){
+            errorTypes = errorTypesWeak;
+        }else if(errorLevel == ErrorLevel.ORDINARY){
+            errorTypes = errorTypesOrdinary;
+        }else if(errorLevel == ErrorLevel.STRONG){
+            errorTypes = errorTypesStrong;
+        }else{
+            errorTypes = errorTypesWeak;
+        }
+
+        return errorTypes;
     }
 
 
