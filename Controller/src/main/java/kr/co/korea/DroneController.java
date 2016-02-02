@@ -3,6 +3,9 @@ package kr.co.korea;
 import kr.co.korea.domain.Coordination;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
+import kr.co.korea.error.ErrorEventProvider;
+import kr.co.korea.error.ErrorLevel;
+import kr.co.korea.error.ErrorType;
 import kr.co.korea.proecessor.ExitProcessor;
 import kr.co.korea.proecessor.FlightProcessor;
 import kr.co.korea.proecessor.Processor;
@@ -101,7 +104,7 @@ public class DroneController {
         controller.setDistance(setting);
         controller.setAngle(setting);
         controller.setFilghtTime(setting);
-
+        controller.setRandomErrorEvent(setting);
 
         controller.chooseStartFlightOrNot(setting);
 
@@ -132,9 +135,41 @@ public class DroneController {
         System.out.println("비행 시간: " + flightTime + "초");
     }
 
+    /**
+     * 랜덤 에러 이벤트 생성 및 설정.
+     *
+     * @param setting
+     */
+    private void setRandomErrorEvent(DroneSetting setting) {
+        ErrorEventProvider errorEventProvider = new ErrorEventProvider();
+
+        Map<Long, ErrorType> errorEvent;
+
+        Iterator iterator = clients.keySet().iterator();
+
+        while(iterator.hasNext()){
+            String droneName = (String) iterator.next();
+            Drone drone = clients.get(droneName);
+
+            String leaderOrFollower = drone.getLeaderOrFollower();
+            long flightTime = setting.getFlightTime();
+
+            if(leaderOrFollower.equals("L")){
+                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.ORDINARY);
+            }else{
+                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
+            }
+
+            drone.setErrorEvent(errorEvent);
+        }
+    }
 
 
-
+    /**
+     * 비행 시작 명령 내리기.
+     *
+     * @param setting
+     */
     private void chooseStartFlightOrNot(DroneSetting setting) {
         Iterator iterator = clients.keySet().iterator();
 

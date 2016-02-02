@@ -12,7 +12,7 @@ public class ErrorEventProviderTest {
     @Test
     public void createRandomErrorEventTest(){
         ErrorEventProvider errorEventProvider = new ErrorEventProvider();
-        Map<Long, ErrorType> errorEventMap = errorEventProvider.createRandomErrorEvent(500, ErrorLevel.ORDINARY);
+        Map<Long, ErrorType> errorEventMap = errorEventProvider.createRandomErrorEvent(500, ErrorLevel.WEAK);
 
         System.out.println(errorEventMap);
     }

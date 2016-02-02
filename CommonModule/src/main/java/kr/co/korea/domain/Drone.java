@@ -1,7 +1,10 @@
 package kr.co.korea.domain;
 
+import kr.co.korea.error.ErrorType;
+
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Created by kjs on 2016-01-15.
@@ -11,6 +14,7 @@ public class Drone implements Serializable {
     private String name;
     private String leaderOrFollower;
     private DroneSetting droneSetting;
+    private Map<Long, ErrorType> errorEvent;
     private FlyingInfo flyingInfo;
 
     public Drone(String name, DroneSetting droneSetting, FlyingInfo flyingInfo) {
@@ -57,5 +61,13 @@ public class Drone implements Serializable {
 
     public void setFlyingInfo(FlyingInfo flyingInfo) {
         this.flyingInfo = flyingInfo;
+    }
+
+    public Map<Long, ErrorType> getErrorEvent() {
+        return errorEvent;
+    }
+
+    public void setErrorEvent(Map<Long, ErrorType> errorEvent) {
+        this.errorEvent = errorEvent;
     }
 }

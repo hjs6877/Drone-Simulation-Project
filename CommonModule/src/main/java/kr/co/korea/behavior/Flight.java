@@ -4,6 +4,7 @@ import kr.co.korea.domain.Coordination;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlightStatus;
+import kr.co.korea.error.ErrorType;
 import kr.co.korea.util.MathUtils;
 
 import java.util.Map;
@@ -49,14 +50,16 @@ public class Flight {
     private String droneName;
     private Drone drone;
     private DroneSetting setting;
+    private Map<Long, ErrorType> errorEventMap;
 
     public Flight(String droneName, Drone drone){
         this.droneName = droneName;
         this.drone = drone;
     }
 
-    public FlightStatus flyWithoutError(){
+    public FlightStatus flyAsLeader(){
         setting = drone.getDroneSetting();
+        errorEventMap = drone.getErrorEvent();
 
         String departure = setting.getDeparture();
         String destination = setting.getDestination();
@@ -71,6 +74,73 @@ public class Flight {
         System.out.println("출발지: " + setting.getDeparture());
         System.out.println("목적지: " + setting.getDestination());
         System.out.println("비행시간: " + setting.getFlightTime());
+        System.out.println("장애 이벤트: " + errorEventMap);
+
+        FlightStatus status = new FlightStatus();
+
+        int countDown = 10;
+
+
+        System.out.println("######### Take off and now hovering..");
+        try {
+            Thread.sleep(3000);
+
+            System.out.println(countDown + "초 후에 비행을 시작합니다..");
+
+            for(long i=countDown; i>0; i--){
+                System.out.println(i);
+                Thread.sleep(1000);
+            }
+
+            int startTime = 1;
+
+            /**
+             * 실제 비행하는 부분. 리더일때와 팔로워 일때의 프로세스가 달라야 함.
+             */
+            for(long i=flightTime; i>0; i--){
+                Thread.sleep(1000);
+                System.out.println("###### " + startTime + "초 비행");
+
+                Map<String, Double> coordinationMapAtSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
+                        destinationLongitude, destinationLatitude, flightTime, startTime);
+
+                double longitude = coordinationMapAtSeconds.get("longitude");
+                double latitude = coordinationMapAtSeconds.get("latitude");
+                System.out.println(startTime + " 비행 시 좌표: " + longitude + ", " + latitude);
+
+                startTime++;
+
+            }
+
+            System.out.println("###### 목적지 도착. Now landing...");
+            Thread.sleep(3000);
+            System.out.println("###### 비행 종료..");
+            System.exit(-1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return status;
+    }
+
+    public FlightStatus flyAsFollower(){
+        setting = drone.getDroneSetting();
+        errorEventMap = drone.getErrorEvent();
+
+        String departure = setting.getDeparture();
+        String destination = setting.getDestination();
+        double departureLongitude = setting.getDepartureCoordination().get(departure).getLongitude();
+        double departureLatitude = setting.getDepartureCoordination().get(departure).getLatitude();
+        double destinationLongitude = setting.getDestinationCoordination().get(destination).getLongitude();
+        double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
+        long flightTime = setting.getFlightTime();
+
+        System.out.println("droneName: " + droneName);
+        System.out.println("리더 여부: " + setting.getDroneMap().get(droneName).getLeaderOrFollower());
+        System.out.println("출발지: " + setting.getDeparture());
+        System.out.println("목적지: " + setting.getDestination());
+        System.out.println("비행시간: " + setting.getFlightTime());
+        System.out.println("장애 이벤트: " + errorEventMap);
 
         FlightStatus status = new FlightStatus();
 
