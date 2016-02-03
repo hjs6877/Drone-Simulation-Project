@@ -8,6 +8,7 @@ import kr.co.korea.error.ErrorType;
 import kr.co.korea.util.MathUtils;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * 리더의 비행 시작(without error)시, 시나리오
@@ -50,7 +51,7 @@ public class Flight {
     private String droneName;
     private Drone drone;
     private DroneSetting setting;
-    private Map<Long, ErrorType> errorEventMap;
+    private TreeMap<Long, ErrorType> errorEventMap;
 
     public Flight(String droneName, Drone drone){
         this.droneName = droneName;
@@ -67,10 +68,12 @@ public class Flight {
         double departureLatitude = setting.getDepartureCoordination().get(departure).getLatitude();
         double destinationLongitude = setting.getDestinationCoordination().get(destination).getLongitude();
         double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
+        Map<Long, ErrorType> errorEventMap = drone.getErrorEvent();
+
         long flightTime = setting.getFlightTime();
 
         System.out.println("droneName: " + droneName);
-        System.out.println("리더 여부: " + setting.getDroneMap().get(droneName).getLeaderOrFollower());
+        System.out.println("리더 여부: " + drone.getLeaderOrFollower());
         System.out.println("출발지: " + setting.getDeparture());
         System.out.println("목적지: " + setting.getDestination());
         System.out.println("비행시간: " + setting.getFlightTime());
@@ -97,18 +100,20 @@ public class Flight {
             /**
              * 실제 비행하는 부분. 리더일때와 팔로워 일때의 프로세스가 달라야 함.
              */
-            for(long i=flightTime; i>0; i--){
+            for(long i=startTime; i<=flightTime; i++){
                 Thread.sleep(1000);
-                System.out.println("###### " + startTime + "초 비행");
+                System.out.println("###### " + i + "초 비행");
 
                 Map<String, Double> coordinationMapAtSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
                         destinationLongitude, destinationLatitude, flightTime, startTime);
 
                 double longitude = coordinationMapAtSeconds.get("longitude");
                 double latitude = coordinationMapAtSeconds.get("latitude");
-                System.out.println(startTime + " 비행 시 좌표: " + longitude + ", " + latitude);
 
-                startTime++;
+                if(this.isExistErrorEvent(errorEventMap, i)){
+                    System.out.println(i + "초에 에러 이벤트 발생: " + errorEventMap.get(i));
+                    System.out.println("비행 시 좌표: " + longitude + ", " + latitude);
+                }
 
             }
 
@@ -121,6 +126,11 @@ public class Flight {
         }
 
         return status;
+    }
+
+    private boolean isExistErrorEvent(Map<Long, ErrorType> errorEventMap, long flightTime) {
+
+        return (errorEventMap.get(flightTime) != null) && (errorEventMap.get(flightTime) != ErrorType.NORMAL);
     }
 
     public FlightStatus flyAsFollower(){
@@ -163,18 +173,20 @@ public class Flight {
             /**
              * 실제 비행하는 부분. 리더일때와 팔로워 일때의 프로세스가 달라야 함.
              */
-            for(long i=flightTime; i>0; i--){
+            for(long i=startTime; i<=flightTime; i++){
                 Thread.sleep(1000);
-                System.out.println("###### " + startTime + "초 비행");
+                System.out.println("###### " + i + "초 비행");
 
                 Map<String, Double> coordinationMapAtSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
                         destinationLongitude, destinationLatitude, flightTime, startTime);
 
                 double longitude = coordinationMapAtSeconds.get("longitude");
                 double latitude = coordinationMapAtSeconds.get("latitude");
-                System.out.println(startTime + " 비행 시 좌표: " + longitude + ", " + latitude);
 
-                startTime++;
+                if(this.isExistErrorEvent(errorEventMap, i)){
+                    System.out.println(i + "초에 에러 이벤트 발생: " + errorEventMap.get(i));
+                    System.out.println("비행 시 좌표: " + longitude + ", " + latitude);
+                }
 
             }
 

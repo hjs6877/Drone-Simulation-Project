@@ -5,6 +5,7 @@ import kr.co.korea.error.ErrorType;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by kjs on 2016-01-15.
@@ -14,7 +15,7 @@ public class Drone implements Serializable {
     private String name;
     private String leaderOrFollower;
     private DroneSetting droneSetting;
-    private Map<Long, ErrorType> errorEvent;
+    private TreeMap<Long, ErrorType> errorEvent;
     private FlyingInfo flyingInfo;
 
     public Drone(String name, DroneSetting droneSetting, FlyingInfo flyingInfo) {
@@ -63,11 +64,11 @@ public class Drone implements Serializable {
         this.flyingInfo = flyingInfo;
     }
 
-    public Map<Long, ErrorType> getErrorEvent() {
+    public TreeMap<Long, ErrorType>  getErrorEvent() {
         return errorEvent;
     }
 
-    public void setErrorEvent(Map<Long, ErrorType> errorEvent) {
+    public void setErrorEvent(TreeMap<Long, ErrorType>  errorEvent) {
         this.errorEvent = errorEvent;
     }
 }

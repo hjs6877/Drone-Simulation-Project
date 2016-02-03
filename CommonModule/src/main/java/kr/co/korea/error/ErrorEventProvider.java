@@ -41,7 +41,7 @@ public class ErrorEventProvider {
     private final int errorEventSize = 30;
     private final int errorEventCount = 15;
 
-    public Map<Long, ErrorType> createRandomErrorEvent(long flightTime, ErrorLevel errorLevel){
+    public TreeMap<Long, ErrorType> createRandomErrorEvent(long flightTime, ErrorLevel errorLevel){
         Map<Long, ErrorType> errorEventMap = new HashMap<Long, ErrorType>();
 
         ErrorType[] errorTypes = this.getErrorTypes(errorLevel);

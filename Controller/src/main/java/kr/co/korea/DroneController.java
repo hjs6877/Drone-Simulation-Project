@@ -143,7 +143,7 @@ public class DroneController {
     private void setRandomErrorEvent(DroneSetting setting) {
         ErrorEventProvider errorEventProvider = new ErrorEventProvider();
 
-        Map<Long, ErrorType> errorEvent;
+        TreeMap<Long, ErrorType> errorEvent;
 
         Iterator iterator = clients.keySet().iterator();
 
