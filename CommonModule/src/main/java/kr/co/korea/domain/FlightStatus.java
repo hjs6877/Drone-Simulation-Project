@@ -67,7 +67,39 @@ public class FlightStatus implements Serializable {
          * TODO 순서가 바뀐다면 TRIVIAL부터 순차적으로 장애 횟수를 판단해야 됨.
          */
         ErrorType[] errorTypes = ErrorType.values();
+        for(ErrorType errorType : errorTypes){
+            if(errorType == ErrorType.NORMAL) continue;
 
+            this.updateUpperErrorType(errorType);
+        }
+
+    }
+
+    private void updateUpperErrorType(ErrorType errorType) {
+        if(errorType == ErrorType.TRIVIAL){
+            if(trivialList.size() == 2){
+                minorList.add(ErrorType.TRIVIAL);
+                clearErrorEventList(ErrorType.TRIVIAL);
+            }
+        }else if(errorType == ErrorType.MINOR){
+            if(minorList.size() == 2){
+                majorList.add(ErrorType.MAJOR);
+                clearErrorEventList(ErrorType.MINOR);
+            }
+        }else if(errorType == ErrorType.MAJOR){
+            if(majorList.size() == 3){
+                criticalList.add(ErrorType.CRITICAL);
+                clearErrorEventList(ErrorType.MAJOR);
+            }
+        }else if(errorType == ErrorType.CRITICAL){
+            /**
+             * CRITICAL의 경우 리더 교체를 판단할 때 체크만 하면 되므로 별도로 BLOCK으로 업데이트 할 필요 없음.
+             */
+        }else if(errorType == ErrorType.BLOCK){
+            /**
+             * CRITICAL의 경우 리더 교체를 판단할 때 체크만 하면 됨.
+             */
+        }
     }
 
     public void clearErrorEventList(ErrorType errorType){

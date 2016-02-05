@@ -1,3 +1,4 @@
+import kr.co.korea.domain.FlightStatus;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
@@ -15,5 +16,41 @@ public class ErrorEventProviderTest {
         Map<Long, ErrorType> errorEventMap = errorEventProvider.createRandomErrorEvent(500, ErrorLevel.WEAK);
 
         System.out.println(errorEventMap);
+    }
+
+    @Test
+    public void calculateAddErrorTypeTest(){
+        int startTime = 1;
+        int flightTime = 500;
+
+        ErrorEventProvider errorEventProvider = new ErrorEventProvider();
+        Map<Long, ErrorType> errorEventMap = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
+
+        System.out.println(errorEventMap);
+
+        FlightStatus flightStatus = new FlightStatus();
+
+        for(long i=startTime; i<=flightTime; i++){
+            ErrorType errorType = errorEventMap.get(i);
+            if(this.isExistErrorEvent(errorType)){
+                System.out.println(i + "초에 에러 이벤트 발생: " + errorType);
+
+
+                flightStatus.addErrorEvent(errorType);
+                flightStatus.updateErrorEvent();
+
+            }
+        }
+
+        System.out.println("###### 장애 이벤트 현황 ######");
+        System.out.println("TRIVIAL: " + flightStatus.getTrivialList().size());
+        System.out.println("MINOR: " + flightStatus.getMinorList().size());
+        System.out.println("MAJOR: " + flightStatus.getMajorList().size());
+        System.out.println("CRITICAL: " + flightStatus.getCriticalList().size());
+        System.out.println("BLOCK: " + flightStatus.getBlockList().size());
+    }
+
+    private boolean isExistErrorEvent(ErrorType errorType) {
+        return (errorType != null) && (errorType != ErrorType.NORMAL);
     }
 }
