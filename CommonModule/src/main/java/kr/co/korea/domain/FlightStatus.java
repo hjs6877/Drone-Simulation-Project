@@ -44,26 +44,44 @@ public class FlightStatus implements Serializable {
     }
 
 
-    // TODO 메서드를 하나로 줄이기
-    public void addTrivial(ErrorType errorType) {
-        trivialList.add(errorType);
+    public void addErrorEvent(ErrorType errorType){
+        if(errorType == ErrorType.TRIVIAL){
+            trivialList.add(errorType);
+        }else if(errorType == ErrorType.MINOR){
+            minorList.add(errorType);
+        }else if(errorType == ErrorType.MAJOR){
+            majorList.add(errorType);
+        }else if(errorType == ErrorType.CRITICAL){
+            criticalList.add(errorType);
+        }else if(errorType == ErrorType.BLOCK){
+            blockList.add(errorType);
+        }
     }
 
-    public void addMinor(ErrorType errorType) {
-        minorList.add(errorType);
+    /**
+     * NORMAL을 제외하고, TRIVIAL부터 순차적으로 장애 횟수를 판단해서 상위 장애의 횟수를 업데이트 해야 됨.
+     */
+    public void updateErrorEvent(){
+        /**
+         * ErrorType의 순서가 바뀌지 않는다는 가정하에 loop로 처리.
+         * TODO 순서가 바뀐다면 TRIVIAL부터 순차적으로 장애 횟수를 판단해야 됨.
+         */
+        ErrorType[] errorTypes = ErrorType.values();
+
     }
 
-    public void addMajor(ErrorType errorType) {
-        majorList.add(errorType);
+    public void clearErrorEventList(ErrorType errorType){
+        if(errorType == ErrorType.TRIVIAL){
+            trivialList.clear();
+        }else if(errorType == ErrorType.MINOR){
+            minorList.clear();
+        }else if(errorType == ErrorType.MAJOR){
+            majorList.clear();
+        }else if(errorType == ErrorType.CRITICAL){
+            criticalList.clear();
+        }else if(errorType == ErrorType.BLOCK){
+            blockList.clear();
+        }
     }
-
-    public void addCritical(ErrorType errorType) {
-        criticalList.add(errorType);
-    }
-
-    public void addBlock(ErrorType errorType) {
-        blockList.add(errorType);
-    }
-
 
 }

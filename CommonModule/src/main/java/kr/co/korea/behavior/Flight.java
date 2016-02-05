@@ -1,6 +1,5 @@
 package kr.co.korea.behavior;
 
-import kr.co.korea.domain.Coordination;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlightStatus;
@@ -52,10 +51,12 @@ public class Flight {
     private Drone drone;
     private DroneSetting setting;
     private TreeMap<Long, ErrorType> errorEventMap;
+    private FlightStatus flightStatus;
 
     public Flight(String droneName, Drone drone){
         this.droneName = droneName;
         this.drone = drone;
+        flightStatus = new FlightStatus();
     }
 
     public FlightStatus flyAsLeader(){
@@ -99,6 +100,7 @@ public class Flight {
 
             /**
              * 실제 비행하는 부분. 리더일때와 팔로워 일때의 프로세스가 달라야 함.
+             * // TODO 로깅 필요.
              */
             for(long i=startTime; i<=flightTime; i++){
                 Thread.sleep(1000);
@@ -110,9 +112,30 @@ public class Flight {
                 double longitude = coordinationMapAtSeconds.get("longitude");
                 double latitude = coordinationMapAtSeconds.get("latitude");
 
-                if(this.isExistErrorEvent(errorEventMap, i)){
-                    System.out.println(i + "초에 에러 이벤트 발생: " + errorEventMap.get(i));
+                /**
+                 * 장애 이벤트가 해당 비행 시간(초)에 존재한다면(발생한다면)
+                 * - FlightStatus의 발생한 장애 이벤트별 리스트에 저장.
+                 * - 장애 이벤트별 업데이트
+                 *      ㄴ 장애 이벤트 리스트 별로 발생 빈도수를 확인 한후, 일정 횟수 이상 되면
+                 *      상위 장애를 1회 추가 한 후, 해당 장애 clear. TODO
+                 * - 장애 이벤트별로 발생 빈도수를 확인해서 리더교체가 필요한 장애 상태인지를 확인. TODO
+                 *      ㄴ 장애 타입별로 올라가면서 확인. TODO
+                 *      ㄴ 일정 횟수 이상 되면 상위 장애를 1회 추가 후, 해당 장애 clear. TODO
+                 *      ㄴ BLOCK 장애까지 recursive하게 반복 체크. TODO
+                 * - 리더교체가 필요한 상태라면(CRITICAL 2회, BLOCK 1회 라면) 리더 교체 프로세스를 시작. TODO
+                 *      ㄴ FlyingInfo 객체에 해당 시점까지의 비행 정보를 저장. TODO
+                 *      ㄴ 비행 중지. // TODO 쓰레드 중지가 되는지 확인 필요. 안되면 마지막에 프로세스를 죽여야 됨.
+                 *      ㄴ 리더 교체 필요 메시지와 FlyingInfo 객체를 Drone 객체에 포함 시켜서 전송. TODO
+                 *      ㄴ 로깅. TODO
+                 */
+                ErrorType errorType = errorEventMap.get(i);
+                if(this.isExistErrorEvent(errorType)){
+                    System.out.println(i + "초에 에러 이벤트 발생: " + errorType);
                     System.out.println("비행 시 좌표: " + longitude + ", " + latitude);
+
+                    flightStatus.addErrorEvent(errorType);
+                    flightStatus.updateErrorEvent();
+
                 }
 
             }
@@ -128,9 +151,8 @@ public class Flight {
         return status;
     }
 
-    private boolean isExistErrorEvent(Map<Long, ErrorType> errorEventMap, long flightTime) {
-
-        return (errorEventMap.get(flightTime) != null) && (errorEventMap.get(flightTime) != ErrorType.NORMAL);
+    private boolean isExistErrorEvent(ErrorType errorType) {
+        return (errorType != null) && (errorType != ErrorType.NORMAL);
     }
 
     public FlightStatus flyAsFollower(){
@@ -183,7 +205,9 @@ public class Flight {
                 double longitude = coordinationMapAtSeconds.get("longitude");
                 double latitude = coordinationMapAtSeconds.get("latitude");
 
-                if(this.isExistErrorEvent(errorEventMap, i)){
+                ErrorType errorType = errorEventMap.get(i);
+
+                if(this.isExistErrorEvent(errorType)){
                     System.out.println(i + "초에 에러 이벤트 발생: " + errorEventMap.get(i));
                     System.out.println("비행 시 좌표: " + longitude + ", " + latitude);
                 }
