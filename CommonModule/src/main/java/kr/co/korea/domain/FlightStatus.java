@@ -75,6 +75,10 @@ public class FlightStatus implements Serializable {
 
     }
 
+    public boolean hasErrorEventForReplacingLeader(){
+        return (this.getCriticalList().size() >= 2 || this.getBlockList().size() >= 1);
+    }
+
     private void updateUpperErrorType(ErrorType errorType) {
         if(errorType == ErrorType.TRIVIAL){
             if(trivialList.size() == 2){
@@ -97,7 +101,7 @@ public class FlightStatus implements Serializable {
              */
         }else if(errorType == ErrorType.BLOCK){
             /**
-             * CRITICAL의 경우 리더 교체를 판단할 때 체크만 하면 됨.
+             * BLOCK의 경우 리더 교체를 판단할 때 체크만 하면 됨.
              */
         }
     }

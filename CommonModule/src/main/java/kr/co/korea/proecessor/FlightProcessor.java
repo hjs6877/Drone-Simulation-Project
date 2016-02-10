@@ -7,6 +7,7 @@ import kr.co.korea.role.AerialVehicle;
 import kr.co.korea.role.Follower;
 import kr.co.korea.role.Leader;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.Map;
@@ -24,17 +25,17 @@ public class FlightProcessor implements Processor, Serializable {
         this.drone = drone;
     }
 
-    public void doProcess(Socket socket) {
+    public void doProcess(ObjectOutputStream objectOutputStream) {
 
         FlightStatus status = null;
         /**
          * 리더와 프로세스를 확인 한뒤 비행 진행.
          */
         if(this.isLeader()){
-            AerialVehicle leader = new Leader(droneName, drone);
+            AerialVehicle leader = new Leader(objectOutputStream, droneName, drone);
             status = leader.fly();
         }else{
-            AerialVehicle follower = new Follower(droneName, drone);
+            AerialVehicle follower = new Follower(objectOutputStream, droneName, drone);
             status = follower.fly();
         }
 

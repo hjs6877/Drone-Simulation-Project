@@ -8,6 +8,8 @@ import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
 
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.Map;
 
 /**
@@ -16,9 +18,10 @@ import java.util.Map;
 public class Leader extends AerialVehicle {
     private String droneName;
     private Drone drone;
+    private ObjectOutputStream objectOutputStream;
 
-
-    public Leader(String droneName, Drone drone) {
+    public Leader(ObjectOutputStream objectOutputStream, String droneName, Drone drone) {
+        this.objectOutputStream = objectOutputStream;
         this.droneName = droneName;
         this.drone = drone;
     }
@@ -30,7 +33,7 @@ public class Leader extends AerialVehicle {
      * @return
      */
     public FlightStatus fly() {
-        Flight flight = new Flight(droneName, drone);
+        Flight flight = new Flight(objectOutputStream, droneName, drone);
         FlightStatus status = flight.flyAsLeader();
 
         return status;

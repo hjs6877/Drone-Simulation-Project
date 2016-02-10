@@ -1,11 +1,12 @@
 package kr.co.korea.behavior;
 
-import kr.co.korea.domain.Drone;
-import kr.co.korea.domain.DroneSetting;
-import kr.co.korea.domain.FlightStatus;
+import kr.co.korea.domain.*;
 import kr.co.korea.error.ErrorType;
 import kr.co.korea.util.MathUtils;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -47,13 +48,16 @@ import java.util.TreeMap;
  */
 // TODO 인터페이스로 바꾸고, LeaderFlight, FollowerFlight을 구현하는것으로 변경.
 public class Flight {
+    private ObjectOutputStream objectOutputStream;
     private String droneName;
     private Drone drone;
     private DroneSetting setting;
     private TreeMap<Long, ErrorType> errorEventMap;
     private FlightStatus flightStatus;
 
-    public Flight(String droneName, Drone drone){
+
+    public Flight(ObjectOutputStream objectOutputStream, String droneName, Drone drone){
+        this.objectOutputStream = objectOutputStream;
         this.droneName = droneName;
         this.drone = drone;
         flightStatus = new FlightStatus();
@@ -117,11 +121,9 @@ public class Flight {
                  * - FlightStatus의 발생한 장애 이벤트별 리스트에 저장.
                  * - 장애 이벤트별 업데이트
                  *      ㄴ 장애 이벤트 리스트 별로 발생 빈도수를 확인 한후, 일정 횟수 이상 되면
-                 *      상위 장애를 1회 추가 한 후, 해당 장애 clear. TODO
-                 * - 장애 이벤트별로 발생 빈도수를 확인해서 리더교체가 필요한 장애 상태인지를 확인. TODO
-                 *      ㄴ 장애 타입별로 올라가면서 확인. TODO
-                 *      ㄴ 일정 횟수 이상 되면 상위 장애를 1회 추가 후, 해당 장애 clear. TODO
-                 *      ㄴ BLOCK 장애까지 recursive하게 반복 체크. TODO
+                 *      상위 장애를 1회 추가 한 후, 해당 장애 clear.
+                 * - CRITICAL 또는 BLOCK 장애가 발생했는지 장애 리스트의 빈도수를 확인해서 리더교체가 필요한 장애 상태인지를 확인. TODO
+                 *
                  * - 리더교체가 필요한 상태라면(CRITICAL 2회, BLOCK 1회 라면) 리더 교체 프로세스를 시작. TODO
                  *      ㄴ FlyingInfo 객체에 해당 시점까지의 비행 정보를 저장. TODO
                  *      ㄴ 비행 중지. // TODO 쓰레드 중지가 되는지 확인 필요. 안되면 마지막에 프로세스를 죽여야 됨.
@@ -135,6 +137,34 @@ public class Flight {
 
                     flightStatus.addErrorEvent(errorType);
                     flightStatus.updateErrorEvent();
+
+                    /**
+                     * 리더 교체가 필요한 장애가 발생했는가?
+                     * TODO 여기서부터 리더 프로세스가 추가.
+                     */
+                    if(drone.getLeaderOrFollower().equals("L") && flightStatus.hasErrorEventForReplacingLeader()){
+                        System.out.println("심각한 장애 발생으로 인해 리더 교체 프로세스 실시!!!!!!!!!!!!!!!!!!!!!!");
+                        System.out.println("쓰레드 명: " + Thread.currentThread().getName());
+
+                        FlyingInfo flyingInfo = drone.getFlyingInfo();
+                        flyingInfo.setMessage(FlyingMessage.REPLACE_LEADER);
+
+                        drone.setFlyingInfo(flyingInfo);
+                        try {
+                            objectOutputStream.writeObject(drone);
+//                            System.out.println("쓰레드 대기 상태로 진입..");
+//                            Thread.sleep(10000);
+//                            synchronized (Thread.currentThread()){
+//                                System.out.println("쓰레드 대기 상태로 진입..");
+//
+//                                Thread.currentThread().wait();
+//                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    System.out.println("비행 메시지:::: " + drone.getFlyingInfo().getMessage());
 
                 }
 

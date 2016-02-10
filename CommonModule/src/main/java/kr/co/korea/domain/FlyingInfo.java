@@ -15,6 +15,7 @@ public class FlyingInfo implements Serializable {
     private double remainDistance;
     private long flightTime;
     private FlightStatus flightStatus;
+    private FlyingMessage message;
 
     public Map<String, Coordination> getLastDepartureCoordination() {
         return lastDepartureCoordination;
@@ -46,5 +47,13 @@ public class FlyingInfo implements Serializable {
 
     public void setFlightStatus(FlightStatus flightStatus) {
         this.flightStatus = flightStatus;
+    }
+
+    public FlyingMessage getMessage() {
+        return message;
+    }
+
+    public void setMessage(FlyingMessage message) {
+        this.message = message;
     }
 }
