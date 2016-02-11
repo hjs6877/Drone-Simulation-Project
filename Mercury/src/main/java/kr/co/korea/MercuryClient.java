@@ -4,7 +4,6 @@ import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.thread.ClientReceiver;
-import kr.co.korea.thread.ClientSender;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -38,7 +37,7 @@ public class MercuryClient {
             oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(drone);
 
-            Thread receiver = new Thread(new ClientReceiver(socket, drone));
+            Thread receiver = new Thread(new ClientReceiver(oos));
 
             receiver.start();
 

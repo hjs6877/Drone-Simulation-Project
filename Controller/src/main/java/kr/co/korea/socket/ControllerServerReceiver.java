@@ -2,22 +2,23 @@ package kr.co.korea.socket;
 
 import kr.co.korea.domain.Drone;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by ideapad on 2016-01-17.
  */
 public class ControllerServerReceiver extends Thread {
-    private LinkedHashMap<String, Drone> clients = null;
+    private Map<String, Drone> clients = null;
 
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
 
-    public ControllerServerReceiver(Socket socket, LinkedHashMap<String, Drone> clients) {
+    public ControllerServerReceiver(Socket socket, Map<String, Drone> clients) {
         this.clients = clients;
         this.socket = socket;
         try {
