@@ -1,8 +1,6 @@
 package kr.co.korea;
 
 import kr.co.korea.domain.Drone;
-import kr.co.korea.domain.DroneSetting;
-import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.thread.ClientReceiver;
 
@@ -14,7 +12,7 @@ import java.net.Socket;
 /**
  * Created by ideapad on 2016-01-17.
  */
-public class VenusClientMain {
+public class VenusClient {
     private String serverIp = "127.0.0.1;";
     private int serverPort = 5555;
     private Socket socket;
@@ -24,7 +22,7 @@ public class VenusClientMain {
 
 
     public static void main(String[] args) throws IOException {
-        VenusClientMain venusClientMain = new VenusClientMain();
+        VenusClient venusClientMain = new VenusClient();
         venusClientMain.connectToController();
     }
 
