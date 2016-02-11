@@ -3,11 +3,11 @@ package kr.co.korea;
 import kr.co.korea.domain.Coordination;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
+import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
 import kr.co.korea.proecessor.ExitProcessor;
-import kr.co.korea.proecessor.FlightProcessor;
 import kr.co.korea.proecessor.Processor;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.socket.ControllerServer;
@@ -155,7 +155,7 @@ public class DroneController {
             long flightTime = setting.getFlightTime();
 
             if(leaderOrFollower.equals("L")){
-                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.ORDINARY);
+                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.STRONG);
             }else{
                 errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
             }
@@ -219,10 +219,11 @@ public class DroneController {
             String droneName = (String) iterator.next();
             Drone drone = clients.get(droneName);
             drone.setDroneSetting(setting);
+            drone.getFlyingInfo().setMessage(FlyingMessage.FLYING_START);
             ObjectOutputStream objectOutputStream = drone.getOutputStream();
 
             try {
-                objectOutputStream.writeObject(new FlightProcessor(droneName, drone));
+                objectOutputStream.writeObject(drone);
             } catch (IOException e) {
                 e.printStackTrace();
             }

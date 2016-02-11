@@ -5,7 +5,6 @@ import kr.co.korea.domain.Drone;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
@@ -35,6 +34,7 @@ public class ControllerServer extends Thread {
                 ControllerServerReceiver receiver = new ControllerServerReceiver(socket, clients);
 
                 receiver.start();
+
             }
         } catch (IOException e) {
             e.printStackTrace();
