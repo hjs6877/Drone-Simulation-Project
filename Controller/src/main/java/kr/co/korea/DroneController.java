@@ -3,6 +3,7 @@ package kr.co.korea;
 import kr.co.korea.domain.Coordination;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
+import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
@@ -155,7 +156,7 @@ public class DroneController {
             long flightTime = setting.getFlightTime();
 
             if(leaderOrFollower.equals("L")){
-                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.ORDINARY);
+                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.STRONG);
             }else{
                 errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
             }
@@ -195,13 +196,13 @@ public class DroneController {
                     ObjectOutputStream objectOutputStream = drone.getOutputStream();
 
                     try {
-                        objectOutputStream.writeObject(new ExitProcessor());
+                        objectOutputStream.writeObject(new ExitProcessor());            // TODO Processor 없애야 함. 안씀.
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
 
-                System.exit(-1);;
+                System.exit(-1);
             }
 
             break;
@@ -218,11 +219,12 @@ public class DroneController {
         while(iterator.hasNext()){
             String droneName = (String) iterator.next();
             Drone drone = clients.get(droneName);
+            drone.getFlyingInfo().setMessage(FlyingMessage.FLYING_START);
             drone.setDroneSetting(setting);
             ObjectOutputStream objectOutputStream = drone.getOutputStream();
 
             try {
-                objectOutputStream.writeObject(new FlightProcessor(droneName, drone));
+                objectOutputStream.writeObject(drone);
             } catch (IOException e) {
                 e.printStackTrace();
             }
