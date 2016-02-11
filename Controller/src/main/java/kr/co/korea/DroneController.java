@@ -66,10 +66,10 @@ public class DroneController {
      * 최종 목적지까지로의 비행 임무를 완수할 가능성이 높아진다는것이다. 이부분을 적극 주장하자.
      */
 
-    LinkedHashMap<String, Drone> clients = null;
+    Map<String, Drone> clients = null;
 
     DroneController(){
-        clients = new LinkedHashMap();
+        clients = Collections.synchronizedMap(new LinkedHashMap());
         Collections.synchronizedMap(clients);
     }
 

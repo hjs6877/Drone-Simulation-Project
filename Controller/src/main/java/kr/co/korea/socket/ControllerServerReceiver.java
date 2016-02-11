@@ -8,19 +8,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by ideapad on 2016-01-17.
  */
 public class ControllerServerReceiver extends Thread {
-    private LinkedHashMap<String, Drone> clients = null;
+    private Map<String, Drone> clients = null;
 
     private Socket socket;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
 
-    public ControllerServerReceiver(Socket socket, LinkedHashMap<String, Drone> clients) {
+    public ControllerServerReceiver(Socket socket, Map<String, Drone> clients) {
         this.clients = clients;
         this.socket = socket;
         try {
@@ -54,20 +54,27 @@ public class ControllerServerReceiver extends Thread {
                      */
                     Iterator iterator = clients.keySet().iterator();
 
+
                     while(iterator.hasNext()){
                         String droneName = (String) iterator.next();
                         Drone droneObj = clients.get(droneName);
+
                         System.out.println(droneObj.getName() + "은 리더인가 팔로워인가:  " + droneObj.getLeaderOrFollower());
+
                         if(droneObj.getLeaderOrFollower().equals("L")){
                             System.out.println(droneName + "에게 리더 비행 중단 메시지 전송");
+                            System.out.println(droneObj.getName() + " 객체2: " + droneObj);
+                            System.out.println(droneObj.getName() + " 객체 메시지2-1: " + droneObj.getFlyingInfo().getMessage());
                             droneObj.getFlyingInfo().setMessage(FlyingMessage.FLYING_STOP);
-                            System.out.println("최종적으로 전송되는 메시지1: " + droneObj.getFlyingInfo().getMessage());
+
                             ObjectOutputStream objectOutputStream = droneObj.getOutputStream();
                             objectOutputStream.writeObject(droneObj);
                         }else{
                             System.out.println(droneName + "에게 팔로워 비행 대기 메시지 전송");
+                            System.out.println(droneObj.getName() + " 객체2: " + droneObj);
+                            System.out.println(droneObj.getName() + " 객체 메시지2-1: " + droneObj.getFlyingInfo().getMessage());
                             droneObj.getFlyingInfo().setMessage(FlyingMessage.FLYING_WAIT);
-                            System.out.println("최종적으로 전송되는 메시지2: " + droneObj.getFlyingInfo().getMessage());
+                            System.out.println(droneObj.getName() + " 객체 메시지2-2: " + droneObj.getFlyingInfo().getMessage());
                             ObjectOutputStream objectOutputStream = droneObj.getOutputStream();
                             objectOutputStream.writeObject(droneObj);   // TODO 왜 여기서 FLYING_WAIT이 안넘어갈까?
                         }

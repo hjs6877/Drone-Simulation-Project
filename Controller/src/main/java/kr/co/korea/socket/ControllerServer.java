@@ -5,14 +5,14 @@ import kr.co.korea.domain.Drone;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by ideapad on 2016-01-17.
  */
 public class ControllerServer extends Thread {
-    LinkedHashMap<String, Drone> clients;
-    public ControllerServer(LinkedHashMap clients){
+    Map<String, Drone> clients;
+    public ControllerServer(Map clients){
         this.clients = clients;
     }
 

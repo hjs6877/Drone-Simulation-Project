@@ -31,7 +31,8 @@ public class VenusClient {
             System.out.println("Venus client --> Controller에 연결되었습니다.");
 
             Drone droneObj = new Drone("venus", new DroneSetting(), new FlyingInfo());
-
+            System.out.println(droneObj.getName() + " 객체1: " + droneObj);
+            System.out.println(droneObj.getName() + " 객체 메시지1: " + droneObj.getFlyingInfo().getMessage());
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             objectOutputStream.writeObject(droneObj);
@@ -47,6 +48,9 @@ public class VenusClient {
                      * TODO 쓰레드가 시작된 상황에서 이부분이 가능한지 확인 필요. 리더 교체 플래그 셋팅을 위한 중요 핵심 포인트.
                      */
                     clientReceiver.setDrone(drone);
+                    System.out.println(drone.getName() + " 객체2: " + drone);
+                    System.out.println(drone.getName() + " 객체 메시지2: " + drone.getFlyingInfo().getMessage());
+                    System.out.println("넘어온 Flying message: " + drone.getFlyingInfo().getMessage());
 
                     /**
                      * FLYING_START 메시지가 넘어 온다면 비행 시작.

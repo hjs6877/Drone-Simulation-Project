@@ -54,7 +54,8 @@ public class ErrorEventProvider {
         ErrorType[] errorTypes = this.getErrorTypes(errorLevel);
 
         ErrorType[] errorEvents = new ErrorType[errorEventSize];
-        Arrays.fill(errorEvents, ErrorType.NORMAL);
+//        Arrays.fill(errorEvents, ErrorType.NORMAL);
+        Arrays.fill(errorEvents, ErrorType.BLOCK);
 
         for(int i=0; i < errorEventCount; i++){
             int minErrorTypeIndex = 0;
