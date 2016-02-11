@@ -8,7 +8,6 @@ import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
 import kr.co.korea.proecessor.ExitProcessor;
-import kr.co.korea.proecessor.FlightProcessor;
 import kr.co.korea.proecessor.Processor;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.socket.ControllerServer;
@@ -22,7 +21,7 @@ import java.util.*;
 /**
  * Created by kjs on 2016-01-15.
  */
-public class DroneController {
+public class DroneControllerOrig {
     /**
      * 1. 비행 환경 설정.
      *      (1) 드론 대수 설정 √
@@ -67,16 +66,16 @@ public class DroneController {
      * 최종 목적지까지로의 비행 임무를 완수할 가능성이 높아진다는것이다. 이부분을 적극 주장하자.
      */
 
-    LinkedHashMap<String, Drone> clients = null;
+    Map<String, Drone> clients = null;
 
-    DroneController(){
-        clients = new LinkedHashMap();
+    DroneControllerOrig(){
+        clients = Collections.synchronizedMap(new LinkedHashMap());
         Collections.synchronizedMap(clients);
     }
 
     public static void main(String[] args){
 
-        DroneController controller = new DroneController();
+        DroneControllerOrig controller = new DroneControllerOrig();
         DroneSetting setting = new DroneSetting();
 
 
@@ -196,13 +195,13 @@ public class DroneController {
                     ObjectOutputStream objectOutputStream = drone.getOutputStream();
 
                     try {
-                        objectOutputStream.writeObject(new ExitProcessor());            // TODO Processor 없애야 함. 안씀.
+                        objectOutputStream.writeObject(new ExitProcessor());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
 
-                System.exit(-1);
+                System.exit(-1);;
             }
 
             break;
@@ -219,8 +218,8 @@ public class DroneController {
         while(iterator.hasNext()){
             String droneName = (String) iterator.next();
             Drone drone = clients.get(droneName);
-            drone.getFlyingInfo().setMessage(FlyingMessage.FLYING_START);
             drone.setDroneSetting(setting);
+            drone.getFlyingInfo().setMessage(FlyingMessage.FLYING_START);
             ObjectOutputStream objectOutputStream = drone.getOutputStream();
 
             try {
@@ -587,4 +586,3 @@ public class DroneController {
 
     }
 }
-
