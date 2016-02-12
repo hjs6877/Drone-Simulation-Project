@@ -33,24 +33,49 @@ public class DroneRunner extends Thread {
                 if(drone != null){
                     FlyingMessage flyingMessage = drone.getFlyingInfo().getMessage();
 
+
+                    //  TODO 메시지에 따라서 DroneRunnerRepository의 메시지 호출 메서드가 달라짐.
+
                     /**
-                     * TODO 메시지에 따라서 DroneRunnerRepository의 메시지 호출 메서드가 달라짐.
+                     *  드론 클라이언트 접속 시, 전달 되는 메시지.
+                     *  - 접속 확인 용.
                      */
-                    if(flyingMessage == FlyingMessage.FLYING_READY){
+                    if(flyingMessage == FlyingMessage.STATUS_FLYING_READY){
                         System.out.println(drone.getName() + " 비행 준비 완료..");
                         DroneController.droneRunnerRepository.addDroneRunner(this);
                     }
 
-                    if(flyingMessage == FlyingMessage.REPLACE_LEADER){
-                        DroneController.droneRunnerRepository.sendMessageToFollowers(FlyingMessage.FLYING_WAIT);
+                    /**
+                     * 컨트롤러로부터 비행 설정 완료 메시지를 전송 받았을 때,
+                     * - 모든 팔로워들에게 비행 시작 메시지를 전송한다.
+                     */
+                    if(flyingMessage == FlyingMessage.STATUS_FLYING_SET_COMPLETE){
+                        DroneController.droneRunnerRepository.sendMessageToFollowers(FlyingMessage.DO_FLYING_START);
                     }
 
-                    if(flyingMessage == FlyingMessage.REPLACE_LEADER){
-
+                    /**
+                     * 장애로 인해 리더 교체 메시지를 리더로부터 전송 받았을 때,
+                     * - 비행중인 팔로워들에게 비행 대기 메시지를 전송한다.
+                     */
+                    if(flyingMessage == FlyingMessage.STATUS_NEED_REPLACE_LEADER){
+                        DroneController.droneRunnerRepository.sendMessageToFollowers(FlyingMessage.DO_FLYING_WAIT);
                     }
 
-                    if(flyingMessage == FlyingMessage.REPLACE_LEADER){
+                    /**
+                     * 팔로워들로부터 비행 일시 중지 상태를 알리는 메시지를 전송 받았을 때,
+                     * - 모든 팔로워들로부터 메시지를 전송 받은 후, 리더에게 신규 리더 선출하라는 메시지를 전송한다.
+                     */
+                    if(flyingMessage == FlyingMessage.STATUS_FLYING_WAITED){
+                        // TODO 모든 팔로워들로부터 메시지를 전송 받았는지 확인.
+                        DroneController.droneRunnerRepository.sendMessageToLeader(FlyingMessage.DO_ELECT_NEW_LEADER);
+                    }
 
+                    /**
+                     * 리더로부터 새로운 리더가 선출 되었다는 메시지를 전송 받았을 때,
+                     * - 모든 팔로워들에게 비행 재개 메시지를 전송한다.
+                     */
+                    if(flyingMessage == FlyingMessage.DO_FLYING_RESUME){
+                        DroneController.droneRunnerRepository.sendMessageToFollowers(FlyingMessage.DO_FLYING_RESUME);
                     }
 
                 }else{
