@@ -56,14 +56,14 @@ public class VenusClientOrig {
                     /**
                      * FLYING_START 메시지가 넘어 온다면 비행 시작.
                      */
-                    if(drone.getFlyingInfo().getMessage() == FlyingMessage.FLYING_START){
+                    if(drone.getFlyingInfo().getMessage() == FlyingMessage.DO_FLYING_START){
                         receiver.start();
                     }
 
                     /**
                      * FLYING_STOP 메시지가 넘어 온다면, 비행 중지. 시스템 프로세스를 죽인다.
                      */
-                    if(drone.getFlyingInfo().getMessage() == FlyingMessage.FLYING_STOP){
+                    if(drone.getFlyingInfo().getMessage() == FlyingMessage.DO_FLYING_STOP){
                         System.out.println("비행을 중단합니다..");
                         System.exit(-1);
                     }
@@ -71,7 +71,7 @@ public class VenusClientOrig {
                     /**
                      * FLYING_WAIT 메시지가 넘어 온다면, 비행 대기. 쓰레드를 wait 시킨다.
                      */
-                    if(drone.getFlyingInfo().getMessage() == FlyingMessage.FLYING_WAIT){
+                    if(drone.getFlyingInfo().getMessage() == FlyingMessage.DO_FLYING_WAIT){
                         System.out.println("리더 선출을 위해 비행 대기합니다..");
                         clientReceiver.waitFlight();
                     }

@@ -143,7 +143,7 @@ public class Flyer extends Thread {
                         System.out.println("심각한 장애 발생으로 인해 리더 교체 프로세스 실시!!!!!!!!!!!!!!!!!!!!!!");
 
 
-                        flyingInfo.setMessage(FlyingMessage.REPLACE_LEADER);
+                        flyingInfo.setMessage(FlyingMessage.STATUS_NEED_REPLACE_LEADER);
                         flyingInfo.setFlightStatus(flightStatus);
                         // TODO FlyingInfo 객체에 여러가지 정보를 더 담아야 됨.
                         drone.setFlyingInfo(flyingInfo);

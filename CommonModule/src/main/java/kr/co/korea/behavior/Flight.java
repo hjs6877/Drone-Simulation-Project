@@ -6,7 +6,6 @@ import kr.co.korea.util.MathUtils;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -147,7 +146,7 @@ public class Flight {
                         System.out.println("쓰레드 명: " + Thread.currentThread().getName());
 
                         FlyingInfo flyingInfo = drone.getFlyingInfo();
-                        flyingInfo.setMessage(FlyingMessage.REPLACE_LEADER);
+                        flyingInfo.setMessage(FlyingMessage.STATUS_NEED_REPLACE_LEADER);
 
                         drone.setFlyingInfo(flyingInfo);
                         try {

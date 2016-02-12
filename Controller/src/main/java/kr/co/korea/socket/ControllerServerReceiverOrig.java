@@ -47,7 +47,7 @@ public class ControllerServerReceiverOrig extends Thread {
                  * - 기존 리더의 경우, 비행 중지 메시지를 전송한다.
                  * - 팔로워들에게는 비행 대기 메시지를 전송한다.
                  */
-                if(drone.getFlyingInfo().getMessage() == FlyingMessage.REPLACE_LEADER){
+                if(drone.getFlyingInfo().getMessage() == FlyingMessage.STATUS_ELECTED_NEW_LEADER){
                     /**
                      * - 리더에게는 FLYING_STOP 메시지 전송.
                      * - 팔로워들에게는 FLYING_WAIT 메시지 전송.
@@ -65,7 +65,7 @@ public class ControllerServerReceiverOrig extends Thread {
                             System.out.println(droneName + "에게 리더 비행 중단 메시지 전송");
                             System.out.println(droneObj.getName() + " 객체2: " + droneObj);
                             System.out.println(droneObj.getName() + " 객체 메시지2-1: " + droneObj.getFlyingInfo().getMessage());
-                            droneObj.getFlyingInfo().setMessage(FlyingMessage.FLYING_STOP);
+                            droneObj.getFlyingInfo().setMessage(FlyingMessage.DO_FLYING_STOP);
 
                             ObjectOutputStream objectOutputStream = droneObj.getOutputStream();
                             objectOutputStream.writeObject(droneObj);
@@ -73,7 +73,7 @@ public class ControllerServerReceiverOrig extends Thread {
                             System.out.println(droneName + "에게 팔로워 비행 대기 메시지 전송");
                             System.out.println(droneObj.getName() + " 객체2: " + droneObj);
                             System.out.println(droneObj.getName() + " 객체 메시지2-1: " + droneObj.getFlyingInfo().getMessage());
-                            droneObj.getFlyingInfo().setMessage(FlyingMessage.FLYING_WAIT);
+                            droneObj.getFlyingInfo().setMessage(FlyingMessage.DO_FLYING_WAIT);
                             System.out.println(droneObj.getName() + " 객체 메시지2-2: " + droneObj.getFlyingInfo().getMessage());
                             ObjectOutputStream objectOutputStream = droneObj.getOutputStream();
                             objectOutputStream.writeObject(droneObj);   // TODO 왜 여기서 FLYING_WAIT이 안넘어갈까?
@@ -88,7 +88,7 @@ public class ControllerServerReceiverOrig extends Thread {
                  * - 새로운 리더가 계산 되면 해당 drone 객체의 리더 플래그를 "L"로 변경해준다.
                  * - 각각의 클라이언트들에게 FLYING_RESUME 메시지를 포함해서 drone 객체 전송.
                  */
-                if(drone.getFlyingInfo().getMessage() == FlyingMessage.FLYING_WAITED){
+                if(drone.getFlyingInfo().getMessage() == FlyingMessage.STATUS_FLYING_WAITED){
 
 
                 }

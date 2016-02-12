@@ -70,22 +70,18 @@ public class DroneController {
         DroneSetting setting = new DroneSetting();
 
 
+
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         /**
-         * ControllerServer Thread 가동.
+         * 비행 환경 설정.
          */
-        controller.startDroneController();
-
-
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//        /**
-//         * 비행 환경 설정.
-//         */
-//        controller.setQuestionForConfiguration();
+        controller.setQuestionForConfiguration();
 //        controller.setNumberOfDrone(setting);
 //        controller.setDroneInfo(setting);
 //        controller.setFormationType(setting);
@@ -124,6 +120,12 @@ public class DroneController {
 //        System.out.println("비행 속도: " + speed);
 //        System.out.println("각도: " + angle);
 //        System.out.println("비행 시간: " + flightTime + "초");
+
+        /**
+         * ControllerServer Thread 가동.
+         */
+        controller.startDroneController();
+
     }
 
     /**
@@ -258,13 +260,19 @@ public class DroneController {
                 continue;
             }
 
-            if(!input.toLowerCase().equals("y")){
+            if((!input.toLowerCase().equals("y")) && (!input.toLowerCase().equals("n"))){
+                System.out.println("비행을 시작하시려면 y, 종료하시려면 n을 입력해주세요.");
+                continue;
+            }
+
+            if(input.toLowerCase().equals("n")){
                 System.out.println("Drone 프로세스 가동 후 Controller를 재 가동해주세요.");
                 System.exit(-1);
             }
 
-            break;
-
+            if(input.toLowerCase().equals("y")){
+                break;
+            }
         }
     }
     /**

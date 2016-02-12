@@ -29,7 +29,7 @@ public class VenusClient {
             clientReceiver.start();
 
             Drone initDrone = new Drone("venus", new DroneSetting(), new FlyingInfo());
-            initDrone.getFlyingInfo().setMessage(FlyingMessage.FLYING_READY);
+            initDrone.getFlyingInfo().setMessage(FlyingMessage.STATUS_FLYING_READY);
 
             clientSender.sendMessage(initDrone);
         } catch(ConnectException ce) {

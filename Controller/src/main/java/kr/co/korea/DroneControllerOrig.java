@@ -218,7 +218,7 @@ public class DroneControllerOrig {
             String droneName = (String) iterator.next();
             Drone drone = clients.get(droneName);
             drone.setDroneSetting(setting);
-            drone.getFlyingInfo().setMessage(FlyingMessage.FLYING_START);
+            drone.getFlyingInfo().setMessage(FlyingMessage.DO_FLYING_START);
             ObjectOutputStream objectOutputStream = drone.getOutputStream();
 
             try {
