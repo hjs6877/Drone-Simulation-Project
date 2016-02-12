@@ -1,6 +1,6 @@
 package kr.co.korea;
 
-import kr.co.korea.thread.ClientRunner;
+import kr.co.korea.thread.ClientSender;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -22,12 +22,12 @@ public class VenusClient2 {
                 System.out.println("Venus client --> Controller에 연결되었습니다.");
             }
 
-            ClientRunner clientRunner = new ClientRunner(socket);
-            clientRunner.start();
+            ClientSender clientSender = new ClientSender(socket);
+            clientSender.start();
 
             /**
              * 초기 접속 성공 메시지를 보낸다.
-             * TODO ClientRunner 쓰레드 실행전 ObjectOutputStream을 생성하지 않으면 쓰레드가 더이상 진행하지 않음.해결 필요
+             * TODO ClientSender 쓰레드 실행전 ObjectOutputStream을 생성하지 않으면 쓰레드가 더이상 진행하지 않음.해결 필요
              * */
 //            Drone initDrone = new Drone("venus", new DroneSetting(), new FlyingInfo());
 //            initDrone.getFlyingInfo().setMessage(FlyingMessage.FLYING_READY);
