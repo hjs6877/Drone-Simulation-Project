@@ -39,7 +39,7 @@ public class ControllerServerReceiverOrig extends Thread {
                 drone = (Drone) ois.readObject();
                 name = drone.getName();
 
-                drone.setOutputStream(oos);
+//                drone.setOutputStream(oos);
 
                 clients.put(name, drone);
                 /**
@@ -67,16 +67,16 @@ public class ControllerServerReceiverOrig extends Thread {
                             System.out.println(droneObj.getName() + " 객체 메시지2-1: " + droneObj.getFlyingInfo().getMessage());
                             droneObj.getFlyingInfo().setMessage(FlyingMessage.DO_FLYING_STOP);
 
-                            ObjectOutputStream objectOutputStream = droneObj.getOutputStream();
-                            objectOutputStream.writeObject(droneObj);
+//                            ObjectOutputStream objectOutputStream = droneObj.getOutputStream();
+//                            objectOutputStream.writeObject(droneObj);
                         }else{
                             System.out.println(droneName + "에게 팔로워 비행 대기 메시지 전송");
                             System.out.println(droneObj.getName() + " 객체2: " + droneObj);
                             System.out.println(droneObj.getName() + " 객체 메시지2-1: " + droneObj.getFlyingInfo().getMessage());
                             droneObj.getFlyingInfo().setMessage(FlyingMessage.DO_FLYING_WAIT);
                             System.out.println(droneObj.getName() + " 객체 메시지2-2: " + droneObj.getFlyingInfo().getMessage());
-                            ObjectOutputStream objectOutputStream = droneObj.getOutputStream();
-                            objectOutputStream.writeObject(droneObj);   // TODO 왜 여기서 FLYING_WAIT이 안넘어갈까?
+//                            ObjectOutputStream objectOutputStream = droneObj.getOutputStream();
+//                            objectOutputStream.writeObject(droneObj);   // TODO 왜 여기서 FLYING_WAIT이 안넘어갈까?
                         }
 
                     }

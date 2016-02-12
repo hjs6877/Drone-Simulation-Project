@@ -16,8 +16,6 @@ import java.util.TreeMap;
  */
 public class Flyer extends Thread {
     private Socket socket;
-    ObjectInputStream objectInputStream;
-    ObjectOutputStream objectOutputStream;
     Drone drone;
     TreeMap<Long, ErrorType> errorEventMap;
     DroneSetting setting;
@@ -27,8 +25,6 @@ public class Flyer extends Thread {
         flightStatus = new FlightStatus();
 
         this.socket = socket;
-        objectInputStream = new ObjectInputStream(socket.getInputStream());
-        objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
     }
 
     public void run() {
@@ -148,13 +144,10 @@ public class Flyer extends Thread {
                         // TODO FlyingInfo 객체에 여러가지 정보를 더 담아야 됨.
                         drone.setFlyingInfo(flyingInfo);
 
-                        try {
-                            objectOutputStream.writeObject(drone);
-                            waitFlight();
+                        // TODO 메시지 전송은 ClientSender를 거쳐서 하도록 수정.
+//                            objectOutputStream.writeObject(drone);
+                        waitFlight();
 
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
                     }else{      /** 팔로워들에게 적용되는 프로세스 **/
                         flyingInfo.setFlightStatus(flightStatus);
                     }

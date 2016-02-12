@@ -27,9 +27,9 @@ public class DroneRunner extends Thread {
 
     public void run(){
         try{
-            while(!this.flag){
+            while(!this.flag){   // TODO ObjectInputStream이 null인걸로 판단하도록 수정.
                 Object object =  objectInputStream.readObject();
-                Drone drone = (Drone) object;
+                drone = (Drone) object;
                 if(drone != null){
                     FlyingMessage flyingMessage = drone.getFlyingInfo().getMessage();
 
@@ -41,17 +41,9 @@ public class DroneRunner extends Thread {
                      *  - 접속 확인 용.
                      */
                     if(flyingMessage == FlyingMessage.STATUS_FLYING_READY){
-                        System.out.println(drone.getName() + " 비행 준비 완료..");
-                        DroneController.droneRunnerRepository.addDroneRunner(this);
+//                        System.err.println(drone.getName() + " 비행 준비 완료..");
                     }
 
-                    /**
-                     * 컨트롤러로부터 비행 설정 완료 메시지를 전송 받았을 때,
-                     * - 모든 팔로워들에게 비행 시작 메시지를 전송한다.
-                     */
-                    if(flyingMessage == FlyingMessage.STATUS_FLYING_SET_COMPLETE){
-                        DroneController.droneRunnerRepository.sendMessageToFollowers(FlyingMessage.DO_FLYING_START);
-                    }
 
                     /**
                      * 장애로 인해 리더 교체 메시지를 리더로부터 전송 받았을 때,
@@ -74,7 +66,7 @@ public class DroneRunner extends Thread {
                      * 리더로부터 새로운 리더가 선출 되었다는 메시지를 전송 받았을 때,
                      * - 모든 팔로워들에게 비행 재개 메시지를 전송한다.
                      */
-                    if(flyingMessage == FlyingMessage.DO_FLYING_RESUME){
+                    if(flyingMessage == FlyingMessage.STATUS_ELECTED_NEW_LEADER){
                         DroneController.droneRunnerRepository.sendMessageToFollowers(FlyingMessage.DO_FLYING_RESUME);
                     }
 

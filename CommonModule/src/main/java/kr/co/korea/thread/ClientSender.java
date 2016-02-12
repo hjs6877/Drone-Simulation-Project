@@ -20,15 +20,12 @@ public class ClientSender extends Thread{
     public ClientSender(Socket socket) {
         this.socket = socket;
         try {
-            System.out.println("서버에 연결되었습니다.2");
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
-            System.out.println("서버에 연결되었습니다.3");
         } catch(Exception e) {}
     }
 
     public void run() {
-        System.out.println("Client Sender-서버에 연결되었습니다.4");
         while(objectOutputStream != null){
 
         }

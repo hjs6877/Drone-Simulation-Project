@@ -11,7 +11,6 @@ import java.util.TreeMap;
  * Created by kjs on 2016-01-15.
  */
 public class Drone implements Serializable {
-    private transient ObjectOutputStream outputStream;
     private String name;
     private String leaderOrFollower;
     private DroneSetting droneSetting;
@@ -22,14 +21,6 @@ public class Drone implements Serializable {
         this.name = name;
         this.droneSetting = droneSetting;
         this.flyingInfo = flyingInfo;
-    }
-
-    public ObjectOutputStream getOutputStream() {
-        return outputStream;
-    }
-
-    public void setOutputStream(ObjectOutputStream outputStream) {
-        this.outputStream = outputStream;
     }
 
     public String getName() {

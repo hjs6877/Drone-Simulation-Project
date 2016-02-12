@@ -19,11 +19,10 @@ public class VenusClient {
             String serverIp = "127.0.0.1";
             // 소켓을 생성하여 연결을 요청한다.
             Socket socket = new Socket(serverIp, 5555);
-            System.out.println("서버에 연결되었습니다.1");
+            System.out.println("Venus --> ControllerServer에 연결...");
 
             ClientSender clientSender = new ClientSender(socket);
-            Thread sender   = new Thread(clientSender);
-            Thread clientReceiver = new Thread(new ClientReceiver(socket));
+            ClientReceiver clientReceiver = new ClientReceiver(socket);
 
             clientSender.start();
             clientReceiver.start();
@@ -34,6 +33,8 @@ public class VenusClient {
             clientSender.sendMessage(initDrone);
         } catch(ConnectException ce) {
             ce.printStackTrace();
-        } catch(Exception e) {}
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     } // main
 }

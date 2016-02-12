@@ -32,7 +32,6 @@ public class ClientReceiver extends Thread {
 //            } catch(IOException e) {}
 //        }
 
-        System.out.println("쫌 되자4....");
         try {
 
             /**
@@ -54,7 +53,8 @@ public class ClientReceiver extends Thread {
                      * FLYING_START 메시지가 넘어 온다면 비행 시작.
                      */
                     if(drone.getFlyingInfo().getMessage() == FlyingMessage.DO_FLYING_START){
-                        flyRunner.start();
+                        System.out.println(drone.getName() + "이 비행을 시작합니다.");
+//                        flyRunner.start();
                     }
 
                     /**
