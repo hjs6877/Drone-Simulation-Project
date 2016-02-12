@@ -10,7 +10,6 @@ import kr.co.korea.error.ErrorType;
 import kr.co.korea.proecessor.ExitProcessor;
 import kr.co.korea.proecessor.Processor;
 import kr.co.korea.service.LocationProvider;
-import kr.co.korea.socket.ControllerServer;
 import kr.co.korea.util.MathUtils;
 import kr.co.korea.validator.StringValidator;
 
@@ -234,8 +233,8 @@ public class DroneControllerOrig {
      * Controller Server Thread 시작.
      */
     public void startControllerServerThread(){
-        ControllerServer controllerServer = new ControllerServer(clients);
-        controllerServer.start();
+//        ControllerServer controllerServer = new ControllerServer(clients);
+//        controllerServer.start();
     }
 
     /**

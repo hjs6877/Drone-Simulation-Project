@@ -4,7 +4,7 @@ import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessage;
-import kr.co.korea.thread.ClientReceiver;
+import kr.co.korea.thread.Flyer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,6 +15,7 @@ import java.net.Socket;
  * Created by ideapad on 2016-01-17.
  */
 public class VenusClientOrig {
+    private Socket socket;
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
 
@@ -37,7 +38,7 @@ public class VenusClientOrig {
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             objectOutputStream.writeObject(droneObj);
 
-            ClientReceiver clientReceiver = new ClientReceiver(objectOutputStream);
+            Flyer clientReceiver = new Flyer(socket);
             Thread receiver = new Thread(clientReceiver);
 
             while (objectInputStream != null){

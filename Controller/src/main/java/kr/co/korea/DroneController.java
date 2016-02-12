@@ -1,22 +1,18 @@
-package kr.co.korea.controller;
+package kr.co.korea;
 
 import kr.co.korea.domain.Coordination;
-import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
-import kr.co.korea.domain.FlyingMessage;
-import kr.co.korea.error.ErrorEventProvider;
-import kr.co.korea.error.ErrorLevel;
-import kr.co.korea.error.ErrorType;
-import kr.co.korea.proecessor.ExitProcessor;
-import kr.co.korea.proecessor.Processor;
+import kr.co.korea.repository.DroneRunnerRepository;
+import kr.co.korea.runner.DroneRunner;
 import kr.co.korea.service.LocationProvider;
-import kr.co.korea.socket.ControllerServer;
 import kr.co.korea.util.MathUtils;
 import kr.co.korea.validator.StringValidator;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Created by kjs on 2016-01-15.
@@ -65,15 +61,10 @@ public class DroneController {
      * 7. 이 연구의 핵심은 장애 발생 시, 드론간의 커뮤니케이션을 통해 동적으로 리더를 선정함으로 인해
      * 최종 목적지까지로의 비행 임무를 완수할 가능성이 높아진다는것이다. 이부분을 적극 주장하자.
      */
+    public static DroneRunnerRepository droneRunnerRepository = new DroneRunnerRepository();
+    private int serverPort = 5555;
 
-    Map<String, Drone> clients = null;
-
-    DroneController(){
-        clients = Collections.synchronizedMap(new LinkedHashMap());
-        Collections.synchronizedMap(clients);
-    }
-
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
 
         DroneController controller = new DroneController();
         DroneSetting setting = new DroneSetting();
@@ -82,57 +73,78 @@ public class DroneController {
         /**
          * ControllerServer Thread 가동.
          */
-        controller.startControllerServerThread();
+        controller.startDroneController();
 
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        /**
+//         * 비행 환경 설정.
+//         */
+//        controller.setQuestionForConfiguration();
+//        controller.setNumberOfDrone(setting);
+//        controller.setDroneInfo(setting);
+//        controller.setFormationType(setting);
+//        controller.setDeparture(setting);
+//        controller.setDestination(setting);
+//        controller.setSpeed(setting);
+//        controller.setDistance(setting);
+//        controller.setAngle(setting);
+//        controller.setFilghtTime(setting);
+//        controller.setRandomErrorEvent(setting);
+//
+//        controller.chooseStartFlightOrNot(setting);
+//
+//
+//        int formationType = setting.getFormationType();
+//        int numberOfDrone = setting.getNumberOfDrone();
+//        String departure = setting.getDeparture();
+//        String destination = setting.getDestination();
+//        double departureLongitude = setting.getDepartureCoordination().get(departure).getLongitude();
+//        double departureLatitude = setting.getDepartureCoordination().get(departure).getLatitude();
+//        double destinationLongitude = setting.getDestinationCoordination().get(destination).getLongitude();
+//        double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
+//        int speed = setting.getSpeed();
+//        double distance = setting.getDistance();
+//        double angle = setting.getAngle();
+//
+//        long flightTime = setting.getFlightTime();
+//
+//        System.out.println("드론 비행 대수: " + numberOfDrone);
+//        System.out.println("포메이션 타입: " + formationType);
+//        System.out.println("출발지: " + departure);
+//        System.out.println("출발지 좌표: " + departureLongitude + ", " + departureLatitude);
+//        System.out.println("목적지: " + destination);
+//        System.out.println("목적지 좌표: " + destinationLongitude + ", " + destinationLatitude);
+//        System.out.println("비행 거리: " + distance);
+//        System.out.println("비행 속도: " + speed);
+//        System.out.println("각도: " + angle);
+//        System.out.println("비행 시간: " + flightTime + "초");
+    }
+
+    /**
+     * Controller Server Thread 시작.
+     */
+    public void startDroneController() throws IOException {
+        ServerSocket serverSocket = new ServerSocket(serverPort);
+        if(serverSocket != null){
+            System.out.println("## Drone Controller 서버 start..");
         }
 
-        /**
-         * 비행 환경 설정.
-         */
-        controller.setQuestionForConfiguration();
-        controller.setNumberOfDrone(setting);
-        controller.setDroneInfo(setting);
-        controller.setFormationType(setting);
-        controller.setDeparture(setting);
-        controller.setDestination(setting);
-        controller.setSpeed(setting);
-        controller.setDistance(setting);
-        controller.setAngle(setting);
-        controller.setFilghtTime(setting);
-        controller.setRandomErrorEvent(setting);
+        while(true){
+            Socket socket = serverSocket.accept();
 
-        controller.chooseStartFlightOrNot(setting);
+            DroneRunner droneRunner = new DroneRunner(socket);
 
+            DroneController.droneRunnerRepository.addDroneRunner(droneRunner);
 
-        int formationType = setting.getFormationType();
-        int numberOfDrone = setting.getNumberOfDrone();
-        String departure = setting.getDeparture();
-        String destination = setting.getDestination();
-        double departureLongitude = setting.getDepartureCoordination().get(departure).getLongitude();
-        double departureLatitude = setting.getDepartureCoordination().get(departure).getLatitude();
-        double destinationLongitude = setting.getDestinationCoordination().get(destination).getLongitude();
-        double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
-        int speed = setting.getSpeed();
-        double distance = setting.getDistance();
-        double angle = setting.getAngle();
+            droneRunner.start();
+        }
 
-        long flightTime = setting.getFlightTime();
-
-        System.out.println("드론 비행 대수: " + numberOfDrone);
-        System.out.println("포메이션 타입: " + formationType);
-        System.out.println("출발지: " + departure);
-        System.out.println("출발지 좌표: " + departureLongitude + ", " + departureLatitude);
-        System.out.println("목적지: " + destination);
-        System.out.println("목적지 좌표: " + destinationLongitude + ", " + destinationLatitude);
-        System.out.println("비행 거리: " + distance);
-        System.out.println("비행 속도: " + speed);
-        System.out.println("각도: " + angle);
-        System.out.println("비행 시간: " + flightTime + "초");
     }
 
     /**
@@ -141,27 +153,27 @@ public class DroneController {
      * @param setting
      */
     private void setRandomErrorEvent(DroneSetting setting) {
-        ErrorEventProvider errorEventProvider = new ErrorEventProvider();
-
-        TreeMap<Long, ErrorType> errorEvent;
-
-        Iterator iterator = clients.keySet().iterator();
-
-        while(iterator.hasNext()){
-            String droneName = (String) iterator.next();
-            Drone drone = clients.get(droneName);
-
-            String leaderOrFollower = drone.getLeaderOrFollower();
-            long flightTime = setting.getFlightTime();
-
-            if(leaderOrFollower.equals("L")){
-                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.STRONG);
-            }else{
-                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
-            }
-
-            drone.setErrorEvent(errorEvent);
-        }
+//        ErrorEventProvider errorEventProvider = new ErrorEventProvider();
+//
+//        TreeMap<Long, ErrorType> errorEvent;
+//
+//        Iterator iterator = clients.keySet().iterator();
+//
+//        while(iterator.hasNext()){
+//            String droneName = (String) iterator.next();
+//            Drone drone = clients.get(droneName);
+//
+//            String leaderOrFollower = drone.getLeaderOrFollower();
+//            long flightTime = setting.getFlightTime();
+//
+//            if(leaderOrFollower.equals("L")){
+//                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.STRONG);
+//            }else{
+//                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
+//            }
+//
+//            drone.setErrorEvent(errorEvent);
+//        }
     }
 
 
@@ -171,72 +183,66 @@ public class DroneController {
      * @param setting
      */
     private void chooseStartFlightOrNot(DroneSetting setting) {
-        Iterator iterator = clients.keySet().iterator();
-
-        while(true){
-            System.out.print("비행을 시작하시겠습니까? 시작하시려면 'y'를 중단하시려면 'n'을 입력하세요: ");
-            Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
-
-            if(StringValidator.isEmpty(input)){
-                System.out.println("'y' 또는 'n'을 입력해주세요");
-                continue;
-            }
-
-
-
-            if(!input.toLowerCase().equals("y")){
-                System.out.println("비행 프로세스를 중단합니다.");
-
-
-                while(iterator.hasNext()){
-                    String droneName = (String) iterator.next();
-                    Drone drone = clients.get(droneName);
-                    ObjectOutputStream objectOutputStream = drone.getOutputStream();
-
-                    try {
-                        objectOutputStream.writeObject(new ExitProcessor());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                System.exit(-1);;
-            }
-
-            break;
-        }
-
-        this.sendFlightOrder(setting);
-
+//        Iterator iterator = clients.keySet().iterator();
+//
+//        while(true){
+//            System.out.print("비행을 시작하시겠습니까? 시작하시려면 'y'를 중단하시려면 'n'을 입력하세요: ");
+//            Scanner scanner = new Scanner(System.in);
+//            String input = scanner.nextLine();
+//
+//            if(StringValidator.isEmpty(input)){
+//                System.out.println("'y' 또는 'n'을 입력해주세요");
+//                continue;
+//            }
+//
+//
+//
+//            if(!input.toLowerCase().equals("y")){
+//                System.out.println("비행 프로세스를 중단합니다.");
+//
+//
+//                while(iterator.hasNext()){
+//                    String droneName = (String) iterator.next();
+//                    Drone drone = clients.get(droneName);
+//                    ObjectOutputStream objectOutputStream = drone.getOutputStream();
+//
+//                    try {
+//                        objectOutputStream.writeObject(new ExitProcessor());
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//
+//                System.exit(-1);;
+//            }
+//
+//            break;
+//        }
+//
+//        this.sendFlightOrder(setting);
+//
 
     }
 
     private void sendFlightOrder(DroneSetting setting) {
-        Iterator iterator = clients.keySet().iterator();
-
-        while(iterator.hasNext()){
-            String droneName = (String) iterator.next();
-            Drone drone = clients.get(droneName);
-            drone.setDroneSetting(setting);
-            drone.getFlyingInfo().setMessage(FlyingMessage.FLYING_START);
-            ObjectOutputStream objectOutputStream = drone.getOutputStream();
-
-            try {
-                objectOutputStream.writeObject(drone);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        Iterator iterator = clients.keySet().iterator();
+//
+//        while(iterator.hasNext()){
+//            String droneName = (String) iterator.next();
+//            Drone drone = clients.get(droneName);
+//            drone.setDroneSetting(setting);
+//            drone.getFlyingInfo().setMessage(FlyingMessage.FLYING_START);
+//            ObjectOutputStream objectOutputStream = drone.getOutputStream();
+//
+//            try {
+//                objectOutputStream.writeObject(drone);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
-    /**
-     * Controller Server Thread 시작.
-     */
-    public void startControllerServerThread(){
-        ControllerServer controllerServer = new ControllerServer(clients);
-        controllerServer.start();
-    }
+
 
     /**
      * 비행 환경 설정을 위한 사전 질문.
@@ -269,30 +275,30 @@ public class DroneController {
     private void setNumberOfDrone(DroneSetting setting) {
         int num = 2;
 
-        int numberOfDrone = clients.size();
-        if(numberOfDrone < 2){
-            System.out.println("현재 비행 가능한 Drone은 " + numberOfDrone + "대 입니다.");
-            System.out.println("비행 가능한 Drone은 최소 2대 이상이여야 합니다. Drone 프로세스 가동 후 Controller를 재 가동해주세요.");
+//        int numberOfDrone = clients.size();
+//        if(numberOfDrone < 2){
+//            System.out.println("현재 비행 가능한 Drone은 " + numberOfDrone + "대 입니다.");
+//            System.out.println("비행 가능한 Drone은 최소 2대 이상이여야 합니다. Drone 프로세스 가동 후 Controller를 재 가동해주세요.");
+//
+//            if(numberOfDrone != 0){
+//                Iterator iterator = clients.keySet().iterator();
+//                while(iterator.hasNext()){
+//                    String droneName = (String) iterator.next();
+//                    Drone drone = clients.get(droneName);
+//                    ObjectOutputStream objectOutputStream = drone.getOutputStream();
+//                    try {
+//                        Processor processor = new ExitProcessor();
+//                        objectOutputStream.writeObject(processor);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//            System.exit(-1);
+//        }
 
-            if(numberOfDrone != 0){
-                Iterator iterator = clients.keySet().iterator();
-                while(iterator.hasNext()){
-                    String droneName = (String) iterator.next();
-                    Drone drone = clients.get(droneName);
-                    ObjectOutputStream objectOutputStream = drone.getOutputStream();
-                    try {
-                        Processor processor = new ExitProcessor();
-                        objectOutputStream.writeObject(processor);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            System.exit(-1);
-        }
-
-        System.out.println(numberOfDrone + "대의 Drone이 비행에 참여합니다.");
-        setting.setNumberOfDrone(numberOfDrone);
+//        System.out.println(numberOfDrone + "대의 Drone이 비행에 참여합니다.");
+//        setting.setNumberOfDrone(numberOfDrone);
 
 //        TODO Future Work.
 //        while(true){
@@ -325,52 +331,52 @@ public class DroneController {
      * @param setting
      */
     private void setDroneInfo(DroneSetting setting) {
-        int numberOfDrone = setting.getNumberOfDrone();
-
-        Map<String, Drone> droneMap = new HashMap<String, Drone>();
-
-        System.out.println(numberOfDrone + "대의 Drone에 대한 정보를 설정합니다.");
-
-        Iterator iterator = clients.keySet().iterator();
-        int i = 1;
-        while(iterator.hasNext()){
-            String droneName = (String) iterator.next();
-            Drone drone = clients.get(droneName);
-            System.out.println("## " + droneName + "의 정보 설정 시작.");
-            /**
-             * 리더 및 팔로워 구분 입력.
-             */
-            while(true){
-                System.out.print("Leader 설정(Leader일 경우 'L', Follower일 경우 'F' 입력): ");
-                Scanner scanner2 = new Scanner(System.in);
-                String leaderOrFollower = scanner2.nextLine();
-
-                if(!StringValidator.isLeaderOrFollower(leaderOrFollower)){
-                    System.out.println("Leader/Follower는 'L' 또는 'F'로 입력해주세요.");
-                    continue;
-                }
-
-                if(StringValidator.isExistLeader(leaderOrFollower, droneMap)){
-                    System.out.println("이미 리더가 존재합니다. 'F'를 입력해주세요.");
-                    continue;
-                }
-
-                if((i == numberOfDrone) && (leaderOrFollower.toUpperCase().equals("F")) && (StringValidator.isNotExistLeader(droneMap))){
-                    System.out.println("리더가 존재하지않습니다. 'L'을 입력해주세요.");
-                    continue;
-                }
-
-                i++;
-                leaderOrFollower = leaderOrFollower.toUpperCase();
-                drone.setLeaderOrFollower(leaderOrFollower);
-                break;
-            }
-
-            droneMap.put(droneName, drone);
-        }
-
-
-        setting.setDroneMap(droneMap);
+//        int numberOfDrone = setting.getNumberOfDrone();
+//
+//        Map<String, Drone> droneMap = new HashMap<String, Drone>();
+//
+//        System.out.println(numberOfDrone + "대의 Drone에 대한 정보를 설정합니다.");
+//
+//        Iterator iterator = clients.keySet().iterator();
+//        int i = 1;
+//        while(iterator.hasNext()){
+//            String droneName = (String) iterator.next();
+//            Drone drone = clients.get(droneName);
+//            System.out.println("## " + droneName + "의 정보 설정 시작.");
+//            /**
+//             * 리더 및 팔로워 구분 입력.
+//             */
+//            while(true){
+//                System.out.print("Leader 설정(Leader일 경우 'L', Follower일 경우 'F' 입력): ");
+//                Scanner scanner2 = new Scanner(System.in);
+//                String leaderOrFollower = scanner2.nextLine();
+//
+//                if(!StringValidator.isLeaderOrFollower(leaderOrFollower)){
+//                    System.out.println("Leader/Follower는 'L' 또는 'F'로 입력해주세요.");
+//                    continue;
+//                }
+//
+//                if(StringValidator.isExistLeader(leaderOrFollower, droneMap)){
+//                    System.out.println("이미 리더가 존재합니다. 'F'를 입력해주세요.");
+//                    continue;
+//                }
+//
+//                if((i == numberOfDrone) && (leaderOrFollower.toUpperCase().equals("F")) && (StringValidator.isNotExistLeader(droneMap))){
+//                    System.out.println("리더가 존재하지않습니다. 'L'을 입력해주세요.");
+//                    continue;
+//                }
+//
+//                i++;
+//                leaderOrFollower = leaderOrFollower.toUpperCase();
+//                drone.setLeaderOrFollower(leaderOrFollower);
+//                break;
+//            }
+//
+//            droneMap.put(droneName, drone);
+//        }
+//
+//
+//        setting.setDroneMap(droneMap);
     }
 
     private void setSpeed(DroneSetting setting) {

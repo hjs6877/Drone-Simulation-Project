@@ -7,13 +7,15 @@ import kr.co.korea.util.MathUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
  * Created by ideapad on 2016-01-20.
  */
-public class ClientReceiver extends Thread {
+public class Flyer extends Thread {
+    private Socket socket;
     ObjectInputStream objectInputStream;
     ObjectOutputStream objectOutputStream;
     Drone drone;
@@ -21,11 +23,12 @@ public class ClientReceiver extends Thread {
     DroneSetting setting;
     FlightStatus flightStatus;
 
-    public ClientReceiver(ObjectOutputStream objectOutputStream){
+    public Flyer(Socket socket) throws IOException {
         flightStatus = new FlightStatus();
 
-        this.objectOutputStream = objectOutputStream;
-
+        this.socket = socket;
+        objectInputStream = new ObjectInputStream(socket.getInputStream());
+        objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
     }
 
     public void run() {
