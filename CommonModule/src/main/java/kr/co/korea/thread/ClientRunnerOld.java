@@ -2,32 +2,33 @@ package kr.co.korea.thread;
 
 import kr.co.korea.domain.Drone;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- * Created by kjs on 2016-02-12.
+ * Drone 메시지를 받는 역할을 하고, 실제 비행은 Flyer Thread가 수행한다.
  */
-public class ClientRunner extends Thread{
+public class ClientRunnerOld extends Thread {
     private Socket socket;
+    private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
     private Drone drone;
     private boolean flag = false;
     private Flyer flyer;
     private Thread flyRunner;
 
-
-    public ClientRunner(Socket socket) {
+    public ClientRunnerOld(Socket socket) throws IOException {
         this.socket = socket;
-        try {
-            System.out.println("서버에 연결되었습니다.3");
-            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+        objectInputStream = new ObjectInputStream(socket.getInputStream());
+//        objectOutputStream = new ObjectOutputStream(socket.getOutputStream());        // TODO 여기서 생성하면 왜 안될까??
 
-            System.out.println("서버에 연결되었습니다.5");
-        } catch(Exception e) {}
+        System.out.println("왜 안될까...");
     }
 
-    public void run() {
+    public void run(){
+
         System.out.println("쫌 되자4....");
 //        try {
 //
@@ -86,5 +87,11 @@ public class ClientRunner extends Thread{
 //        } catch (ClassNotFoundException e) {
 //            e.printStackTrace();
 //        }
-    } // run()
+    }
+
+
+    public void sendMessage(Drone drone) throws IOException {
+        this.objectOutputStream.writeObject(drone);
+        this.objectOutputStream.flush();
+    }
 }
