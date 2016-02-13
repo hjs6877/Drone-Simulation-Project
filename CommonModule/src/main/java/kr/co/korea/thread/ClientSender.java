@@ -1,6 +1,7 @@
 package kr.co.korea.thread;
 
 import kr.co.korea.domain.Drone;
+import kr.co.korea.domain.FlyingMessage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,7 +13,6 @@ import java.net.Socket;
  */
 public class ClientSender extends Thread{
     private Socket socket;
-    private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
 
 
@@ -31,8 +31,8 @@ public class ClientSender extends Thread{
         }
     } // run()
 
-    public void sendMessage(Drone drone) throws IOException {
-        objectOutputStream.writeObject(drone);
+    public void sendMessage(FlyingMessage flyingMessage) throws IOException {
+        objectOutputStream.writeObject(flyingMessage);
         objectOutputStream.flush();
     }
 }

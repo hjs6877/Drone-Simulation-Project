@@ -12,6 +12,8 @@ import java.util.Vector;
  * Created by ideapad on 2016-02-11.
  */
 public class DroneRunnerRepository extends Vector<DroneRunner> {
+    public static int messageFlyingArrivedCount = 0;
+
     public synchronized void addDroneRunner(DroneRunner droneRunner) {
         this.addElement(droneRunner);
     }
@@ -28,6 +30,7 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
             DroneRunner droneRunner = iterator.next();
             try{
                 droneRunner.sendMessage(flyingMessage);
+
             }catch (IOException ex){
                 System.out.println(droneRunner.toString() + "의 메시지 전송 에러");
             }

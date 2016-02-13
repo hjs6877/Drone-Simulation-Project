@@ -21,16 +21,17 @@ public class VenusClient {
             Socket socket = new Socket(serverIp, 5555);
             System.out.println("Venus --> ControllerServer에 연결...");
 
+
             ClientSender clientSender = new ClientSender(socket);
-            ClientReceiver clientReceiver = new ClientReceiver(socket);
+            ClientReceiver clientReceiver = new ClientReceiver(socket, clientSender, "venus");
 
             clientSender.start();
             clientReceiver.start();
 
             Drone initDrone = new Drone("venus", new DroneSetting(), new FlyingInfo());
-            initDrone.getFlyingInfo().setMessage(FlyingMessage.STATUS_FLYING_READY);
 
-            clientSender.sendMessage(initDrone);
+
+            clientSender.sendMessage(FlyingMessage.STATUS_FLYING_READY);
         } catch(ConnectException ce) {
             ce.printStackTrace();
         } catch(Exception e) {

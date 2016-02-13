@@ -5,24 +5,37 @@ import java.util.Map;
 
 /**
  * 비행중인 정보를 저장.
- * - 마지막 비행 좌표.
- * - 잔여 비행 시간
+ * - 최종 메시지
+ * - 발생한 장애 현황
+ * - 최종 비행 좌표
+ * - 총 비행 시간
  * - 잔여 거리
- * -
+ *
+ *
  */
 public class FlyingInfo implements Serializable {
-    private Map<String, Coordination> lastDepartureCoordination;
-    private double remainDistance;
-    private long flightTime;
-    private FlightStatus flightStatus;
     private FlyingMessage message;
+    private FlightStatus finalFlightStatus;
+    private Map<String, Double> finalCoordination;
+    private long finalFlightTime;
+    private double remainDistance;
 
-    public Map<String, Coordination> getLastDepartureCoordination() {
-        return lastDepartureCoordination;
+
+
+    public Map<String, Double> getFinalCoordination() {
+        return finalCoordination;
     }
 
-    public void setLastDepartureCoordination(Map<String, Coordination> lastDepartureCoordination) {
-        this.lastDepartureCoordination = lastDepartureCoordination;
+    public void setFinalCoordination(Map<String, Double> finalCoordination) {
+        this.finalCoordination = finalCoordination;
+    }
+
+    public long getFinalFlightTime() {
+        return finalFlightTime;
+    }
+
+    public void setFinalFlightTime(long finalFlightTime) {
+        this.finalFlightTime = finalFlightTime;
     }
 
     public double getRemainDistance() {
@@ -33,20 +46,12 @@ public class FlyingInfo implements Serializable {
         this.remainDistance = remainDistance;
     }
 
-    public long getFlightTime() {
-        return flightTime;
+    public FlightStatus getFinalFlightStatus() {
+        return finalFlightStatus;
     }
 
-    public void setFlightTime(long flightTime) {
-        this.flightTime = flightTime;
-    }
-
-    public FlightStatus getFlightStatus() {
-        return flightStatus;
-    }
-
-    public void setFlightStatus(FlightStatus flightStatus) {
-        this.flightStatus = flightStatus;
+    public void setFinalFlightStatus(FlightStatus finalFlightStatus) {
+        this.finalFlightStatus = finalFlightStatus;
     }
 
     public FlyingMessage getMessage() {
