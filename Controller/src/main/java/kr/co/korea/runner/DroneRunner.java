@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Created by ideapad on 2016-02-11.
@@ -27,7 +28,7 @@ public class DroneRunner extends Thread {
 
     public void run(){
         try{
-            while(!this.flag){   // TODO ObjectInputStream이 null인걸로 판단하도록 수정.
+            while(objectInputStream != null){   // TODO ObjectInputStream이 null인걸로 판단하도록 수정.
                 Object object =  objectInputStream.readObject();
                 drone = (Drone) object;
                 if(drone != null){
@@ -76,12 +77,18 @@ public class DroneRunner extends Thread {
             }
 
             DroneController.droneRunnerRepository.removeDroneRunner(this);
-            objectInputStream.close();
-            objectOutputStream.close();
-            socket.close();
 
-        }catch (IOException e) {
-            e.printStackTrace();
+
+        } catch (SocketException se){
+            System.err.println(se.getMessage());
+            try {
+                if(objectOutputStream != null) objectOutputStream.close();
+                if(objectInputStream != null) objectInputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+//            e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

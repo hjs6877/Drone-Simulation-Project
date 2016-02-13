@@ -101,6 +101,9 @@ public class DroneController {
         controller.setFilghtTime(setting);
         controller.setRandomErrorEvent(setting);
         controller.chooseStartFlightOrNot(setting);
+        controller.setDroneSetting(setting);
+
+        controller.sendFlyingStartMessage();
 
 
         int formationType = setting.getFormationType();
@@ -553,11 +556,19 @@ public class DroneController {
 
             break;
         }
-
-        this.sendFlightOrder(setting);
     }
 
-    private void sendFlightOrder(DroneSetting setting) {
+    private void setDroneSetting(DroneSetting setting){
+        Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
+        while(iterator.hasNext()){
+            DroneRunner droneRunner = iterator.next();
+            Drone drone = droneRunner.getDrone();
+
+            drone.setDroneSetting(setting);
+        }
+    }
+    private void sendFlyingStartMessage() {
+
         System.out.println("## 비행 시작 메시지 전송.");
 
         DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_START);

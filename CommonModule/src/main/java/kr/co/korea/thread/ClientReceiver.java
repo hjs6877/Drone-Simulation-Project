@@ -15,8 +15,7 @@ public class ClientReceiver extends Thread {
     private ObjectInputStream objectInputStream;
     private Drone drone;
     private boolean flag = false;
-    private Flyer flyer;
-    private Thread flyRunner;
+
 
     public ClientReceiver(Socket socket) {
         this.socket = socket;
@@ -37,10 +36,10 @@ public class ClientReceiver extends Thread {
             /**
              * TODO 비행을 수행하는 FlyRunner는 메시지의 상황에 맞게 시작되거나, 대기하거나, 재시작된다.
              */
-            flyer = new Flyer(socket);      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
-            flyRunner = new Thread(flyer);
+            Flyer flyer = new Flyer(socket);      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
+            Thread flyRunner = new Thread(flyer);
 
-            while (!flag){
+            while (objectInputStream != null){
                 Object object = objectInputStream.readObject();
                 drone = (Drone) object;
                 if(drone != null){
@@ -54,7 +53,7 @@ public class ClientReceiver extends Thread {
                      */
                     if(drone.getFlyingInfo().getMessage() == FlyingMessage.DO_FLYING_START){
                         System.out.println(drone.getName() + "이 비행을 시작합니다.");
-//                        flyRunner.start();
+                        flyRunner.start();
                     }
 
                     /**
