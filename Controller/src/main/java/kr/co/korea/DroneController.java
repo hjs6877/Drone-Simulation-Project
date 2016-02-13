@@ -8,15 +8,12 @@ import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
 import kr.co.korea.repository.DroneRunnerRepository;
-import kr.co.korea.runner.DroneRunner;
+import kr.co.korea.runner.DroneRunnerSimpleTest;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.util.MathUtils;
 import kr.co.korea.validator.StringValidator;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.*;
 
 /**
@@ -229,12 +226,12 @@ public class DroneController {
 
         System.out.println(numberOfDrone + "대의 Drone에 대한 정보를 설정합니다.");
 
-        Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
+        Iterator<DroneRunnerSimpleTest> iterator = DroneController.droneRunnerRepository.iterator();
         int i = 1;
         while(iterator.hasNext()){
-            DroneRunner droneRunner = iterator.next();
-            Drone drone = droneRunner.getDrone();
-            String droneName = "";
+            DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
+            Drone drone = droneRunnerSimpleTest.getDrone();
+            String droneName = drone.getName();
 
             System.out.println("## " + droneName + "의 정보 설정 시작.");
 
@@ -256,18 +253,18 @@ public class DroneController {
                     continue;
                 }
 
-//                if((i == numberOfDrone) && (leaderOrFollower.toUpperCase().equals("F")) && (StringValidator.isNotExistLeader(droneMap))){
-//                    System.out.println("리더가 존재하지않습니다. 'L'을 입력해주세요.");
-//                    continue;
-//                }
+                if((i == numberOfDrone) && (leaderOrFollower.toUpperCase().equals("F")) && (StringValidator.isNotExistLeader(droneMap))){
+                    System.out.println("리더가 존재하지않습니다. 'L'을 입력해주세요.");
+                    continue;
+                }
 
                 i++;
                 leaderOrFollower = leaderOrFollower.toUpperCase();
-//                drone.setLeaderOrFollower(leaderOrFollower);
+                drone.setLeaderOrFollower(leaderOrFollower);
                 break;
             }
 
-//            droneMap.put(droneName, drone);
+            droneMap.put(droneName, drone);
         }
 
 
@@ -509,22 +506,22 @@ public class DroneController {
 
         TreeMap<Long, ErrorType> errorEvent;
 
-        Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
+        Iterator<DroneRunnerSimpleTest> iterator = DroneController.droneRunnerRepository.iterator();
 
         while(iterator.hasNext()){
-            DroneRunner droneRunner = iterator.next();
-//            Drone drone = droneRunner.getDrone();
+            DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
+            Drone drone = droneRunnerSimpleTest.getDrone();
 
-//            String leaderOrFollower = drone.getLeaderOrFollower();
+            String leaderOrFollower = drone.getLeaderOrFollower();
             long flightTime = setting.getFlightTime();
 
-//            if(leaderOrFollower.equals("L")){
-//                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.STRONG);
-//            }else{
-//                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
-//            }
+            if(leaderOrFollower.equals("L")){
+                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.STRONG);
+            }else{
+                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
+            }
 
-//            drone.setErrorEvent(errorEvent);
+            drone.setErrorEvent(errorEvent);
         }
     }
 
@@ -559,12 +556,12 @@ public class DroneController {
     }
 
     private void setDroneSetting(DroneSetting setting){
-        Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
+        Iterator<DroneRunnerSimpleTest> iterator = DroneController.droneRunnerRepository.iterator();
         while(iterator.hasNext()){
-            DroneRunner droneRunner = iterator.next();
-//            Drone drone = droneRunner.getDrone();
+            DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
+            Drone drone = droneRunnerSimpleTest.getDrone();
 
-//            drone.setDroneSetting(setting);
+            drone.setDroneSetting(setting);
         }
     }
     private void sendFlyingStartMessage() {

@@ -48,5 +48,5 @@ public class TcpIpMultichatClient {
                 } catch(IOException e) {}
             }
         } // run
-    } // ClientReceiver
+    } // ClientReceiverSimpleTest
 }

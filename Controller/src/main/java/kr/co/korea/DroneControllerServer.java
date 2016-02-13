@@ -1,6 +1,6 @@
 package kr.co.korea;
 
-import kr.co.korea.runner.DroneRunner;
+import kr.co.korea.runner.DroneRunnerSimpleTest;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -24,11 +24,11 @@ public class DroneControllerServer extends Thread {
             while(true){
                 Socket socket = serverSocket.accept();
 
-                DroneRunner droneRunner = new DroneRunner(socket);
+                DroneRunnerSimpleTest droneRunnerSimpleTest = new DroneRunnerSimpleTest(socket);
 
-                DroneController.droneRunnerRepository.addDroneRunner(droneRunner);
+                DroneControllerSimpleTest.droneRunnerRepository.addDroneRunner(droneRunnerSimpleTest);
 
-                droneRunner.start();
+                droneRunnerSimpleTest.start();
             }
 
         } catch (IOException e) {
