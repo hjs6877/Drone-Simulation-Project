@@ -26,7 +26,6 @@ public class ClientReceiver extends Thread {
     }
 
     public void run() {
-        System.out.println("쓰레드명1: " + Thread.currentThread().getName());
         try {
 
             /**
@@ -86,9 +85,20 @@ public class ClientReceiver extends Thread {
                         drone = flyer.getDrone();
 
                         clientSender.sendMessageOrDrone(drone);
-
                         Thread.sleep(1000);
                         clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_WAITED);
+                    }
+
+                    /**
+                     * FLYING_RESUME 메시지가 넘어 온다면, 비행 재개.
+                     * TODO 쓰레드를 깨우는건 여기서 깨운다.
+                     */
+                    if(flyingMessage == FlyingMessage.DO_FLYING_RESUME){
+                        System.out.println("++++ 수신 메시지: 비행을 재개합니다..");
+                        flyer.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_RESUME;
+                        synchronized (flyer){
+                            flyer.notifyAll();
+                        }
                     }
 
                     /**
@@ -103,10 +113,8 @@ public class ClientReceiver extends Thread {
 
 
 
-                    /**
-                     * FLYING_RESUME 메시지가 넘어 온다면, 비행 재개.
-                     * TODO 쓰레드를 깨우는건 여기서 깨운다.
-                     */
+
+
                 }
             }
 

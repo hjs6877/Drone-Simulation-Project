@@ -14,12 +14,13 @@ import java.io.Serializable;
  * 5. BLOCK 장애 발생 시, BLOCK list에 추가하고, BLOCK list size가 1이면, 리더 교체
  */
 public class FlightStatus implements Serializable {
-    List<ErrorType> trivialList = new ArrayList<ErrorType>();
-    List<ErrorType> minorList = new ArrayList<ErrorType>();;
-    List<ErrorType> majorList = new ArrayList<ErrorType>();;
-    List<ErrorType> criticalList = new ArrayList<ErrorType>();;
-    List<ErrorType> blockList = new ArrayList<ErrorType>();;
+    private List<ErrorType> trivialList = new ArrayList<ErrorType>();
+    private List<ErrorType> minorList = new ArrayList<ErrorType>();
+    private List<ErrorType> majorList = new ArrayList<ErrorType>();
+    private List<ErrorType> criticalList = new ArrayList<ErrorType>();
+    private List<ErrorType> blockList = new ArrayList<ErrorType>();
 
+    private double totalErrorPoint = 0.0;
 
     public List<ErrorType> getTrivialList() {
         return trivialList;
@@ -43,6 +44,25 @@ public class FlightStatus implements Serializable {
         return blockList;
     }
 
+    public double getTotalErrorPoint() {
+        return totalErrorPoint;
+    }
+
+    public void setTotalErrorPoint() {
+        double trivialUnitPoint = 1.0;
+        double minorUnitPoint = 2.0;
+        double majorUnitPoint = 3.0;
+        double criticalUnitPoint = 6.0;
+        double blockUnitPoint = 9.0;
+
+        double trivialPoint = trivialUnitPoint * trivialList.size();
+        double minorPoint = minorUnitPoint * minorList.size();
+        double majorPoint = majorUnitPoint * majorList.size();
+        double criticalPoint = criticalUnitPoint * criticalList.size();
+        double blockPoint = blockUnitPoint * blockList.size();
+
+        totalErrorPoint = trivialPoint + minorPoint + majorPoint + criticalPoint + blockPoint;
+    }
 
     public void addErrorEvent(ErrorType errorType){
         if(errorType == ErrorType.TRIVIAL){
@@ -75,7 +95,7 @@ public class FlightStatus implements Serializable {
 
     }
 
-    public boolean hasErrorEventForReplacingLeader(){
+    public boolean hasThreshholdErrorEvent(){
         return (this.getCriticalList().size() >= 2 || this.getBlockList().size() >= 1);
     }
 

@@ -15,6 +15,5 @@ public enum FlyingMessage implements Serializable{
     DO_FLYING_WAIT,             /** 비행을 일시 중지 대기하라 **/
     DO_FLYING_RESUME,           /** 중지 된 비행을 재개하라 **/
     DO_FLYING_STOP,             /** 비행을 완전 중지하라 **/
-    DO_FLYING_FINISH,           /** 착륙 후, 비행을 종료하라 **/
-    DO_ELECT_NEW_LEADER         /** 새로운 리더를 선출하라 **/
+    DO_FLYING_FINISH            /** 착륙 후, 비행을 종료하라 **/
 }

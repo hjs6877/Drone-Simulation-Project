@@ -23,6 +23,10 @@ import java.util.*;
  */
 public class DroneController {
     /**
+     * TODO 장애 발생 시, 더이상 남은 Drone이 없을 경우, 종료 처리 프로세스
+     * TODO 팔로워가 BlOCK 장애 상태가 될 경우의 처리.
+     */
+    /**
      * 1. 비행 환경 설정.
      *      (1) 드론 대수 설정 √
      *      (2) 포메이션 형태 설정(드론 대수에 따라 자동 지정 또는 수동 지정) √

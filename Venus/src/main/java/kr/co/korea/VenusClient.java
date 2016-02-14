@@ -1,22 +1,19 @@
 package kr.co.korea;
 
-import kr.co.korea.domain.Drone;
-import kr.co.korea.domain.DroneSetting;
-import kr.co.korea.domain.FlyingInfo;
-import kr.co.korea.domain.FlyingMessage;
+import kr.co.korea.domain.*;
 import kr.co.korea.thread.ClientReceiver;
 import kr.co.korea.thread.ClientReceiverSimpleTest;
 import kr.co.korea.thread.ClientSender;
 
 import java.net.ConnectException;
 import java.net.Socket;
+import java.util.HashMap;
 
 /**
  * Created by kjs on 2016-02-12.
  */
 public class VenusClient {
     public static void main(String args[]) {
-        System.out.println("쓰레드명 main: " + Thread.currentThread().getName());
         try {
             String serverIp = "127.0.0.1";
             // 소켓을 생성하여 연결을 요청한다.
@@ -29,7 +26,7 @@ public class VenusClient {
             clientSender.start();
             clientReceiver.start();
 
-            Drone initDrone = new Drone("venus", new DroneSetting(), new FlyingInfo());
+            Drone initDrone = new Drone("venus", new DroneSetting(), new FlyingInfo(new FlightStatus(), new HashMap<String, Double>()));
 
             clientSender.sendMessageOrDrone(initDrone);
             clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_READY);

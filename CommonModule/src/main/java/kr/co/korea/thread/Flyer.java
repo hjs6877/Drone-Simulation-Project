@@ -19,11 +19,8 @@ public class Flyer extends Thread {
     Drone drone;
     TreeMap<Long, ErrorType> errorEventMap;
     DroneSetting setting;
-    FlightStatus flightStatus;
 
     public Flyer(Socket socket, ClientSender clientSender) throws IOException {
-        flightStatus = new FlightStatus();
-
         this.socket = socket;
         this.clientSender = clientSender;
     }
@@ -55,7 +52,7 @@ public class Flyer extends Thread {
         return drone.getLeaderOrFollower().equals("L");
     }
 
-    public FlightStatus fly(){
+    public void fly(){
         setting = drone.getDroneSetting();
         errorEventMap = drone.getErrorEvent();
 
@@ -69,16 +66,12 @@ public class Flyer extends Thread {
 
         long flightTime = setting.getFlightTime();
 
-        String leaderOrFollower = drone.getLeaderOrFollower();
-
-        System.out.println("droneName: " + leaderOrFollower);
+        System.out.println("droneName: " + drone.getLeaderOrFollower());
         System.out.println("리더 여부: " + drone.getLeaderOrFollower());
         System.out.println("출발지: " + setting.getDeparture());
         System.out.println("목적지: " + setting.getDestination());
         System.out.println("비행시간: " + setting.getFlightTime());
         System.out.println("장애 이벤트: " + errorEventMap);
-
-        FlightStatus status = new FlightStatus();
 
         int countDown = 3;
 
@@ -96,6 +89,7 @@ public class Flyer extends Thread {
             int startTime = 1;
 
             FlyingInfo flyingInfo = drone.getFlyingInfo();
+            FlightStatus flightStatus = flyingInfo.getFinalFlightStatus();
 
             /**
              * 실제 비행하는 부분. 리더일때와 팔로워 일때의 프로세스가 달라야 함.
@@ -105,7 +99,7 @@ public class Flyer extends Thread {
             for(long atSeconds=startTime; atSeconds<=flightTime; atSeconds++){
                 Thread.sleep(1000);
                 System.out.println("###### " + atSeconds + "초 비행");
-
+                System.out.println("리더 여부2: " + drone.getLeaderOrFollower());
                 /**
                  * 비행 대기 명령이 할당 되었을 때, 비행을 일시 중지한다.
                  *
@@ -120,6 +114,7 @@ public class Flyer extends Thread {
 
                 double longitude = coordinationMapAtSeconds.get("longitude");
                 double latitude = coordinationMapAtSeconds.get("latitude");
+                double remainDistance = MathUtils.calculateDistanceByLngLat(longitude, latitude, longitude, latitude);
 
                 /**
                  * 장애 이벤트가 해당 비행 시간(초)에 존재한다면(발생한다면)
@@ -142,8 +137,9 @@ public class Flyer extends Thread {
 
                     flightStatus.addErrorEvent(errorType);
                     flightStatus.updateErrorEvent();
+                    flightStatus.setTotalErrorPoint();
 
-
+                    flyingInfo.setFinalFlightStatus(flightStatus);
 
                     /**
                      * 리더 교체가 필요한 장애가 발생했다면??
@@ -152,25 +148,27 @@ public class Flyer extends Thread {
                      * - 비행 대기 상태로 전환.
                      * TODO 여기서부터 리더에 대한 프로세스 진행.
                      */
-                    if(leaderOrFollower.equals("L") && flightStatus.hasErrorEventForReplacingLeader()){
+                    if(drone.getLeaderOrFollower().equals("L") && flightStatus.hasThreshholdErrorEvent()) {
                         System.out.println("심각한 장애 발생으로 인해 리더 교체 프로세스 실시!!!!!!!!!!!!!!!!!!!!!!");
 
 
                         flyingInfo.setMessage(FlyingMessage.STATUS_NEED_REPLACE_LEADER);
-                        flyingInfo.setFinalFlightStatus(flightStatus);
-                        // TODO FlyingInfo 객체에 여러가지 정보를 더 담아야 됨.
+
+                        flyingInfo.setFinalCoordination(coordinationMapAtSeconds);
+                        flyingInfo.setFinalFlightTime(atSeconds);
+                        flyingInfo.setRemainDistance(remainDistance);
+
                         drone.setFlyingInfo(flyingInfo);
 
                         /** 리더 교체 필요 메시지 전송 **/
                         clientSender.sendMessageOrDrone(FlyingMessage.STATUS_NEED_REPLACE_LEADER);
 
-                        // TODO Drone 객체도 이때 전송.
-
-                    }else{      /** 팔로워들에게 적용되는 프로세스 **/
+                    }else if(flightStatus.hasThreshholdErrorEvent()){      /** 팔로워들에게 적용되는 프로세스 **/
+                        System.out.println("심각한 장애 발생으로 인해 팔로워 비행 중단.");    // TODO 추가 구현 필요.
                         /**
                          * TODO 팔로워도 심각한 장애가 발생하면 비행 중지를 해야 함. 중지 전, 비행 정보를 전송하고, DroneRunner에서도 제거 되어야 함.
                          */
-                        flyingInfo.setFinalFlightStatus(flightStatus);
+
                     }
 
                 }else{  /** 장애가 발생하지 않았을 경우 **/
@@ -229,7 +227,6 @@ public class Flyer extends Thread {
 //            e.printStackTrace();
 //        }
 
-        return status;
     }
 
     private boolean isExistErrorEvent(ErrorType errorType) {

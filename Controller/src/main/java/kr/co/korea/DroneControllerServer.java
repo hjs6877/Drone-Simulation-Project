@@ -10,13 +10,16 @@ import kr.co.korea.runner.DroneRunnerSimpleTest;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by ideapad on 2016-02-12.
  */
 public class DroneControllerServer extends Thread {
     private int serverPort = 5555;
+    private List<Drone> finalDroneInfoList = new ArrayList<Drone>();
 
     public void run(){
         ServerSocket serverSocket = null;
@@ -76,25 +79,74 @@ public class DroneControllerServer extends Thread {
                 System.out.println("## 모든 Drone이 비행 대기 상태가 되었습니다.");
 
                 Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
+                DroneRunner droneRunnerNewLeader = null;
                 while(iterator.hasNext()){
                     DroneRunner droneRunner = iterator.next();
                     Drone drone = droneRunner.getDrone();
+                    String leaderOrFollower = drone.getLeaderOrFollower();
                     FlyingInfo flyingInfo = drone.getFlyingInfo();
-
+                    double totalErrorPoint = flyingInfo.getFinalFlightStatus().getTotalErrorPoint();
 
                     System.out.println("#### Drone 이름: " + drone.getName());
                     System.out.println("#### 리더 여부: " + drone.getLeaderOrFollower());
                     System.out.println("###### 누적 업데이트 된 최종 장애 정보 출력..");
-                    System.out.println("###### flyingInfo.getFinalFlightStatus() 객체: " + flyingInfo.getFinalFlightStatus());
                     System.out.println("TRIVIAL: " + flyingInfo.getFinalFlightStatus().getTrivialList().size());
                     System.out.println("MINOR: " + flyingInfo.getFinalFlightStatus().getMinorList().size());
                     System.out.println("MAJOR: " + flyingInfo.getFinalFlightStatus().getMajorList().size());
                     System.out.println("CRITICAL: " + flyingInfo.getFinalFlightStatus().getCriticalList().size());
                     System.out.println("BLOCK: " + flyingInfo.getFinalFlightStatus().getBlockList().size());
-
+                    System.out.println("Total Error Point: " + flyingInfo.getFinalFlightStatus().getTotalErrorPoint());
                     System.out.println("===================================================================");
 
+                    if(!leaderOrFollower.equals("L")){
+                        if(droneRunnerNewLeader == null){
+                            droneRunnerNewLeader = droneRunner;
+                            continue;
+                        }
+
+                        if(totalErrorPoint < droneRunnerNewLeader.getDrone().getFlyingInfo().getFinalFlightStatus().getTotalErrorPoint()){
+                            droneRunnerNewLeader = droneRunner;
+                            continue;
+                        }
+                    }
+
                 }
+
+                System.out.println("## New Leader가 선출되었습니다.");
+                System.out.println("## New Leader: " + droneRunnerNewLeader.getDrone().getName());
+                System.out.println("===================================================================");
+                /**
+                 *  기존 리더의 처리
+                 *  - finalDroneInfoList에 비행정보 저장.
+                 *  - 비행 프로세스 종료 메시지 전송.
+                 *  - DroneRunnerRepository에서 제거
+                 */
+                Iterator<DroneRunner> iterator2 = DroneController.droneRunnerRepository.iterator();
+                while(iterator2.hasNext()) {
+                    DroneRunner droneRunner = iterator2.next();
+                    Drone drone = droneRunner.getDrone();
+                    String leaderOrFollower = drone.getLeaderOrFollower();
+
+                    if(leaderOrFollower.equals("L")){
+                        System.out.println("## 기존 Leader의 비행정보를 저장하고, 비행을 중단합니다.");
+                        finalDroneInfoList.add(drone);
+                        DroneController.droneRunnerRepository.sendMessageToLeader(FlyingMessage.DO_FLYING_STOP);
+                        DroneController.droneRunnerRepository.removeDroneRunner(droneRunner);
+
+                        break;
+                    }
+
+                }
+
+                /**
+                 * 신규 리더의 처리
+                 * - DroneRunner에서 리더 설정을 추가.
+                 * - 남은 Drone들에게 신규 리더가 선출 되었음을 알린다.
+                 */
+                System.out.println("===================================================================");
+                System.out.println("## 비행 대기했던 Drone들의 비행을 재개합니다.");
+                droneRunnerNewLeader.getDrone().setLeaderOrFollower("L");
+                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_RESUME);
             }
         }
     }

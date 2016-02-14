@@ -1,14 +1,12 @@
 package kr.co.korea;
 
-import kr.co.korea.domain.Drone;
-import kr.co.korea.domain.DroneSetting;
-import kr.co.korea.domain.FlyingInfo;
-import kr.co.korea.domain.FlyingMessage;
+import kr.co.korea.domain.*;
 import kr.co.korea.thread.ClientReceiverSimpleTest;
 import kr.co.korea.thread.ClientSender;
 
 import java.net.ConnectException;
 import java.net.Socket;
+import java.util.HashMap;
 
 /**
  * Created by ideapad on 2016-01-17.
@@ -28,7 +26,7 @@ public class MercuryClientSimpleTest {
             clientSender.start();
             clientReceiverSimpleTest.start();
 
-            Drone initDrone = new Drone("mercury", new DroneSetting(), new FlyingInfo());
+            Drone initDrone = new Drone("mercury", new DroneSetting(), new FlyingInfo(new FlightStatus(), new HashMap<String, Double>()));
 
 
             clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_READY);

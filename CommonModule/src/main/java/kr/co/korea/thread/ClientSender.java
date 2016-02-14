@@ -26,7 +26,6 @@ public class ClientSender extends Thread{
     }
 
     public void run() {
-        System.out.println("쓰레드명0: " + Thread.currentThread().getName());
         while(objectOutputStream != null){
 
         }

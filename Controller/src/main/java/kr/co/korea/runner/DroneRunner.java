@@ -61,13 +61,6 @@ public class DroneRunner extends Thread {
 
 
 
-                    /**
-                     * 리더로부터 새로운 리더가 선출 되었다는 메시지를 전송 받았을 때,
-                     * - 모든 팔로워들에게 비행 재개 메시지를 전송한다.
-                     */
-                    if(flyingMessage == FlyingMessage.STATUS_ELECTED_NEW_LEADER){
-                        DroneController.droneRunnerRepository.sendMessageToFollowers(FlyingMessage.DO_FLYING_RESUME);
-                    }
 
                     /**
                      * 팔로워들로부터 목적지에 도착했다는 메시지를 전송 받았을 때,

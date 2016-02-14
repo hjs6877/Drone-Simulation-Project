@@ -1,6 +1,7 @@
 package kr.co.korea.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,6 +21,10 @@ public class FlyingInfo implements Serializable {
     private long finalFlightTime;
     private double remainDistance;
 
+    public FlyingInfo(FlightStatus flightStatus, HashMap<String, Double> finalCoordination) {
+        this.finalFlightStatus = flightStatus;
+        this.finalCoordination = finalCoordination;
+    }
 
 
     public Map<String, Double> getFinalCoordination() {
