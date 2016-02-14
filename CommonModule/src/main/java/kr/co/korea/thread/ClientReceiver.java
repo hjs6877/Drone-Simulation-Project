@@ -39,8 +39,8 @@ public class ClientReceiver extends Thread {
             /**
              * TODO 비행을 수행하는 FlyRunner는 메시지의 상황에 맞게 시작되거나, 대기하거나, 재시작된다.
              */
-            Flyer flyer = new Flyer(socket, clientSender, "");      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
-            Thread flyRunner = new Thread(flyer);
+            FlyerSimpleTest flyerSimpleTest = new FlyerSimpleTest(socket, clientSender, "");      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
+            Thread flyRunner = new Thread(flyerSimpleTest);
 
             while (objectInputStream != null){
                 Object object = objectInputStream.readObject();
@@ -50,7 +50,7 @@ public class ClientReceiver extends Thread {
                     /**
                      * TODO 쓰레드가 시작된 상황에서 이부분이 가능한지 확인 필요. 리더 교체 플래그 셋팅을 위한 중요 핵심 포인트.
                      */
-                    flyer.setDrone(drone);
+                    flyerSimpleTest.setDrone(drone);
 
                     /**
                      * FLYING_START 메시지가 넘어 온다면 비행 시작.
@@ -76,7 +76,7 @@ public class ClientReceiver extends Thread {
                      */
                     if(drone.getFlyingInfo().getMessage() == FlyingMessage.DO_FLYING_WAIT){
                         System.out.println("++++ 수신 메시지: 리더 선출을 위해 비행 대기합니다..");
-                        flyer.waitFlight();
+                        flyerSimpleTest.waitFlight();
                     }
 
                     /**

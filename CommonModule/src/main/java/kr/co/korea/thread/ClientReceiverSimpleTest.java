@@ -40,8 +40,8 @@ public class ClientReceiverSimpleTest extends Thread {
             /**
              * TODO 비행을 수행하는 FlyRunner는 메시지의 상황에 맞게 시작되거나, 대기하거나, 재시작된다.
              */
-            Flyer flyer = new Flyer(socket, clientSender, name);      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
-            Thread flyRunner = new Thread(flyer);
+            FlyerSimpleTest flyerSimpleTest = new FlyerSimpleTest(socket, clientSender, name);      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
+            Thread flyRunner = new Thread(flyerSimpleTest);
 
             while (objectInputStream != null){
                 Object object = objectInputStream.readObject();
@@ -69,12 +69,12 @@ public class ClientReceiverSimpleTest extends Thread {
                     if(flyingMessage == FlyingMessage.DO_FLYING_WAIT){
 
                         System.out.println("++++ 수신 메시지: 리더 선출을 위해 비행 대기합니다..");
-                        flyer.waitMessage = "wait";
+                        flyerSimpleTest.waitMessage = "wait";
                         try {
                             Thread.sleep(5000);
-                            flyer.waitMessage = "";
-                            synchronized (flyer){
-                                flyer.notifyAll();
+                            flyerSimpleTest.waitMessage = "";
+                            synchronized (flyerSimpleTest){
+                                flyerSimpleTest.notifyAll();
                             }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
