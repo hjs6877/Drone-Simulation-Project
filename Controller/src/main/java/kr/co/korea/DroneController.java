@@ -7,7 +7,9 @@ import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
+import kr.co.korea.repository.DroneControllerServerRepository;
 import kr.co.korea.repository.DroneRunnerRepository;
+import kr.co.korea.runner.DroneRunner;
 import kr.co.korea.runner.DroneRunnerSimpleTest;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.util.MathUtils;
@@ -64,6 +66,7 @@ public class DroneController {
      * 최종 목적지까지로의 비행 임무를 완수할 가능성이 높아진다는것이다. 이부분을 적극 주장하자.
      */
     public static DroneRunnerRepository droneRunnerRepository = new DroneRunnerRepository();
+    public static DroneControllerServerRepository droneControllerServerRepository = new DroneControllerServerRepository();
 
 
     public static void main(String[] args) throws IOException {
@@ -134,6 +137,8 @@ public class DroneController {
      */
     public void startDroneControllerServer() throws IOException {
         DroneControllerServer droneControllerServer = new DroneControllerServer();
+        DroneController.droneControllerServerRepository.addDroneControllerServer(droneControllerServer);
+
         droneControllerServer.start();
     }
 
@@ -226,11 +231,11 @@ public class DroneController {
 
         System.out.println(numberOfDrone + "대의 Drone에 대한 정보를 설정합니다.");
 
-        Iterator<DroneRunnerSimpleTest> iterator = DroneController.droneRunnerRepository.iterator();
+        Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
         int i = 1;
         while(iterator.hasNext()){
-            DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
-            Drone drone = droneRunnerSimpleTest.getDrone();
+            DroneRunner droneRunner = iterator.next();
+            Drone drone = droneRunner.getDrone();
             String droneName = drone.getName();
 
             System.out.println("## " + droneName + "의 정보 설정 시작.");
@@ -281,9 +286,9 @@ public class DroneController {
 
         while(true){
             System.out.print("포메이션 타입 입력(1-Horizontal, 2-Vertical, 3-Triangle, 4-Diamond:");
-            Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
-
+//            Scanner scanner = new Scanner(System.in);
+//            String input = scanner.nextLine();
+            String input = "1";
             int startNum = 1;
             int endNum = 4;
 
@@ -319,9 +324,10 @@ public class DroneController {
             String departure = "";
 
             System.out.print("출발지 입력: ");
-            Scanner scanner1 = new Scanner(System.in);
-            departure = scanner1.nextLine();
+//            Scanner scanner1 = new Scanner(System.in);
+//            departure = scanner1.nextLine();
 
+            departure = "안암역";
             if(StringValidator.isEmpty(departure)){
                 System.out.println("출발지를 입력해주세요.");
                 continue;
@@ -355,8 +361,11 @@ public class DroneController {
             String destination = "";
 
             System.out.print("목적지 입력: ");
-            Scanner scanner1 = new Scanner(System.in);
-            destination = scanner1.nextLine();
+//            Scanner scanner1 = new Scanner(System.in);
+//            destination = scanner1.nextLine();
+
+            destination = "고려대역";
+
             if(StringValidator.isEmpty(destination)){
                 System.out.println("목적지를 입력해주세요.");
                 continue;
@@ -413,8 +422,9 @@ public class DroneController {
 
         while(true){
             System.out.print("속도 입력: ");
-            Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
+//            Scanner scanner = new Scanner(System.in);
+//            String input = scanner.nextLine();
+            String input = "60";
             int num = 1;
 
 
@@ -506,11 +516,11 @@ public class DroneController {
 
         TreeMap<Long, ErrorType> errorEvent;
 
-        Iterator<DroneRunnerSimpleTest> iterator = DroneController.droneRunnerRepository.iterator();
+        Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
 
         while(iterator.hasNext()){
-            DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
-            Drone drone = droneRunnerSimpleTest.getDrone();
+            DroneRunner droneRunner = iterator.next();
+            Drone drone = droneRunner.getDrone();
 
             String leaderOrFollower = drone.getLeaderOrFollower();
             long flightTime = setting.getFlightTime();
@@ -535,8 +545,9 @@ public class DroneController {
 
         while(true){
             System.out.print("비행을 시작하시겠습니까? 시작하시려면 'y'를 중단하시려면 'n'을 입력하세요: ");
-            Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
+//            Scanner scanner = new Scanner(System.in);
+//            String input = scanner.nextLine();
+            String input = "y";
 
             if(StringValidator.isEmpty(input)){
                 System.out.println("'y' 또는 'n'을 입력해주세요");
@@ -556,18 +567,18 @@ public class DroneController {
     }
 
     private void setDroneSetting(DroneSetting setting){
-        Iterator<DroneRunnerSimpleTest> iterator = DroneController.droneRunnerRepository.iterator();
+        Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
         while(iterator.hasNext()){
-            DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
-            Drone drone = droneRunnerSimpleTest.getDrone();
+            DroneRunner droneRunner = iterator.next();
+            Drone drone = droneRunner.getDrone();
 
             drone.setDroneSetting(setting);
+//            droneRunner.setDrone(drone);
         }
     }
     private void sendFlyingStartMessage() {
 
         System.out.println("## 비행 시작 메시지 전송.");
-
         DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_START);
     }
 }

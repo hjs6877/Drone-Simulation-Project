@@ -13,6 +13,7 @@ import java.util.TreeMap;
  * Created by ideapad on 2016-01-20.
  */
 public class Flyer extends Thread {
+    public FlyingMessage DO_FLYING_WAIT = null;
     private Socket socket;
     private ClientSender clientSender;
     Drone drone;
@@ -28,6 +29,7 @@ public class Flyer extends Thread {
     }
 
     public void run() {
+        System.out.println("쓰레드명2: " + Thread.currentThread().getName());
         /**
          * 비행 시작..
          */
@@ -78,7 +80,7 @@ public class Flyer extends Thread {
 
         FlightStatus status = new FlightStatus();
 
-        int countDown = 5;
+        int countDown = 3;
 
         System.out.println("######### Take off and now hovering..");
         try {
@@ -93,6 +95,8 @@ public class Flyer extends Thread {
 
             int startTime = 1;
 
+            FlyingInfo flyingInfo = drone.getFlyingInfo();
+
             /**
              * 실제 비행하는 부분. 리더일때와 팔로워 일때의 프로세스가 달라야 함.
              * 리더인지를 체크해서 별도 로직을 적용해야 함.
@@ -102,6 +106,14 @@ public class Flyer extends Thread {
                 Thread.sleep(1000);
                 System.out.println("###### " + atSeconds + "초 비행");
 
+                /**
+                 * 비행 대기 명령이 할당 되었을 때, 비행을 일시 중지한다.
+                 *
+                 */
+                if(DO_FLYING_WAIT == FlyingMessage.DO_FLYING_WAIT){
+                    System.out.println("비행 대기상태로 전환합니다..");
+                    this.waitFlight();
+                }
 
                 Map<String, Double> coordinationMapAtSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
                         destinationLongitude, destinationLatitude, flightTime, atSeconds);
@@ -131,7 +143,7 @@ public class Flyer extends Thread {
                     flightStatus.addErrorEvent(errorType);
                     flightStatus.updateErrorEvent();
 
-                    FlyingInfo flyingInfo = drone.getFlyingInfo();
+
 
                     /**
                      * 리더 교체가 필요한 장애가 발생했다면??
@@ -150,11 +162,9 @@ public class Flyer extends Thread {
                         drone.setFlyingInfo(flyingInfo);
 
                         /** 리더 교체 필요 메시지 전송 **/
-//                        clientSender.sendMessage(drone);
+                        clientSender.sendMessageOrDrone(FlyingMessage.STATUS_NEED_REPLACE_LEADER);
 
-                        /** 비행 대기 상태로 전환 **/
-                        System.out.println("리더인 " + drone.getName() +"이(가) 비행 대기 상태로 전환합니다..");
-                        this.waitFlight();
+                        // TODO Drone 객체도 이때 전송.
 
                     }else{      /** 팔로워들에게 적용되는 프로세스 **/
                         /**
@@ -164,7 +174,7 @@ public class Flyer extends Thread {
                     }
 
                 }else{  /** 장애가 발생하지 않았을 경우 **/
-
+                    flyingInfo.setFinalFlightStatus(flightStatus);
                 }
 
             }
@@ -173,8 +183,6 @@ public class Flyer extends Thread {
             Thread.sleep(3000);
 
 
-
-            FlyingInfo flyingInfo = drone.getFlyingInfo();
 
             Map<String, Double> coordinationMapAtArraivedSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
                     destinationLongitude, destinationLatitude, flightTime, flightTime);
@@ -200,29 +208,36 @@ public class Flyer extends Thread {
             /** 비행 도착 메시지 및 비행 정보 전송 **/
 //            clientSender.sendMessage(drone);
 
-            System.out.println("###### 도착 비행 정보..");
-            System.out.println("최종 좌표: " + coordinationMapAtArraivedSeconds.get("longitude") + ", " + coordinationMapAtArraivedSeconds.get("latitude"));
-            System.out.println("최종 비행 시간: " + flightTime + "초");
-            System.out.println("최종 비행 잔여 거리: " + remainDistance);
-
-
-            System.out.println("###### 누적 업데이트 된 최종 장애 정보 출력..");
-            System.out.println("TRIVIAL: " + flightStatus.getTrivialList().size());
-            System.out.println("MINOR: " + flightStatus.getMinorList().size());
-            System.out.println("MAJOR: " + flightStatus.getMajorList().size());
-            System.out.println("CRITICAL: " + flightStatus.getCriticalList().size());
-            System.out.println("BLOCK: " + flightStatus.getBlockList().size());
+//            System.out.println("###### 도착 비행 정보..");
+//            System.out.println("최종 좌표: " + coordinationMapAtArraivedSeconds.get("longitude") + ", " + coordinationMapAtArraivedSeconds.get("latitude"));
+//            System.out.println("최종 비행 시간: " + flightTime + "초");
+//            System.out.println("최종 비행 잔여 거리: " + remainDistance);
+//
+//
+//            System.out.println("###### 누적 업데이트 된 최종 장애 정보 출력..");
+//            System.out.println("TRIVIAL: " + flightStatus.getTrivialList().size());
+//            System.out.println("MINOR: " + flightStatus.getMinorList().size());
+//            System.out.println("MAJOR: " + flightStatus.getMajorList().size());
+//            System.out.println("CRITICAL: " + flightStatus.getCriticalList().size());
+//            System.out.println("BLOCK: " + flightStatus.getBlockList().size());
         } catch (InterruptedException e) {
             e.printStackTrace();
         } //catch (IOException e) {
+        catch (IOException e) {
+            e.printStackTrace();
+        }
 //            e.printStackTrace();
 //        }
 
         return status;
     }
 
+    private boolean isExistErrorEvent(ErrorType errorType) {
+        return (errorType != null) && (errorType != ErrorType.NORMAL);
+    }
+
+
     public synchronized void waitFlight(){
-        System.out.println("쓰레드 대기 상태로 진입..");
         try {
             this.wait();
         } catch (InterruptedException e) {
@@ -230,8 +245,5 @@ public class Flyer extends Thread {
         }
     }
 
-    private boolean isExistErrorEvent(ErrorType errorType) {
-        return (errorType != null) && (errorType != ErrorType.NORMAL);
-    }
 
 }

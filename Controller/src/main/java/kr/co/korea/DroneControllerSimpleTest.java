@@ -7,6 +7,7 @@ import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorType;
 import kr.co.korea.repository.DroneRunnerRepository;
+import kr.co.korea.repository.DroneRunnerRepositorySimpleTest;
 import kr.co.korea.runner.DroneRunnerSimpleTest;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.util.MathUtils;
@@ -62,7 +63,7 @@ public class DroneControllerSimpleTest {
      * 7. 이 연구의 핵심은 장애 발생 시, 드론간의 커뮤니케이션을 통해 동적으로 리더를 선정함으로 인해
      * 최종 목적지까지로의 비행 임무를 완수할 가능성이 높아진다는것이다. 이부분을 적극 주장하자.
      */
-    public static DroneRunnerRepository droneRunnerRepository = new DroneRunnerRepository();
+    public static DroneRunnerRepositorySimpleTest droneRunnerRepositorySimpleTest = new DroneRunnerRepositorySimpleTest();
 
 
     public static void main(String[] args) throws IOException {
@@ -176,13 +177,13 @@ public class DroneControllerSimpleTest {
     private void setNumberOfDrone(DroneSetting setting) throws IOException {
         int minNum = 2;
 
-        int numberOfDrone = DroneControllerSimpleTest.droneRunnerRepository.size();
+        int numberOfDrone = DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.size();
         if(numberOfDrone < minNum){
             System.out.println("현재 비행 가능한 Drone은 " + numberOfDrone + "대 입니다.");
             System.out.println("비행 가능한 Drone은 최소 " + minNum + "대 이상이여야 합니다. Drone 프로세스 가동 후 Controller를 재 가동해주세요.");
 
             if(numberOfDrone != 0){
-                DroneControllerSimpleTest.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_STOP);
+                DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessage.DO_FLYING_STOP);
             }
             System.exit(-1);
         }
@@ -225,7 +226,7 @@ public class DroneControllerSimpleTest {
 
         System.out.println(numberOfDrone + "대의 Drone에 대한 정보를 설정합니다.");
 
-        Iterator<DroneRunnerSimpleTest> iterator = DroneControllerSimpleTest.droneRunnerRepository.iterator();
+        Iterator<DroneRunnerSimpleTest> iterator = DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.iterator();
         int i = 1;
         while(iterator.hasNext()){
             DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
@@ -505,7 +506,7 @@ public class DroneControllerSimpleTest {
 
         TreeMap<Long, ErrorType> errorEvent;
 
-        Iterator<DroneRunnerSimpleTest> iterator = DroneControllerSimpleTest.droneRunnerRepository.iterator();
+        Iterator<DroneRunnerSimpleTest> iterator = DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.iterator();
 
         while(iterator.hasNext()){
             DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
@@ -545,7 +546,7 @@ public class DroneControllerSimpleTest {
             if(!input.toLowerCase().equals("y")){
                 System.out.println("비행 프로세스를 중단합니다.");
 
-                DroneControllerSimpleTest.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_STOP);
+                DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessage.DO_FLYING_STOP);
 
                 System.exit(-1);
             }
@@ -555,7 +556,7 @@ public class DroneControllerSimpleTest {
     }
 
     private void setDroneSetting(DroneSetting setting){
-        Iterator<DroneRunnerSimpleTest> iterator = DroneControllerSimpleTest.droneRunnerRepository.iterator();
+        Iterator<DroneRunnerSimpleTest> iterator = DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.iterator();
         while(iterator.hasNext()){
             DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
 //            Drone drone = droneRunnerSimpleTest.getDrone();
@@ -567,6 +568,6 @@ public class DroneControllerSimpleTest {
 
         System.out.println("## 비행 시작 메시지 전송.");
 
-        DroneControllerSimpleTest.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_START);
+        DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessage.DO_FLYING_START);
     }
 }

@@ -31,7 +31,7 @@ public class VenusClientSimpleTest {
             Drone initDrone = new Drone("venus", new DroneSetting(), new FlyingInfo());
 
 
-            clientSender.sendMessage(FlyingMessage.STATUS_FLYING_READY);
+            clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_READY);
         } catch(ConnectException ce) {
             ce.printStackTrace();
         } catch(Exception e) {

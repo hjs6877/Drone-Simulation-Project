@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by ideapad on 2016-02-10.
  */
 public enum FlyingMessage implements Serializable{
-    STATUS_FLYING_READY,        /** 비행 대기 상태 **/
+    STATUS_FLYING_READY,        /** 비행 준비 상태 **/
     STATUS_NEED_REPLACE_LEADER, /** 리더 교체 필요 상태 **/
     STATUS_FLYING_WAITED,       /** 비행 대기 상태 **/
     STATUS_ELECTED_NEW_LEADER,  /** 새로운 리더가 선출 된 상태 **/

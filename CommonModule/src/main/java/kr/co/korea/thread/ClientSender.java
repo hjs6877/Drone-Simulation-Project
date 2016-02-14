@@ -26,13 +26,14 @@ public class ClientSender extends Thread{
     }
 
     public void run() {
+        System.out.println("쓰레드명0: " + Thread.currentThread().getName());
         while(objectOutputStream != null){
 
         }
     } // run()
 
-    public void sendMessage(FlyingMessage flyingMessage) throws IOException {
-        objectOutputStream.writeObject(flyingMessage);
+    public synchronized void sendMessageOrDrone(Object object) throws IOException {
+        objectOutputStream.writeObject(object);
         objectOutputStream.flush();
     }
 }

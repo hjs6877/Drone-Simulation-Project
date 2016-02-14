@@ -107,7 +107,7 @@ public class FlyerSimpleTest extends Thread {
                     System.out.println("심각한 장애 발생으로 인해 리더 교체 프로세스 실시!!!!!!!!!!!!!!!!!!!!!!");
 
                     /** 리더 교체 필요 메시지 전송 **/
-                    clientSender.sendMessage(FlyingMessage.STATUS_NEED_REPLACE_LEADER);
+                    clientSender.sendMessageOrDrone(FlyingMessage.STATUS_NEED_REPLACE_LEADER);
 
                     /** 비행 대기 상태로 전환 **/
                     System.out.println("리더인 ㅇㅇ 이(가) 비행 대기 상태로 전환합니다..");
@@ -115,10 +115,6 @@ public class FlyerSimpleTest extends Thread {
 
                 }else{      /** 팔로워들에게 적용되는 프로세스 **/
 
-                }
-
-                if(waitMessage.equals("wait")){
-                    this.waitFlight();
                 }
 
             }
@@ -131,15 +127,6 @@ public class FlyerSimpleTest extends Thread {
         }
 
         return status;
-    }
-
-    public synchronized void waitFlight(){
-        System.out.println("쓰레드 대기 상태로 진입..");
-        try {
-            this.wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private boolean isExistErrorEvent(ErrorType errorType) {

@@ -4,6 +4,7 @@ import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessage;
+import kr.co.korea.thread.ClientReceiver;
 import kr.co.korea.thread.ClientReceiverSimpleTest;
 import kr.co.korea.thread.ClientSender;
 
@@ -15,6 +16,7 @@ import java.net.Socket;
  */
 public class VenusClient {
     public static void main(String args[]) {
+        System.out.println("쓰레드명 main: " + Thread.currentThread().getName());
         try {
             String serverIp = "127.0.0.1";
             // 소켓을 생성하여 연결을 요청한다.
@@ -22,15 +24,15 @@ public class VenusClient {
             System.out.println("Venus --> ControllerServer에 연결...");
 
             ClientSender clientSender = new ClientSender(socket);
-            ClientReceiverSimpleTest clientReceiverSimpleTest = new ClientReceiverSimpleTest(socket, clientSender, "");
+            ClientReceiver clientReceiver = new ClientReceiver(socket, clientSender);
 
             clientSender.start();
-            clientReceiverSimpleTest.start();
+            clientReceiver.start();
 
             Drone initDrone = new Drone("venus", new DroneSetting(), new FlyingInfo());
-            initDrone.getFlyingInfo().setMessage(FlyingMessage.STATUS_FLYING_READY);
 
-//            clientSender.sendMessage(initDrone);
+            clientSender.sendMessageOrDrone(initDrone);
+            clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_READY);
         } catch(ConnectException ce) {
             ce.printStackTrace();
         } catch(Exception e) {
