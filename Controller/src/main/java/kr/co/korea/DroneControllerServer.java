@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ideapad on 2016-02-12.
@@ -229,6 +230,82 @@ public class DroneControllerServer extends Thread {
              *  - DroneRunnerRepository에서 제거
              */
             this.doStopFollowerFlight();
+        }
+
+
+        /**
+         * 팔로워들로부터 목적지에 도착했다는 메시지를 전송 받았을 때,
+         * - DroneRunnerRepository에 저장된 DroneRunnerSimpleTest 갯수만큼 메시지를 받게되었을 때,
+         *      - DroneRunner로 부터 drone 객체를 가져와서 비행 결과에 대한 통계를 낸다.
+         *      - 통계 출력이 끝나면 모든 Drone 들에게 비행 종료 메시지를 전송한다.
+         */
+        if(flyingMessage == FlyingMessage.STATUS_FLYING_ARRIVED){
+            synchronized (DroneController.droneRunnerRepository){
+                DroneRunnerRepository.messageFlyingArrivedCount++;
+            }
+
+            System.out.println("===================================================================");
+            System.out.println("++++ 수신 메시지:  " + DroneRunnerRepository.messageFlyingWaitedCount +
+                    "번째 Drone 으로부터 목적지 도착 상태(STATUS_FLYING_ARRIVED) 메시지를 수신하였습니다..");
+            System.out.println("===================================================================");
+
+            System.out.println("===================================================================");
+            System.out.println("## DroneRunnerRepository.messageFlyingWaitedCount: " + DroneRunnerRepository.messageFlyingArrivedCount);
+            System.out.println("===================================================================");
+
+            if(DroneRunnerRepository.messageFlyingArrivedCount == DroneController.droneRunnerRepository.size()){
+                /**
+                 *  TODO 비행 결과에 대한 통계를 낸다.
+                 *  - 최종 비행 성공 Drone 댓 수.
+                 *  - 리더 교체 횟수. TODO
+                 *  - 최종 비행에 성공한 Drone의 최종 비행 정보.
+                 *      - Drone 이름.
+                 *      - 최종 비행 메시지.
+                 *      - 최종 비행 좌표.
+                 *      - 최종 비행 시간.
+                 *      - 비행 잔여 거리.
+                 */
+
+                System.out.println("#### 최종 비행 성공 Drone 댓 수: " + DroneController.droneRunnerRepository.size() + "대");
+                System.out.println("#### 최종 비행 정보 ####");
+
+                Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
+                while(iterator.hasNext()){
+                    DroneRunner droneRunner = iterator.next();
+                    Drone drone = droneRunner.getDrone();
+                    FlyingInfo flyingInfo = drone.getFlyingInfo();
+                    FlyingMessage finalflyingMessage = flyingInfo.getMessage();
+                    Map<String, Double> coordinationMapAtArraivedSeconds = flyingInfo.getFinalCoordination();
+                    double longitude = coordinationMapAtArraivedSeconds.get("longitude");
+                    double latitude = coordinationMapAtArraivedSeconds.get("latitude");
+                    long finalFlightTime = flyingInfo.getFinalFlightTime();
+                    double remainDistance = flyingInfo.getRemainDistance();
+
+                    System.out.println("#### Drone 이름: " + drone.getName());
+                    System.out.println("#### 최종 비행 메시지: " + finalflyingMessage);
+                    System.out.println("#### 최종 비행 좌표: " + longitude + ", " + latitude);
+                    System.out.println("#### 최종 비행 시간: " + finalFlightTime);
+                    System.out.println("#### 최종 잔여 비행 거리: " + remainDistance);
+                    System.out.println("==========================================");
+
+                    finalDroneInfoList.add(drone);
+                    DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_FINISH);
+                    DroneController.droneRunnerRepository.removeDroneRunner(droneRunner);
+                }
+
+
+                synchronized (DroneController.droneRunnerRepository){
+                    DroneRunnerRepository.messageFlyingArrivedCount = 0;
+                }
+
+
+                /**
+                 * 최종적으로 finalDroneInfoList 처리를 하고 난 다음에 모든 DroneRunner를 제거한다.
+                 */
+
+
+            }
+
         }
 
     }

@@ -1,8 +1,6 @@
 package kr.co.korea.repository;
 
-import kr.co.korea.DroneController;
 import kr.co.korea.DroneControllerServer;
-import kr.co.korea.domain.FlyingMessage;
 
 import java.util.Vector;
 

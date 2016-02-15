@@ -62,12 +62,12 @@ public class ErrorEventProvider {
         ErrorType[] errorTypes = this.getErrorTypes(errorLevel);
 
         ErrorType[] errorEvents = new ErrorType[errorEventSize];
-//        Arrays.fill(errorEvents, ErrorType.NORMAL);
+        Arrays.fill(errorEvents, ErrorType.NORMAL);
 
         /**
          * 테스트용. 초기 장애 이벤트 배열의 요소를 BLOCK 이벤트로 초기화 시킨다.
          */
-        Arrays.fill(errorEvents, ErrorType.BLOCK);
+//        Arrays.fill(errorEvents, ErrorType.BLOCK);
 
         for(int i=0; i < errorEventCount; i++){
             int minErrorTypeIndex = 0;

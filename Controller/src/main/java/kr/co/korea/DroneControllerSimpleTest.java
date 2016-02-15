@@ -6,7 +6,6 @@ import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorType;
-import kr.co.korea.repository.DroneRunnerRepository;
 import kr.co.korea.repository.DroneRunnerRepositorySimpleTest;
 import kr.co.korea.runner.DroneRunnerSimpleTest;
 import kr.co.korea.service.LocationProvider;
@@ -133,8 +132,8 @@ public class DroneControllerSimpleTest {
      * Controller Server Thread 시작.
      */
     public void startDroneControllerServer() throws IOException {
-        DroneControllerServer droneControllerServer = new DroneControllerServer();
-        droneControllerServer.start();
+        DroneControllerServer droneControllerServerNew = new DroneControllerServer();
+        droneControllerServerNew.start();
     }
 
 

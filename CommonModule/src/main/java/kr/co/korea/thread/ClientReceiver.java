@@ -31,7 +31,7 @@ public class ClientReceiver extends Thread {
             /**
              * TODO 비행을 수행하는 FlyRunner는 메시지의 상황에 맞게 시작되거나, 대기하거나, 재시작된다.
              */
-            FlyerNew flyerNew = new FlyerNew(socket, clientSender);      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
+            Flyer flyerNew = new Flyer(socket, clientSender);      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
             Thread flyRunner = new Thread(flyerNew);
 
             while (objectInputStream != null){
