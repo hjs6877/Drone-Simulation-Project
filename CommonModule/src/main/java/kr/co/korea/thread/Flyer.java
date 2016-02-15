@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Created by ideapad on 2016-01-20.
+ * 비행을 처리하는 쓰레드
  */
 public class Flyer extends Thread {
     public FlyingMessage DO_FLYING_WAIT = null;
