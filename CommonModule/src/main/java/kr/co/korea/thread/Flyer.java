@@ -110,7 +110,8 @@ public class Flyer extends Thread {
                  * 비행 대기 명령이 할당 되었을 때, 비행을 일시 중지한다.
                  *
                  */
-                if(DO_FLYING_WAIT == FlyingMessage.DO_FLYING_WAIT){
+                if(DO_FLYING_WAIT == FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER
+                        || DO_FLYING_WAIT == FlyingMessage.DO_FLYING_WAIT_FOR_STOP_FLYING){
                     System.out.println("===================================================================");
                     System.out.println("## 비행 대기상태로 전환합니다..");
                     System.out.println("===================================================================");
@@ -179,16 +180,21 @@ public class Flyer extends Thread {
                         System.out.println("===================================================================");
                         System.out.println("## 심각한 장애 발생으로 인해 팔로워 비행을 중단합니다.");
                         System.out.println("===================================================================");
-                        /**
-                         * TODO 팔로워도 심각한 장애가 발생하면 비행 중지를 해야 함. 중지 전, 비행 정보를 전송하고, DroneRunner에서도 제거 되어야 함.
-                         */
 
-//                        flyingInfo.setMessage(FlyingMessage.ST);
+
+                        flyingInfo.setMessage(FlyingMessage.STATUS_NEED_STOP_FLYING);
                         flyingInfo.setFinalCoordination(coordinationMapAtSeconds);
                         flyingInfo.setFinalFlightTime(atSeconds);
                         flyingInfo.setRemainDistance(remainDistance);
 
                         drone.setFlyingInfo(flyingInfo);
+//
+//                        System.out.println("===================================================================");
+//                        System.out.println("++++ 송신 메시지: 비행 중지 필요(STATUS_NEED_STOP_FLYING) 메시지를 송신하였습니다..");
+//                        System.out.println("===================================================================");
+//
+//                        /** 팔로워 비행 중지 필요 메시지 전송 **/
+//                        clientSender.sendMessageOrDrone(FlyingMessage.STATUS_NEED_STOP_FLYING);
                     }
 
                 }else{  /** 장애가 발생하지 않았을 경우 **/

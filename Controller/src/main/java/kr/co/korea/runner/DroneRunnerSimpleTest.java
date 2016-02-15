@@ -56,7 +56,7 @@ public class DroneRunnerSimpleTest extends Thread {
                     if(flyingMessage == FlyingMessage.STATUS_NEED_REPLACE_LEADER){
                         System.out.println("++++ 송신 메시지:  리더 교체 필요 상황이 발생하여 팔로워들을 비행 대기 상태로 전환합니다..");
 //                        DroneControllerSimpleTest.droneRunnerRepository.sendMessageToFollowers(FlyingMessage.DO_FLYING_WAIT);
-                        DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessage.DO_FLYING_WAIT);
+                        DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER);
                     }
 
                 }

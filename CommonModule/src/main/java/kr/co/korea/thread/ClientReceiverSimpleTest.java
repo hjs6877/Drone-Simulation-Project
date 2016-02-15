@@ -66,7 +66,7 @@ public class ClientReceiverSimpleTest extends Thread {
                     /**
                      * FLYING_WAIT 메시지가 넘어 온다면, 비행 대기. 쓰레드를 wait 시킨다.
                      */
-                    if(flyingMessage == FlyingMessage.DO_FLYING_WAIT){
+                    if(flyingMessage == FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER){
 
                         System.out.println("++++ 수신 메시지: 리더 선출을 위해 비행 대기합니다..");
                         flyerSimpleTest.waitMessage = "wait";

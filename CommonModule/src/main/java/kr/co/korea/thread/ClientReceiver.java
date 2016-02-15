@@ -80,22 +80,41 @@ public class ClientReceiver extends Thread {
                     }
 
                     /**
-                     * FLYING_WAIT 메시지가 넘어 온다면, 비행 대기. 쓰레드를 wait 시킨다.
+                     * 리더 교체를 위해 DO_FLYING_WAIT_FOR_REPLACE_LEADER 메시지가 넘어 온다면, 비행 대기. 쓰레드를 wait 시킨다.
                      * - 현재까지의 비행 정보를 DroneRunner에게 전송한다.
                      */
-                    if(flyingMessage == FlyingMessage.DO_FLYING_WAIT){
+                    if(flyingMessage == FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER){
                         System.out.println("===================================================================");
                         System.out.println("++++ 수신 메시지: 비행 대기 명령(DO_FLYING_WAIT) 메시지를 수신하였습니다..");
                         System.out.println("===================================================================");
 
                         /** 비행 대기 명령을 할당 **/
-                        flyer.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT;
+                        flyer.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER;
 
                         drone = flyer.getDrone();
 
                         clientSender.sendMessageOrDrone(drone);
                         Thread.sleep(1000);
-                        clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_WAITED);
+                        clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_WAITED_FOR_REPLACE_LEADER);
+                    }
+
+                    /**
+                     * 특정 팔로워의 비행 중지를 위해 DO_FLYING_WAIT_FOR_STOP_FLYING 메시지가 넘어 온다면, 비행 대기. 쓰레드를 wait 시킨다.
+                     * - 현재까지의 비행 정보를 DroneRunner에게 전송한다.
+                     */
+                    if(flyingMessage == FlyingMessage.DO_FLYING_WAIT_FOR_STOP_FLYING){
+                        System.out.println("===================================================================");
+                        System.out.println("++++ 수신 메시지: 비행 중지를 위한 비행 대기 명령(DO_FLYING_WAIT_FOR_STOP_FLYING) 메시지를 수신하였습니다..");
+                        System.out.println("===================================================================");
+
+                        /** 비행 대기 명령을 할당 **/
+                        flyer.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT_FOR_STOP_FLYING;
+
+                        drone = flyer.getDrone();
+
+                        clientSender.sendMessageOrDrone(drone);
+                        Thread.sleep(1000);
+                        clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_WAITED_FOR_STOP_FLYING);
                     }
 
                     /**

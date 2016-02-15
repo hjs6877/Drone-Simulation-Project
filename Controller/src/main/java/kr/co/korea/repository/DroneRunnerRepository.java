@@ -1,9 +1,10 @@
 package kr.co.korea.repository;
 
+import kr.co.korea.DroneController;
 import kr.co.korea.domain.Drone;
+import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.runner.DroneRunner;
-import kr.co.korea.runner.DroneRunnerSimpleTest;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -67,6 +68,30 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
                 }
             }catch (IOException ex){
                 System.out.println(droneRunner.toString() + "의 메시지 전송 에러");
+            }
+        }
+    }
+
+    /**
+     * 해당 메시지를 가지는 특정 팔로워에게 메시지 전송.
+     *
+     * @param flyingMessage
+     */
+    public void sendMessageToFollower(FlyingMessage flyingMessage) {
+        Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
+
+        while(iterator.hasNext()){
+            DroneRunner droneRunner = iterator.next();
+            Drone drone = droneRunner.getDrone();
+            String leaderOrFollower = drone.getLeaderOrFollower();
+            FlyingInfo flyingInfo = drone.getFlyingInfo();
+
+            try {
+                if((leaderOrFollower.equals("F")) && (flyingInfo.getMessage() == flyingInfo.getMessage())){
+                    droneRunner.sendMessageOrDrone(flyingMessage);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
