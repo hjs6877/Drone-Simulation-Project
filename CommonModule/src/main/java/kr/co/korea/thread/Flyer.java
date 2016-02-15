@@ -26,7 +26,6 @@ public class Flyer extends Thread {
     }
 
     public void run() {
-        System.out.println("쓰레드명2: " + Thread.currentThread().getName());
         /**
          * 비행 시작..
          */
@@ -66,20 +65,27 @@ public class Flyer extends Thread {
 
         long flightTime = setting.getFlightTime();
 
+        System.out.println("===================================================================");
         System.out.println("droneName: " + drone.getLeaderOrFollower());
-        System.out.println("리더 여부: " + drone.getLeaderOrFollower());
+        System.out.println("초기 리더 여부: " + drone.getLeaderOrFollower());
         System.out.println("출발지: " + setting.getDeparture());
         System.out.println("목적지: " + setting.getDestination());
         System.out.println("비행시간: " + setting.getFlightTime());
         System.out.println("장애 이벤트: " + errorEventMap);
+        System.out.println("===================================================================");
 
         int countDown = 3;
 
-        System.out.println("######### Take off and now hovering..");
+        System.out.println("===================================================================");
+        System.out.println("## Take off and now hovering..");
+        System.out.println("===================================================================");
+
         try {
             Thread.sleep(3000);
 
+            System.out.println("===================================================================");
             System.out.println(countDown + "초 후에 비행을 시작합니다..");
+            System.out.println("===================================================================");
 
             for(long i=countDown; i>0; i--){
                 System.out.println(i);
@@ -98,14 +104,16 @@ public class Flyer extends Thread {
              */
             for(long atSeconds=startTime; atSeconds<=flightTime; atSeconds++){
                 Thread.sleep(1000);
-                System.out.println("###### " + atSeconds + "초 비행");
-                System.out.println("리더 여부2: " + drone.getLeaderOrFollower());
+                System.out.println("## " + atSeconds + "초 비행");
+                System.out.println("## 현재 리더 여부: " + drone.getLeaderOrFollower());
                 /**
                  * 비행 대기 명령이 할당 되었을 때, 비행을 일시 중지한다.
                  *
                  */
                 if(DO_FLYING_WAIT == FlyingMessage.DO_FLYING_WAIT){
-                    System.out.println("비행 대기상태로 전환합니다..");
+                    System.out.println("===================================================================");
+                    System.out.println("## 비행 대기상태로 전환합니다..");
+                    System.out.println("===================================================================");
                     this.waitFlight();
                 }
 
@@ -144,31 +152,43 @@ public class Flyer extends Thread {
                     /**
                      * 리더 교체가 필요한 장애가 발생했다면??
                      * - 'STATUS_NEED_REPLACE_LEADER' 메시지 전송.
-                     * - 현재까지의 비행 정보를 컨트롤러에게 전송. TODO
+                     * - 현재까지의 비행 정보를 컨트롤러에게 전송.
                      * - 비행 대기 상태로 전환.
                      * TODO 여기서부터 리더에 대한 프로세스 진행.
                      */
                     if(drone.getLeaderOrFollower().equals("L") && flightStatus.hasThreshholdErrorEvent()) {
-                        System.out.println("심각한 장애 발생으로 인해 리더 교체 프로세스 실시!!!!!!!!!!!!!!!!!!!!!!");
-
+                        System.out.println("===================================================================");
+                        System.out.println("## 심각한 장애 발생으로 인해 리더 교체 프로세스를 실시합니다!!!!!!!");
+                        System.out.println("===================================================================");
 
                         flyingInfo.setMessage(FlyingMessage.STATUS_NEED_REPLACE_LEADER);
-
                         flyingInfo.setFinalCoordination(coordinationMapAtSeconds);
                         flyingInfo.setFinalFlightTime(atSeconds);
                         flyingInfo.setRemainDistance(remainDistance);
 
                         drone.setFlyingInfo(flyingInfo);
 
+                        System.out.println("===================================================================");
+                        System.out.println("++++ 송신 메시지: 리더 교체 필요(STATUS_NEED_REPLACE_LEADER) 메시지를 송신하였습니다..");
+                        System.out.println("===================================================================");
+
                         /** 리더 교체 필요 메시지 전송 **/
                         clientSender.sendMessageOrDrone(FlyingMessage.STATUS_NEED_REPLACE_LEADER);
 
                     }else if(flightStatus.hasThreshholdErrorEvent()){      /** 팔로워들에게 적용되는 프로세스 **/
-                        System.out.println("심각한 장애 발생으로 인해 팔로워 비행 중단.");    // TODO 추가 구현 필요.
+                        System.out.println("===================================================================");
+                        System.out.println("## 심각한 장애 발생으로 인해 팔로워 비행을 중단합니다.");
+                        System.out.println("===================================================================");
                         /**
                          * TODO 팔로워도 심각한 장애가 발생하면 비행 중지를 해야 함. 중지 전, 비행 정보를 전송하고, DroneRunner에서도 제거 되어야 함.
                          */
 
+//                        flyingInfo.setMessage(FlyingMessage.ST);
+                        flyingInfo.setFinalCoordination(coordinationMapAtSeconds);
+                        flyingInfo.setFinalFlightTime(atSeconds);
+                        flyingInfo.setRemainDistance(remainDistance);
+
+                        drone.setFlyingInfo(flyingInfo);
                     }
 
                 }else{  /** 장애가 발생하지 않았을 경우 **/
@@ -177,7 +197,10 @@ public class Flyer extends Thread {
 
             }
 
-            System.out.println("###### 목적지 도착. 착륙 대기중..");
+            System.out.println("===================================================================");
+            System.out.println("## 목적지 도착. 착륙 대기중..");
+            System.out.println("===================================================================");
+
             Thread.sleep(3000);
 
 

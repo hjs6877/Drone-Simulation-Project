@@ -5,7 +5,6 @@ import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.repository.DroneRunnerRepository;
 import kr.co.korea.runner.DroneRunner;
-import kr.co.korea.runner.DroneRunnerSimpleTest;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -52,20 +51,53 @@ public class DroneControllerServer extends Thread {
         //  TODO 메시지에 따라서 DroneRunnerRepository의 메시지 호출 메서드가 달라짐.
 
         /**
-         * 장애로 인해 리더 교체 메시지를 리더로부터 전송 받았을 때,
+         * 장애로 인해 리더로부터 리더 교체 필요(STATUS_NEED_REPLACE_LEADER) 메시지를  전송 받았을 때,
          * - 비행중인 모든 Drone들에 비행 대기 메시지를 전송한다.
          */
         if(flyingMessage == FlyingMessage.STATUS_NEED_REPLACE_LEADER){
-            System.out.println("++++ 수신 메시지:  리더 교체 필요 메시지를 수신하였습니다..");
-            System.out.println("++++ 송신 메시지:  리더 교체 필요 상황이 발생하여 모든 Drone 들을 비행 대기 상태로 전환합니다..");
-            DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_WAIT);
+            System.out.println("===================================================================");
+            System.out.println("++++ 수신 메시지:  리더 교체 필요(STATUS_NEED_REPLACE_LEADER) 메시지를 수신하였습니다..");
+            System.out.println("===================================================================");
+            /**
+             * '리더 교체 필요' 메시지를 전송한 자기 자신 이외에 추가로 1대의 Drone이 더 있어야 리더 교체를 할 수 있다.
+             */
+            if(DroneController.droneRunnerRepository.size() > 1){
+                System.out.println("===================================================================");
+                System.out.println("++++ 송신 메시지:  리더 교체 필요 상황이 발생하여 " +
+                        "모든 Drone 들에게 비행 대기 명령(DO_FLYING_WAIT) 메시지를 송신하였습니다..");
+                System.out.println("===================================================================");
+                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_WAIT);
+            }else{
+                System.out.println("===================================================================");
+                System.out.println("## 교체 할 리더가 없습니다. ");
+                System.out.println("===================================================================");
+                /**
+                 * 기존 리더의 처리. 리더를 교체할 Drone이 없으므로, 비행 정보를 finalDroneInfoList에 저장하고 비행을 중지한다.
+                 */
+                this.doStopLeaderFlight();
+            }
+
         }
 
         /**
+         * 장애로 인해 팔로워로부터 비행 중지 필요(STATUS_NEED_STOP_FLYING) 메시지를 전송 받았을 때,
+         * - 해당 Drone에게 비행 중지 메시지를 전송한다. TODO
+         */
+        if(flyingMessage == FlyingMessage.STATUS_NEED_STOP_FLYING){
+            System.out.println("===================================================================");
+            System.out.println("++++ 수신 메시지:  리더 교체 필요(STATUS_NEED_REPLACE_LEADER) 메시지를 수신하였습니다..");
+            System.out.println("===================================================================");
+
+
+        }
+
+
+        /**
          * Drone 들로부터 비행 일시 중지 상태를 알리는 메시지를 전송 받았을 때,
-         * - 모든 팔로워들로부터 메시지를 전송 받은 후, 리더에게 신규 리더 선출하라는 메시지를 전송한다.
+         * - 모든 팔로워들로부터 메시지를 전송 받은 후, 신규 리더를 선출한다.
          */
         if(flyingMessage == FlyingMessage.STATUS_FLYING_WAITED){
+
             /**
              * TODO 모든 Drone으로부터 메시지를 전송 받았는지 확인 후, 새로운 리더 선출을 위해
              * TODO 팔로워들의 현재까지의 누적 장애 이벤트를 비교,판단.
@@ -74,9 +106,19 @@ public class DroneControllerServer extends Thread {
                 DroneRunnerRepository.messageFlyingWaitedCount++;
             }
 
-            System.out.println("##DroneRunnerRepository.messageFlyingWaitedCount: " + DroneRunnerRepository.messageFlyingWaitedCount);
+            System.out.println("===================================================================");
+            System.out.println("++++ 수신 메시지:  " + DroneRunnerRepository.messageFlyingWaitedCount +
+                    "번째 팔로워로부터 비행 대기 상태(STATUS_FLYING_WAITED) 메시지를 수신하였습니다..");
+            System.out.println("===================================================================");
+
+            System.out.println("===================================================================");
+            System.out.println("## DroneRunnerRepository.messageFlyingWaitedCount: " + DroneRunnerRepository.messageFlyingWaitedCount);
+            System.out.println("===================================================================");
+
             if(DroneRunnerRepository.messageFlyingWaitedCount == DroneController.droneRunnerRepository.size()){
+                System.out.println("===================================================================");
                 System.out.println("## 모든 Drone이 비행 대기 상태가 되었습니다.");
+                System.out.println("===================================================================");
 
                 Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
                 DroneRunner droneRunnerNewLeader = null;
@@ -87,6 +129,7 @@ public class DroneControllerServer extends Thread {
                     FlyingInfo flyingInfo = drone.getFlyingInfo();
                     double totalErrorPoint = flyingInfo.getFinalFlightStatus().getTotalErrorPoint();
 
+                    System.out.println("===================================================================");
                     System.out.println("#### Drone 이름: " + drone.getName());
                     System.out.println("#### 리더 여부: " + drone.getLeaderOrFollower());
                     System.out.println("###### 누적 업데이트 된 최종 장애 정보 출력..");
@@ -112,31 +155,36 @@ public class DroneControllerServer extends Thread {
 
                 }
 
+                System.out.println("===================================================================");
+                System.out.println("## New Leader를 선출중입니다..");
+                System.out.println("===================================================================");
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("===================================================================");
                 System.out.println("## New Leader가 선출되었습니다.");
                 System.out.println("## New Leader: " + droneRunnerNewLeader.getDrone().getName());
                 System.out.println("===================================================================");
+
+
+                /**
+                 * 리더 선출 프로세스가 끝났으므로 비행 대기 카운트를 초기화 한다.
+                 */
+                synchronized (DroneController.droneRunnerRepository){
+                    DroneRunnerRepository.messageFlyingWaitedCount = 0;
+                }
+
                 /**
                  *  기존 리더의 처리
                  *  - finalDroneInfoList에 비행정보 저장.
                  *  - 비행 프로세스 종료 메시지 전송.
                  *  - DroneRunnerRepository에서 제거
                  */
-                Iterator<DroneRunner> iterator2 = DroneController.droneRunnerRepository.iterator();
-                while(iterator2.hasNext()) {
-                    DroneRunner droneRunner = iterator2.next();
-                    Drone drone = droneRunner.getDrone();
-                    String leaderOrFollower = drone.getLeaderOrFollower();
-
-                    if(leaderOrFollower.equals("L")){
-                        System.out.println("## 기존 Leader의 비행정보를 저장하고, 비행을 중단합니다.");
-                        finalDroneInfoList.add(drone);
-                        DroneController.droneRunnerRepository.sendMessageToLeader(FlyingMessage.DO_FLYING_STOP);
-                        DroneController.droneRunnerRepository.removeDroneRunner(droneRunner);
-
-                        break;
-                    }
-
-                }
+                this.doStopLeaderFlight();
 
                 /**
                  * 신규 리더의 처리
@@ -145,9 +193,43 @@ public class DroneControllerServer extends Thread {
                  */
                 System.out.println("===================================================================");
                 System.out.println("## 비행 대기했던 Drone들의 비행을 재개합니다.");
+                System.out.println("===================================================================");
+                System.out.println("++++ 송신 메시지: 비행 재개 명령(DO_FLYING_RESUME) 메시지를 송신하였습니다..");
+                System.out.println("===================================================================");
                 droneRunnerNewLeader.getDrone().setLeaderOrFollower("L");
                 DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_RESUME);
             }
         }
     }
+
+    private void doStopLeaderFlight(){
+        /**
+         *  기존 리더의 처리
+         *  - finalDroneInfoList에 비행정보 저장.
+         *  - 비행 프로세스 종료 메시지 전송.
+         *  - DroneRunnerRepository에서 제거
+         */
+        Iterator<DroneRunner> iterator2 = DroneController.droneRunnerRepository.iterator();
+        while(iterator2.hasNext()) {
+            DroneRunner droneRunner = iterator2.next();
+            Drone drone = droneRunner.getDrone();
+            String leaderOrFollower = drone.getLeaderOrFollower();
+
+            if(leaderOrFollower.equals("L")){
+                System.out.println("===================================================================");
+                System.out.println("## 기존 Leader의 비행정보를 저장하고, 비행을 중단합니다.");
+                System.out.println("===================================================================");
+                System.out.println("++++ 송신 메시지: " + drone.getName() + "에게 비행 중지 명령(DO_FLYING_STOP) 메시지를 송신하였습니다..");
+                System.out.println("===================================================================");
+
+                finalDroneInfoList.add(drone);
+                DroneController.droneRunnerRepository.sendMessageToLeader(FlyingMessage.DO_FLYING_STOP);
+                DroneController.droneRunnerRepository.removeDroneRunner(droneRunner);
+
+                break;
+            }
+
+        }
+    }
+
 }

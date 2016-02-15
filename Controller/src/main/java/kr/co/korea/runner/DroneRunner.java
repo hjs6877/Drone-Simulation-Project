@@ -1,9 +1,7 @@
 package kr.co.korea.runner;
 
 import kr.co.korea.DroneController;
-import kr.co.korea.DroneControllerSimpleTest;
 import kr.co.korea.domain.Drone;
-import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.repository.DroneRunnerRepository;
 
@@ -12,8 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by ideapad on 2016-02-11.
@@ -57,6 +53,9 @@ public class DroneRunner extends Thread {
 //                        System.err.println(drone.getName() + " 비행 준비 완료..");
                     }
 
+                    /**
+                     *  Drone Client 로부터 전송 받은 메시지 처리를 위해 DroneControllerServer 메시지 전달.
+                     */
                     DroneController.droneControllerServerRepository.get(0).setFlyingMessage(flyingMessage);
 
 

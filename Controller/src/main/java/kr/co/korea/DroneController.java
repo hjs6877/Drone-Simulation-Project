@@ -10,7 +10,6 @@ import kr.co.korea.error.ErrorType;
 import kr.co.korea.repository.DroneControllerServerRepository;
 import kr.co.korea.repository.DroneRunnerRepository;
 import kr.co.korea.runner.DroneRunner;
-import kr.co.korea.runner.DroneRunnerSimpleTest;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.util.MathUtils;
 import kr.co.korea.validator.StringValidator;
@@ -23,8 +22,9 @@ import java.util.*;
  */
 public class DroneController {
     /**
-     * TODO 장애 발생 시, 더이상 남은 Drone이 없을 경우, 종료 처리 프로세스
      * TODO 팔로워가 BlOCK 장애 상태가 될 경우의 처리.
+     *      - TODO 리더 교체를 위한 비행 대기와 팔로워 비행 중지 필요를 위한 해당 팔로워의 비행 대기를 각각 분리해서 처리.
+     * TODO 최종적으로 모든 Drone들의 비행 정보를 표시하는 처리.
      */
     /**
      * 1. 비행 환경 설정.

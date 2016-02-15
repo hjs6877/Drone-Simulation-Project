@@ -49,7 +49,7 @@ public class ClientReceiver extends Thread {
                 if(flyingMessage != null){
 
                     /**
-                     * TODO 쓰레드가 시작된 상황에서 이부분이 가능한지 확인 필요. 리더 교체 플래그 셋팅을 위한 중요 핵심 포인트.
+                     * TODO 리더 교체 플래그 셋팅을 위한 중요 핵심 포인트.
                      */
                     flyer.setDrone(drone);
 
@@ -57,8 +57,11 @@ public class ClientReceiver extends Thread {
                      * FLYING_START 메시지가 넘어 온다면 비행 시작.
                      */
                     if(flyingMessage == FlyingMessage.DO_FLYING_START){
-                        System.out.println(drone.getName() + "이 비행을 시작합니다.");
-
+                        System.out.println("===================================================================");
+                        System.out.println("++++ 수신 메시지:  비행 시작 명령(DO_FLYING_START) 메시지를 수신하였습니다..");
+                        System.out.println("===================================================================");
+                        System.out.println("## " + drone.getName() + " 이(가) 비행을 시작합니다.");
+                        System.out.println("===================================================================");
                         flyRunner.start();
                     }
 
@@ -66,7 +69,11 @@ public class ClientReceiver extends Thread {
                      * DO_FLYING_STOP 메시지가 넘어 온다면, 비행 중지. 시스템 프로세스를 죽인다.
                      */
                     if(flyingMessage == FlyingMessage.DO_FLYING_STOP){
-                        System.out.println("비행을 중단합니다..");
+                        System.out.println("===================================================================");
+                        System.out.println("++++ 수신 메시지:  비행 중단 명령(DO_FLYING_STOP) 메시지를 수신하였습니다..");
+                        System.out.println("===================================================================");
+                        System.out.println("## 비행을 중단합니다..");
+                        System.out.println("===================================================================");
                         objectInputStream.close();
                         socket.close();
                         System.exit(-1);
@@ -77,7 +84,9 @@ public class ClientReceiver extends Thread {
                      * - 현재까지의 비행 정보를 DroneRunner에게 전송한다.
                      */
                     if(flyingMessage == FlyingMessage.DO_FLYING_WAIT){
-                        System.out.println("++++ 수신 메시지: 리더 선출을 위해 비행 대기합니다..");
+                        System.out.println("===================================================================");
+                        System.out.println("++++ 수신 메시지: 비행 대기 명령(DO_FLYING_WAIT) 메시지를 수신하였습니다..");
+                        System.out.println("===================================================================");
 
                         /** 비행 대기 명령을 할당 **/
                         flyer.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT;
@@ -94,7 +103,11 @@ public class ClientReceiver extends Thread {
                      * TODO 쓰레드를 깨우는건 여기서 깨운다.
                      */
                     if(flyingMessage == FlyingMessage.DO_FLYING_RESUME){
-                        System.out.println("++++ 수신 메시지: 비행을 재개합니다..");
+                        System.out.println("===================================================================");
+                        System.out.println("++++ 수신 메시지: 비행 재개 명령(DO_FLYING_RESUME) 메시지를 수신하였습니다..");
+                        System.out.println("===================================================================");
+                        System.out.println("## 비행을 재개합니다..");
+                        System.out.println("===================================================================");
                         flyer.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_RESUME;
                         synchronized (flyer){
                             flyer.notifyAll();
@@ -102,10 +115,15 @@ public class ClientReceiver extends Thread {
                     }
 
                     /**
-                     * DO_FLYING_FINISH 메시지가 넘어 온다면, 착륙 완료 후, 비행을 중단한다. 곧, 시스템 프로세스를 죽인다.
+                     * DO_FLYING_FINISH 메시지가 넘어 온다면, 착륙 완료 후, 비행을 중단한다. 시스템 프로세스를 죽인다.
                      */
                     if(flyingMessage == FlyingMessage.DO_FLYING_FINISH){
-                        System.out.println("착륙 완료. 비행을 중단합니다..");
+                        System.out.println("===================================================================");
+                        System.out.println("++++ 수신 메시지: 비행 종료 명령 메시지를 수신하였습니다..");
+                        System.out.println("===================================================================");
+                        System.out.println("## 착륙 완료. 비행을 종료합니다..");
+                        System.out.println("===================================================================");
+
                         objectInputStream.close();
                         socket.close();
                         System.exit(-1);
