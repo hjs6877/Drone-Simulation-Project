@@ -12,7 +12,7 @@ import java.util.TreeMap;
 /**
  * 비행을 처리하는 쓰레드
  */
-public class Flyer extends Thread {
+public class FlyerNew extends Thread {
     public FlyingMessage DO_FLYING_WAIT = null;
     private Socket socket;
     private ClientSender clientSender;
@@ -20,7 +20,7 @@ public class Flyer extends Thread {
     TreeMap<Long, ErrorType> errorEventMap;
     DroneSetting setting;
 
-    public Flyer(Socket socket, ClientSender clientSender) throws IOException {
+    public FlyerNew(Socket socket, ClientSender clientSender) throws IOException {
         this.socket = socket;
         this.clientSender = clientSender;
     }
@@ -182,7 +182,7 @@ public class Flyer extends Thread {
                         System.out.println("===================================================================");
 
 
-                        flyingInfo.setMessage(FlyingMessage.STATUS_NEED_STOP_FLYING);
+                        flyingInfo.setMessage(FlyingMessage.STATUS_STOPPED_FLYING);
                         flyingInfo.setFinalCoordination(coordinationMapAtSeconds);
                         flyingInfo.setFinalFlightTime(atSeconds);
                         flyingInfo.setRemainDistance(remainDistance);
@@ -190,7 +190,7 @@ public class Flyer extends Thread {
                         drone.setFlyingInfo(flyingInfo);
 
                         System.out.println("===================================================================");
-                        System.out.println("++++ 송신 메시지: 비행 중지 필요(STATUS_NEED_STOP_FLYING) 메시지를 송신하였습니다..");
+                        System.out.println("++++ 송신 메시지: 비행 중지 상태(STATUS_STOPPED_FLYING) 메시지를 송신하였습니다..");
                         System.out.println("===================================================================");
 
                         /**
@@ -198,8 +198,11 @@ public class Flyer extends Thread {
                          * TODO 해당 팔로워만 DronRunnerRepository에서 선택하기 위해서는 STATUS_NEED_STOP_FLYING 메시지를 포함한
                          * TODO drone 객체를 함께 전송해주어야 한다.
                          **/
-                        clientSender.sendMessageOrDrone(FlyingMessage.STATUS_NEED_STOP_FLYING);
+                        clientSender.sendMessageOrDrone(FlyingMessage.STATUS_STOPPED_FLYING);
                         clientSender.sendMessageOrDrone(drone);
+
+                        Thread.sleep(1000);
+                        System.exit(-1);
                     }
 
                 }else{  /** 장애가 발생하지 않았을 경우 **/
