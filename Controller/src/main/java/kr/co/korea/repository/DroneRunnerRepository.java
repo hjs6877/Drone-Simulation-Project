@@ -75,9 +75,12 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
     /**
      * 해당 메시지를 가지는 특정 팔로워에게 메시지 전송.
      *
-     * @param flyingMessage
+     * @param flyingMessageForMatch
+     * @param flyingMessageForOrder
      */
-    public void sendMessageToFollower(FlyingMessage flyingMessage) {
+    public DroneRunner sendMessageToFollower(FlyingMessage flyingMessageForMatch, FlyingMessage flyingMessageForOrder) {
+        DroneRunner matchedDroneRunner = null;
+
         Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
 
         while(iterator.hasNext()){
@@ -87,12 +90,16 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
             FlyingInfo flyingInfo = drone.getFlyingInfo();
 
             try {
-                if((leaderOrFollower.equals("F")) && (flyingInfo.getMessage() == flyingInfo.getMessage())){
-                    droneRunner.sendMessageOrDrone(flyingMessage);
+                if((leaderOrFollower.equals("F")) && (flyingMessageForMatch == flyingInfo.getMessage())){
+                    droneRunner.sendMessageOrDrone(flyingMessageForOrder);
+                    matchedDroneRunner = droneRunner;
+                    break;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
+        return matchedDroneRunner;
     }
 }

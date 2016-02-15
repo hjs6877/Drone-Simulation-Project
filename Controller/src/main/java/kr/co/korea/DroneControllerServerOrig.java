@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by ideapad on 2016-02-12.
  */
-public class DroneControllerServer extends Thread {
+public class DroneControllerServerOrig extends Thread {
     private int serverPort = 5555;
     private List<Drone> finalDroneInfoList = new ArrayList<Drone>();
 

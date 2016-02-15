@@ -12,7 +12,7 @@ import java.util.TreeMap;
 /**
  * 비행을 처리하는 쓰레드
  */
-public class Flyer extends Thread {
+public class FlyerOrig extends Thread {
     public FlyingMessage DO_FLYING_WAIT = null;
     private Socket socket;
     private ClientSender clientSender;
@@ -20,7 +20,7 @@ public class Flyer extends Thread {
     TreeMap<Long, ErrorType> errorEventMap;
     DroneSetting setting;
 
-    public Flyer(Socket socket, ClientSender clientSender) throws IOException {
+    public FlyerOrig(Socket socket, ClientSender clientSender) throws IOException {
         this.socket = socket;
         this.clientSender = clientSender;
     }

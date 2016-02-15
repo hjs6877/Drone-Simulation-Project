@@ -81,7 +81,9 @@ public class ClientReceiver extends Thread {
 
                     /**
                      * 리더 교체를 위해 DO_FLYING_WAIT_FOR_REPLACE_LEADER 메시지가 넘어 온다면, 비행 대기. 쓰레드를 wait 시킨다.
+                     * - 팔로워들을 비행 대기 시킨다.
                      * - 현재까지의 비행 정보를 DroneRunner에게 전송한다.
+                     * - 리더 교체를 위한 비행 대기 상태(STATUS_FLYING_WAITED_FOR_REPLACE_LEADER) 메시지를 송신한다.
                      */
                     if(flyingMessage == FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER){
                         System.out.println("===================================================================");
@@ -100,7 +102,9 @@ public class ClientReceiver extends Thread {
 
                     /**
                      * 특정 팔로워의 비행 중지를 위해 DO_FLYING_WAIT_FOR_STOP_FLYING 메시지가 넘어 온다면, 비행 대기. 쓰레드를 wait 시킨다.
+                     * - 해당 팔로워를 비행 대기 시킨다.
                      * - 현재까지의 비행 정보를 DroneRunner에게 전송한다.
+                     * - 비행 중지를 위한 비행 대기 상태 메시지(STATUS_FLYING_WAITED_FOR_STOP_FLYING)를 송신한다.
                      */
                     if(flyingMessage == FlyingMessage.DO_FLYING_WAIT_FOR_STOP_FLYING){
                         System.out.println("===================================================================");
