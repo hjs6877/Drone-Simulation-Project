@@ -78,7 +78,7 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
      * @param flyingMessageForMatch
      * @param flyingMessageForOrder
      */
-    public DroneRunner sendMessageToFollower(FlyingMessage flyingMessageForMatch, FlyingMessage flyingMessageForOrder) {
+    public synchronized DroneRunner sendMessageToFollower(FlyingMessage flyingMessageForMatch, FlyingMessage flyingMessageForOrder) {
         DroneRunner matchedDroneRunner = null;
 
         Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();

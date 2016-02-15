@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class DroneController {
     /**
-     * TODO 목적지에 도착한 Drone들에 대한 모든 Drone들의 비행 정보를 표시하는 처리. 테스트 필요.
+     * TODO 목적지에 도착한 Drone들에 대한 모든 Drone들의 비행 정보를 표시하는 처리. 한번 더 메시지를 전달 하도록 수정 필요.
      * TODO 중간에 비행이 완전 중지 될 경우 Drone들의 비행 정보를 표시하는 처리.
      * 팔로워에 심각한 장애가 발생하여 비행 대긴 시킨 시점과 리더에 심각한 장애가 발생하여
      * 모든 팔로워들을 비행 대기 시킨 시점이 겹칠 경우 syncronize 할 필요가 있음. TODO

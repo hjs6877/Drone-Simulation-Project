@@ -298,12 +298,6 @@ public class DroneControllerServer extends Thread {
                     DroneRunnerRepository.messageFlyingArrivedCount = 0;
                 }
 
-
-                /**
-                 * 최종적으로 finalDroneInfoList 처리를 하고 난 다음에 모든 DroneRunner를 제거한다.
-                 */
-
-
             }
 
         }

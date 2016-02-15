@@ -237,21 +237,26 @@ public class Flyer extends Thread {
             flyingInfo.setFinalFlightTime(flightTime);
             flyingInfo.setRemainDistance(remainDistance);
 
-            /** 비행 도착 메시지 및 비행 정보 전송 **/
+            drone.setFlyingInfo(flyingInfo);
+
+            /** 비행 도착 메시지 및 비행 정보 전송 // TODO 수정 필요.**/
+            clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_ARRIVED);
             clientSender.sendMessageOrDrone(drone);
 
-            System.out.println("###### 도착 비행 정보..");
+
+            System.out.println("===================================================================");
+            System.out.println("## 도착 비행 정보..");
             System.out.println("최종 좌표: " + coordinationMapAtArraivedSeconds.get("longitude") + ", " + coordinationMapAtArraivedSeconds.get("latitude"));
             System.out.println("최종 비행 시간: " + flightTime + "초");
             System.out.println("최종 비행 잔여 거리: " + remainDistance);
-
-
+            System.out.println("===================================================================");
             System.out.println("###### 누적 업데이트 된 최종 장애 정보 출력..");
             System.out.println("TRIVIAL: " + flightStatus.getTrivialList().size());
             System.out.println("MINOR: " + flightStatus.getMinorList().size());
             System.out.println("MAJOR: " + flightStatus.getMajorList().size());
             System.out.println("CRITICAL: " + flightStatus.getCriticalList().size());
             System.out.println("BLOCK: " + flightStatus.getBlockList().size());
+            System.out.println("===================================================================");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } //catch (IOException e) {

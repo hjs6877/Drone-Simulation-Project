@@ -81,7 +81,7 @@ public class DroneRunner extends Thread {
         }
     }
 
-    public void sendMessageOrDrone(FlyingMessage flyingMessage) throws IOException {
+    public synchronized void sendMessageOrDrone(FlyingMessage flyingMessage) throws IOException {
         this.objectOutputStream.writeObject(drone);
         this.objectOutputStream.writeObject(flyingMessage);
     }
