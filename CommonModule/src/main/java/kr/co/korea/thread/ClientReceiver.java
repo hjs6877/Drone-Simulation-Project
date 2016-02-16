@@ -1,7 +1,9 @@
 package kr.co.korea.thread;
 
 import kr.co.korea.domain.Drone;
+import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessage;
+import kr.co.korea.domain.FlyingMessageType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -31,8 +33,8 @@ public class ClientReceiver extends Thread {
             /**
              * TODO 비행을 수행하는 FlyRunner는 메시지의 상황에 맞게 시작되거나, 대기하거나, 재시작된다.
              */
-            Flyer flyerNew = new Flyer(socket, clientSender);      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
-            Thread flyRunner = new Thread(flyerNew);
+            Flyer flyer = new Flyer(socket, clientSender);      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
+            Thread flyRunner = new Thread(flyer);
 
             while (objectInputStream != null){
                 Object object = objectInputStream.readObject();
@@ -47,16 +49,16 @@ public class ClientReceiver extends Thread {
                 }
 
                 if(flyingMessage != null){
-
+                    FlyingMessageType flyingMessageType = flyingMessage.getFlyingMessageType();
                     /**
                      * TODO 리더 교체 플래그 셋팅을 위한 중요 핵심 포인트.
                      */
-                    flyerNew.setDrone(drone);
+                    flyer.setDrone(drone);
 
                     /**
                      * FLYING_START 메시지가 넘어 온다면 비행 시작.
                      */
-                    if(flyingMessage == FlyingMessage.DO_FLYING_START){
+                    if(flyingMessageType == FlyingMessageType.DO_FLYING_START){
                         System.out.println("===================================================================");
                         System.out.println("++++ 수신 메시지:  비행 시작 명령(DO_FLYING_START) 메시지를 수신하였습니다..");
                         System.out.println("===================================================================");
@@ -68,7 +70,7 @@ public class ClientReceiver extends Thread {
                     /**
                      * DO_FLYING_STOP 메시지가 넘어 온다면, 비행 중지. 시스템 프로세스를 죽인다.
                      */
-                    if(flyingMessage == FlyingMessage.DO_FLYING_STOP){
+                    if(flyingMessageType == FlyingMessageType.DO_FLYING_STOP){
                         System.out.println("===================================================================");
                         System.out.println("++++ 수신 메시지:  비행 중단 명령(DO_FLYING_STOP) 메시지를 수신하였습니다..");
                         System.out.println("===================================================================");
@@ -85,19 +87,25 @@ public class ClientReceiver extends Thread {
                      * - 현재까지의 비행 정보를 DroneRunner에게 전송한다.
                      * - 리더 교체를 위한 비행 대기 상태(STATUS_FLYING_WAITED_FOR_REPLACE_LEADER) 메시지를 송신한다.
                      */
-                    if(flyingMessage == FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER){
+                    if(flyingMessageType == FlyingMessageType.DO_FLYING_WAIT_FOR_REPLACE_LEADER){
                         System.out.println("===================================================================");
                         System.out.println("++++ 수신 메시지: 비행 대기 명령(DO_FLYING_WAIT) 메시지를 수신하였습니다..");
                         System.out.println("===================================================================");
 
                         /** 비행 대기 명령을 할당 **/
-                        flyerNew.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER;
+                        flyer.DO_FLYING_WAIT = FlyingMessageType.DO_FLYING_WAIT_FOR_REPLACE_LEADER;
 
-                        drone = flyerNew.getDrone();
+                        drone = flyer.getDrone();
+                        FlyingInfo flyingInfo = drone.getFlyingInfo();
+                        FlyingMessage flyingMessageNew = flyingInfo.getFlyingMessage();
 
-                        clientSender.sendMessageOrDrone(drone);
-                        Thread.sleep(1000);
-                        clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_WAITED_FOR_REPLACE_LEADER);
+
+                        flyingMessageNew.setFlyingMessageType(FlyingMessageType.STATUS_FLYING_WAITED_FOR_REPLACE_LEADER);
+                        flyingMessageNew.setDroneName(drone.getName());
+                        flyingInfo.setFlyingMessage(flyingMessageNew);
+                        drone.setFlyingInfo(flyingInfo);
+
+                        clientSender.sendMessageOrDrone(flyingMessageNew);
                     }
 
                     /**
@@ -106,41 +114,75 @@ public class ClientReceiver extends Thread {
                      * - 현재까지의 비행 정보를 DroneRunner에게 전송한다.
                      * - 비행 중지를 위한 비행 대기 상태 메시지(STATUS_FLYING_WAITED_FOR_STOP_FLYING)를 송신한다.
                      */
-                    if(flyingMessage == FlyingMessage.DO_FLYING_WAIT_FOR_STOP_FLYING){
+                    if(flyingMessageType == FlyingMessageType.DO_FLYING_WAIT_FOR_STOP_FLYING){
                         System.out.println("===================================================================");
                         System.out.println("++++ 수신 메시지: 비행 중지를 위한 비행 대기 명령(DO_FLYING_WAIT_FOR_STOP_FLYING) 메시지를 수신하였습니다..");
                         System.out.println("===================================================================");
 
                         /** 비행 대기 명령을 할당 **/
-                        flyerNew.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT_FOR_STOP_FLYING;
+                        flyer.DO_FLYING_WAIT = FlyingMessageType.DO_FLYING_WAIT_FOR_STOP_FLYING;
 
-                        drone = flyerNew.getDrone();
+                        drone = flyer.getDrone();
+                        FlyingInfo flyingInfo = drone.getFlyingInfo();
+                        FlyingMessage flyingMessageNew = flyingInfo.getFlyingMessage();
 
-                        clientSender.sendMessageOrDrone(drone);
-                        Thread.sleep(1000);
-                        clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_WAITED_FOR_STOP_FLYING);
+
+                        flyingMessageNew.setFlyingMessageType(FlyingMessageType.STATUS_FLYING_WAITED_FOR_STOP_FLYING);
+                        flyingMessageNew.setDroneName(drone.getName());
+                        flyingInfo.setFlyingMessage(flyingMessageNew);
+                        drone.setFlyingInfo(flyingInfo);
+
+                        clientSender.sendMessageOrDrone(flyingMessageNew);
+                    }
+
+
+                    /**
+                     * 특정 Drone의 비행 종료를 위해 DO_FLYING_WAIT_FOR_FINISH_FLYING 메시지가 넘어 온다면, 비행 대기. 쓰레드를 wait 시킨다.
+                     * - 해당 팔로워를 비행 대기 시킨다.
+                     * - 현재까지의 비행 정보를 DroneRunner에게 전송한다.
+                     * - 비행 종료를 위한 비행 대기 상태 메시지(STATUS_FLYING_WAITED_FOR_FINISH_FLYING)를 송신한다.
+                     */
+                    if(flyingMessageType == FlyingMessageType.DO_FLYING_WAIT_FOR_FINISH_FLYING){
+                        System.out.println("===================================================================");
+                        System.out.println("++++ 수신 메시지: 비행 종료를 위한 비행 대기 명령(DO_FLYING_WAIT_FOR_FINISH_FLYING) 메시지를 수신하였습니다..");
+                        System.out.println("===================================================================");
+
+                        /** 비행 대기 명령을 할당 **/
+                        flyer.DO_FLYING_WAIT = FlyingMessageType.DO_FLYING_WAIT_FOR_FINISH_FLYING;
+
+                        drone = flyer.getDrone();
+                        FlyingInfo flyingInfo = drone.getFlyingInfo();
+                        FlyingMessage flyingMessageNew = flyingInfo.getFlyingMessage();
+
+
+                        flyingMessageNew.setFlyingMessageType(FlyingMessageType.STATUS_FLYING_WAITED_FOR_FINISH_FLYING);
+                        flyingMessageNew.setDroneName(drone.getName());
+                        flyingInfo.setFlyingMessage(flyingMessageNew);
+                        drone.setFlyingInfo(flyingInfo);
+
+                        clientSender.sendMessageOrDrone(flyingMessageNew);
                     }
 
                     /**
                      * FLYING_RESUME 메시지가 넘어 온다면, 비행 재개.
                      * TODO 쓰레드를 깨우는건 여기서 깨운다.
                      */
-                    if(flyingMessage == FlyingMessage.DO_FLYING_RESUME){
+                    if(flyingMessageType == FlyingMessageType.DO_FLYING_RESUME){
                         System.out.println("===================================================================");
                         System.out.println("++++ 수신 메시지: 비행 재개 명령(DO_FLYING_RESUME) 메시지를 수신하였습니다..");
                         System.out.println("===================================================================");
                         System.out.println("## 비행을 재개합니다..");
                         System.out.println("===================================================================");
-                        flyerNew.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_RESUME;
-                        synchronized (flyerNew){
-                            flyerNew.notifyAll();
+                        flyer.DO_FLYING_WAIT = FlyingMessageType.DO_FLYING_RESUME;
+                        synchronized (flyer){
+                            flyer.notifyAll();
                         }
                     }
 
                     /**
                      * DO_FLYING_FINISH 메시지가 넘어 온다면, 착륙 완료 후, 비행을 중단한다. 시스템 프로세스를 죽인다.
                      */
-                    if(flyingMessage == FlyingMessage.DO_FLYING_FINISH){
+                    if(flyingMessageType == FlyingMessageType.DO_FLYING_FINISH){
                         System.out.println("===================================================================");
                         System.out.println("++++ 수신 메시지: 비행 종료 명령 메시지를 수신하였습니다..");
                         System.out.println("===================================================================");
@@ -152,10 +194,6 @@ public class ClientReceiver extends Thread {
                         System.exit(-1);
                     }
 
-
-
-
-
                 }
             }
 
@@ -164,8 +202,6 @@ public class ClientReceiver extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     } // run

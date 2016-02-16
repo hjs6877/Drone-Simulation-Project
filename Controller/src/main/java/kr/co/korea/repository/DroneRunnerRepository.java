@@ -4,6 +4,7 @@ import kr.co.korea.DroneController;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessage;
+import kr.co.korea.domain.FlyingMessageType;
 import kr.co.korea.runner.DroneRunner;
 
 import java.io.IOException;
@@ -14,7 +15,6 @@ import java.util.Vector;
  * Created by ideapad on 2016-02-11.
  */
 public class DroneRunnerRepository extends Vector<DroneRunner> {
-    public static int messageFlyingArrivedCount = 0;
     public static int messageFlyingWaitedCount = 0;
 
     public synchronized void addDroneRunner(DroneRunner droneRunner) {
@@ -27,12 +27,22 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
         }
     }
 
-    public synchronized void sendMessageToAll(FlyingMessage flyingMessage){
+    public synchronized void sendMessageToAll(FlyingMessageType flyingMessageType){
         Iterator<DroneRunner> iterator = this.iterator();
         while (iterator.hasNext()){
             DroneRunner droneRunner = iterator.next();
+            Drone drone = droneRunner.getDrone();
+            FlyingInfo flyingInfo = drone.getFlyingInfo();
+            FlyingMessage flyingMessageNew = flyingInfo.getFlyingMessage();
+
+
+            flyingMessageNew.setFlyingMessageType(flyingMessageType);
+            flyingMessageNew.setDroneName(drone.getName());
+            flyingInfo.setFlyingMessage(flyingMessageNew);
+            drone.setFlyingInfo(flyingInfo);
+
             try{
-                droneRunner.sendMessageOrDrone(flyingMessage);
+                droneRunner.sendMessageOrDrone(flyingMessageNew);
 
             }catch (IOException ex){
                 System.out.println(droneRunner.toString() + "의 메시지 전송 에러");
@@ -41,14 +51,23 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
 
     }
 
-    public synchronized void sendMessageToLeader(FlyingMessage flyingMessage){
+    public synchronized void sendMessageToLeader(FlyingMessageType flyingMessageType){
         Iterator<DroneRunner> iterator = this.iterator();
         while (iterator.hasNext()){
             DroneRunner droneRunner = iterator.next();
             try{
                 Drone drone = droneRunner.getDrone();
                 if(drone.getLeaderOrFollower().equals("L")){
-                    droneRunner.sendMessageOrDrone(flyingMessage);
+                    FlyingInfo flyingInfo = drone.getFlyingInfo();
+                    FlyingMessage flyingMessageNew = flyingInfo.getFlyingMessage();
+
+
+                    flyingMessageNew.setFlyingMessageType(flyingMessageType);
+                    flyingMessageNew.setDroneName(drone.getName());
+                    flyingInfo.setFlyingMessage(flyingMessageNew);
+                    drone.setFlyingInfo(flyingInfo);
+
+                    droneRunner.sendMessageOrDrone(flyingMessageNew);
                 }
 
             }catch (IOException ex){
@@ -57,14 +76,23 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
         }
     }
 
-    public synchronized void sendMessageToFollowers(FlyingMessage flyingMessage){
+    public synchronized void sendMessageToFollowers(FlyingMessageType flyingMessageType){
         Iterator<DroneRunner> iterator = this.iterator();
         while (iterator.hasNext()){
             DroneRunner droneRunner = iterator.next();
             try{
                 Drone drone = droneRunner.getDrone();
                 if(drone.getLeaderOrFollower().equals("F")){
-                    droneRunner.sendMessageOrDrone(flyingMessage);
+                    FlyingInfo flyingInfo = drone.getFlyingInfo();
+                    FlyingMessage flyingMessageNew = flyingInfo.getFlyingMessage();
+
+
+                    flyingMessageNew.setFlyingMessageType(flyingMessageType);
+                    flyingMessageNew.setDroneName(drone.getName());
+                    flyingInfo.setFlyingMessage(flyingMessageNew);
+                    drone.setFlyingInfo(flyingInfo);
+
+                    droneRunner.sendMessageOrDrone(flyingMessageNew);
                 }
             }catch (IOException ex){
                 System.out.println(droneRunner.toString() + "의 메시지 전송 에러");
@@ -75,10 +103,10 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
     /**
      * 해당 메시지를 가지는 특정 팔로워에게 메시지 전송.
      *
-     * @param flyingMessageForMatch
-     * @param flyingMessageForOrder
+     * @param flyingMessageTypeForMatch
+     * @param flyingMessageTypeForOrder
      */
-    public synchronized DroneRunner sendMessageToFollower(FlyingMessage flyingMessageForMatch, FlyingMessage flyingMessageForOrder) {
+    public synchronized DroneRunner sendMessageToDrone(FlyingMessageType flyingMessageTypeForMatch, FlyingMessageType flyingMessageTypeForOrder) {
         DroneRunner matchedDroneRunner = null;
 
         Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
@@ -86,12 +114,14 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
         while(iterator.hasNext()){
             DroneRunner droneRunner = iterator.next();
             Drone drone = droneRunner.getDrone();
-            String leaderOrFollower = drone.getLeaderOrFollower();
             FlyingInfo flyingInfo = drone.getFlyingInfo();
+            FlyingMessage flyingMessage = flyingInfo.getFlyingMessage();
+            FlyingMessageType flyingMessageType = flyingMessage.getFlyingMessageType();
 
             try {
-                if((leaderOrFollower.equals("F")) && (flyingMessageForMatch == flyingInfo.getMessage())){
-                    droneRunner.sendMessageOrDrone(flyingMessageForOrder);
+                if(flyingMessageTypeForMatch == flyingMessageType){
+                    flyingMessage.setFlyingMessageType(flyingMessageTypeForOrder);
+                    droneRunner.sendMessageOrDrone(flyingMessage);
                     matchedDroneRunner = droneRunner;
                     break;
                 }

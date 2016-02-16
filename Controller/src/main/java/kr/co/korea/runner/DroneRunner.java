@@ -3,7 +3,7 @@ package kr.co.korea.runner;
 import kr.co.korea.DroneController;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.FlyingMessage;
-import kr.co.korea.repository.DroneRunnerRepository;
+import kr.co.korea.domain.FlyingMessageType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -43,13 +43,15 @@ public class DroneRunner extends Thread {
 
                 if(flyingMessage != null){
 
-
+                    // TODO 중요 핵심 부분.
+                    drone.getFlyingInfo().setFlyingMessage(flyingMessage);
+                    FlyingMessageType flyingMessageType = flyingMessage.getFlyingMessageType();
 
                     /**
                      *  드론 클라이언트 접속 시, 전달 되는 메시지.
                      *  - 접속 확인 용.
                      */
-                    if(flyingMessage == FlyingMessage.STATUS_FLYING_READY){
+                    if(flyingMessageType == FlyingMessageType.STATUS_FLYING_READY){
 //                        System.err.println(drone.getName() + " 비행 준비 완료..");
                     }
 

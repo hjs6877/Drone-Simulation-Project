@@ -1,10 +1,6 @@
 package kr.co.korea.thread;
 
-import kr.co.korea.domain.Drone;
-import kr.co.korea.domain.FlyingMessage;
-
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 

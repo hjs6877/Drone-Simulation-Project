@@ -1,12 +1,14 @@
 package kr.co.korea;
 
-import kr.co.korea.domain.*;
+import kr.co.korea.domain.Drone;
+import kr.co.korea.domain.DroneSetting;
+import kr.co.korea.domain.FlyingInfo;
+import kr.co.korea.domain.FlyingMessageType;
 import kr.co.korea.thread.ClientReceiverSimpleTest;
 import kr.co.korea.thread.ClientSender;
 
 import java.net.ConnectException;
 import java.net.Socket;
-import java.util.HashMap;
 
 /**
  * Created by kjs on 2016-02-12.
@@ -26,10 +28,10 @@ public class VenusClientSimpleTest {
             clientSender.start();
             clientReceiverSimpleTest.start();
 
-            Drone initDrone = new Drone("venus", new DroneSetting(), new FlyingInfo(new FlightStatus(), new HashMap<String, Double>()));
+            Drone initDrone = new Drone("venus", new DroneSetting(), new FlyingInfo());
 
 
-            clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_READY);
+            clientSender.sendMessageOrDrone(FlyingMessageType.STATUS_FLYING_READY);
         } catch(ConnectException ce) {
             ce.printStackTrace();
         } catch(Exception e) {

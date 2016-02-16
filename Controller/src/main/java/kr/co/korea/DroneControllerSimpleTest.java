@@ -3,7 +3,7 @@ package kr.co.korea;
 import kr.co.korea.domain.Coordination;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
-import kr.co.korea.domain.FlyingMessage;
+import kr.co.korea.domain.FlyingMessageType;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorType;
 import kr.co.korea.repository.DroneRunnerRepositorySimpleTest;
@@ -182,7 +182,7 @@ public class DroneControllerSimpleTest {
             System.out.println("비행 가능한 Drone은 최소 " + minNum + "대 이상이여야 합니다. Drone 프로세스 가동 후 Controller를 재 가동해주세요.");
 
             if(numberOfDrone != 0){
-                DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessage.DO_FLYING_STOP);
+                DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessageType.DO_FLYING_STOP);
             }
             System.exit(-1);
         }
@@ -545,7 +545,7 @@ public class DroneControllerSimpleTest {
             if(!input.toLowerCase().equals("y")){
                 System.out.println("비행 프로세스를 중단합니다.");
 
-                DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessage.DO_FLYING_STOP);
+                DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessageType.DO_FLYING_STOP);
 
                 System.exit(-1);
             }
@@ -567,6 +567,6 @@ public class DroneControllerSimpleTest {
 
         System.out.println("## 비행 시작 메시지 전송.");
 
-        DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessage.DO_FLYING_START);
+        DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessageType.DO_FLYING_START);
     }
 }

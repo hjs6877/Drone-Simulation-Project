@@ -2,7 +2,7 @@ package kr.co.korea.runner;
 
 import kr.co.korea.DroneControllerSimpleTest;
 import kr.co.korea.domain.Drone;
-import kr.co.korea.domain.FlyingMessage;
+import kr.co.korea.domain.FlyingMessageType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -30,21 +30,21 @@ public class DroneRunnerSimpleTest extends Thread {
         try{
             while(objectInputStream != null){   // TODO ObjectInputStream이 null인걸로 판단하도록 수정.
                 Object object = objectInputStream.readObject();
-                FlyingMessage flyingMessage = null;
+                FlyingMessageType flyingMessageType = null;
 
-                if(object instanceof FlyingMessage){
-                    flyingMessage = (FlyingMessage) object;
+                if(object instanceof FlyingMessageType){
+                    flyingMessageType = (FlyingMessageType) object;
                 }
 
-                if(flyingMessage != null){
+                if(flyingMessageType != null){
 
-                    System.out.println("Flying Message::: " + flyingMessage);
+                    System.out.println("Flying Message::: " + flyingMessageType);
 
                     /**
                      *  드론 클라이언트 접속 시, 전달 되는 메시지.
                      *  - 접속 확인 용.
                      */
-                    if(flyingMessage == FlyingMessage.STATUS_FLYING_READY){
+                    if(flyingMessageType == FlyingMessageType.STATUS_FLYING_READY){
                         System.err.println(" 비행 준비 완료..");
                     }
 
@@ -53,10 +53,10 @@ public class DroneRunnerSimpleTest extends Thread {
                      * 장애로 인해 리더 교체 메시지를 리더로부터 전송 받았을 때,
                      * - 비행중인 팔로워들에게 비행 대기 메시지를 전송한다.
                      */
-                    if(flyingMessage == FlyingMessage.STATUS_NEED_REPLACE_LEADER){
+                    if(flyingMessageType == FlyingMessageType.STATUS_NEED_REPLACE_LEADER){
                         System.out.println("++++ 송신 메시지:  리더 교체 필요 상황이 발생하여 팔로워들을 비행 대기 상태로 전환합니다..");
-//                        DroneControllerSimpleTest.droneRunnerRepository.sendMessageToFollowers(FlyingMessage.DO_FLYING_WAIT);
-                        DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER);
+//                        DroneControllerSimpleTest.droneRunnerRepository.sendMessageToFollowers(FlyingMessageType.DO_FLYING_WAIT);
+                        DroneControllerSimpleTest.droneRunnerRepositorySimpleTest.sendMessageToAll(FlyingMessageType.DO_FLYING_WAIT_FOR_REPLACE_LEADER);
                     }
 
                 }
@@ -80,9 +80,9 @@ public class DroneRunnerSimpleTest extends Thread {
         }
     }
 
-    public void sendMessage(FlyingMessage flyingMessage) throws IOException {
+    public void sendMessage(FlyingMessageType flyingMessageType) throws IOException {
 
-        this.objectOutputStream.writeObject(flyingMessage);
+        this.objectOutputStream.writeObject(flyingMessageType);
     }
 
     public Drone getDrone() {

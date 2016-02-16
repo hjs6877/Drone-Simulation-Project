@@ -1,7 +1,7 @@
 package kr.co.korea.thread;
 
 import kr.co.korea.domain.Drone;
-import kr.co.korea.domain.FlyingMessage;
+import kr.co.korea.domain.FlyingMessageType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -45,19 +45,19 @@ public class ClientReceiverSimpleTest extends Thread {
 
             while (objectInputStream != null){
                 Object object = objectInputStream.readObject();
-                FlyingMessage flyingMessage = null;
+                FlyingMessageType flyingMessageType = null;
 
-                if(object instanceof FlyingMessage){
-                    flyingMessage = (FlyingMessage) object;
+                if(object instanceof FlyingMessageType){
+                    flyingMessageType = (FlyingMessageType) object;
                 }
 
-                if(flyingMessage != null){
-                    System.out.println("Flying Message::: " + flyingMessage);
+                if(flyingMessageType != null){
+                    System.out.println("Flying Message::: " + flyingMessageType);
 
                     /**
                      * FLYING_START 메시지가 넘어 온다면 비행 시작.
                      */
-                    if(flyingMessage == FlyingMessage.DO_FLYING_START){
+                    if(flyingMessageType == FlyingMessageType.DO_FLYING_START){
                         System.out.println("ㅇㅇ 이 비행을 시작합니다.");
 
                         flyRunner.start();
@@ -66,7 +66,7 @@ public class ClientReceiverSimpleTest extends Thread {
                     /**
                      * FLYING_WAIT 메시지가 넘어 온다면, 비행 대기. 쓰레드를 wait 시킨다.
                      */
-                    if(flyingMessage == FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER){
+                    if(flyingMessageType == FlyingMessageType.DO_FLYING_WAIT_FOR_REPLACE_LEADER){
 
                         System.out.println("++++ 수신 메시지: 리더 선출을 위해 비행 대기합니다..");
                         flyerSimpleTest.waitMessage = "wait";

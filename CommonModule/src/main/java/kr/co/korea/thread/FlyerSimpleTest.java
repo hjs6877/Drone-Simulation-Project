@@ -2,13 +2,9 @@ package kr.co.korea.thread;
 
 import kr.co.korea.domain.*;
 import kr.co.korea.error.ErrorType;
-import kr.co.korea.util.MathUtils;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -107,7 +103,7 @@ public class FlyerSimpleTest extends Thread {
                     System.out.println("심각한 장애 발생으로 인해 리더 교체 프로세스 실시!!!!!!!!!!!!!!!!!!!!!!");
 
                     /** 리더 교체 필요 메시지 전송 **/
-                    clientSender.sendMessageOrDrone(FlyingMessage.STATUS_NEED_REPLACE_LEADER);
+                    clientSender.sendMessageOrDrone(FlyingMessageType.STATUS_NEED_REPLACE_LEADER);
 
                     /** 비행 대기 상태로 전환 **/
                     System.out.println("리더인 ㅇㅇ 이(가) 비행 대기 상태로 전환합니다..");
