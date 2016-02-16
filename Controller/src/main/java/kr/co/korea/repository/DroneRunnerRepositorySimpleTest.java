@@ -1,7 +1,7 @@
 package kr.co.korea.repository;
 
 import kr.co.korea.domain.Drone;
-import kr.co.korea.domain.FlyingMessageType;
+import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.runner.DroneRunnerSimpleTest;
 
 import java.io.IOException;
@@ -24,12 +24,12 @@ public class DroneRunnerRepositorySimpleTest extends Vector<DroneRunnerSimpleTes
         }
     }
 
-    public synchronized void sendMessageToAll(FlyingMessageType flyingMessageType){
+    public synchronized void sendMessageToAll(FlyingMessage flyingMessage){
         Iterator<DroneRunnerSimpleTest> iterator = this.iterator();
         while (iterator.hasNext()){
             DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
             try{
-                droneRunnerSimpleTest.sendMessage(flyingMessageType);
+                droneRunnerSimpleTest.sendMessage(flyingMessage);
 
             }catch (IOException ex){
                 System.out.println(droneRunnerSimpleTest.toString() + "의 메시지 전송 에러");
@@ -38,14 +38,14 @@ public class DroneRunnerRepositorySimpleTest extends Vector<DroneRunnerSimpleTes
 
     }
 
-    public synchronized void sendMessageToLeader(FlyingMessageType flyingMessageType){
+    public synchronized void sendMessageToLeader(FlyingMessage flyingMessage){
         Iterator<DroneRunnerSimpleTest> iterator = this.iterator();
         while (iterator.hasNext()){
             DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
             try{
                 Drone drone = droneRunnerSimpleTest.getDrone();
                 if(drone.getLeaderOrFollower().equals("L")){
-                    droneRunnerSimpleTest.sendMessage(flyingMessageType);
+                    droneRunnerSimpleTest.sendMessage(flyingMessage);
                 }
 
             }catch (IOException ex){
@@ -54,14 +54,14 @@ public class DroneRunnerRepositorySimpleTest extends Vector<DroneRunnerSimpleTes
         }
     }
 
-    public synchronized void sendMessageToFollowers(FlyingMessageType flyingMessageType){
+    public synchronized void sendMessageToFollowers(FlyingMessage flyingMessage){
         Iterator<DroneRunnerSimpleTest> iterator = this.iterator();
         while (iterator.hasNext()){
             DroneRunnerSimpleTest droneRunnerSimpleTest = iterator.next();
             try{
                 Drone drone = droneRunnerSimpleTest.getDrone();
                 if(drone.getLeaderOrFollower().equals("F")){
-                    droneRunnerSimpleTest.sendMessage(flyingMessageType);
+                    droneRunnerSimpleTest.sendMessage(flyingMessage);
                 }
             }catch (IOException ex){
                 System.out.println(droneRunnerSimpleTest.toString() + "의 메시지 전송 에러");

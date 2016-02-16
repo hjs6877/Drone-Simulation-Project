@@ -3,7 +3,8 @@ package kr.co.korea;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessage;
-import kr.co.korea.domain.FlyingMessageType;
+import kr.co.korea.repository.DroneRunnerRepository;
+import kr.co.korea.runner.DroneRunner;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -48,12 +49,12 @@ public class DroneControllerServer extends Thread {
 
     public synchronized void setFlyingMessage(FlyingMessage flyingMessage) {
         //  TODO 메시지에 따라서 DroneRunnerRepository의 메시지 호출 메서드가 달라짐.
-        FlyingMessageType flyingMessageType = flyingMessage.getFlyingMessageType();
+
         /**
          * 장애로 인해 리더로부터 리더 교체 필요(STATUS_NEED_REPLACE_LEADER) 메시지를  전송 받았을 때,
          * - 비행중인 모든 Drone들에 비행 대기 메시지를 전송한다.
          */
-        if(flyingMessageType == FlyingMessageType.STATUS_NEED_REPLACE_LEADER){
+        if(flyingMessage == FlyingMessage.STATUS_NEED_REPLACE_LEADER){
             System.out.println("===================================================================");
             System.out.println("++++ 수신 메시지:  리더 교체 필요(STATUS_NEED_REPLACE_LEADER) 메시지를 수신하였습니다..");
             System.out.println("===================================================================");
@@ -66,7 +67,7 @@ public class DroneControllerServer extends Thread {
                         "모든 Drone 들에게 비행 대기 명령(DO_FLYING_WAIT_FOR_REPLACE_LEADER) 메시지를 송신하였습니다..");
                 System.out.println("===================================================================");
 
-                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessageType.DO_FLYING_WAIT_FOR_REPLACE_LEADER);
+                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER);
             }else{
                 System.out.println("===================================================================");
                 System.out.println("## 교체 할 리더가 없습니다. ");
@@ -84,7 +85,7 @@ public class DroneControllerServer extends Thread {
          * Drone 들로부터 비행 일시 중지 상태를 알리는 메시지를 전송 받았을 때,
          * - 모든 팔로워들로부터 메시지를 전송 받은 후, 신규 리더를 선출한다.
          */
-        if(flyingMessageType == FlyingMessageType.STATUS_FLYING_WAITED_FOR_REPLACE_LEADER){
+        if(flyingMessage == FlyingMessage.STATUS_FLYING_WAITED_FOR_REPLACE_LEADER){
 
             /**
              * TODO 모든 Drone으로부터 메시지를 전송 받았는지 확인 후, 새로운 리더 선출을 위해
@@ -185,7 +186,7 @@ public class DroneControllerServer extends Thread {
                 System.out.println("++++ 송신 메시지: 비행 재개 명령(DO_FLYING_RESUME) 메시지를 송신하였습니다..");
                 System.out.println("===================================================================");
                 droneRunnerNewLeader.getDrone().setLeaderOrFollower("L");
-                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessageType.DO_FLYING_RESUME);
+                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_RESUME);
             }
         }
 
@@ -194,11 +195,11 @@ public class DroneControllerServer extends Thread {
          *
          * - 해당 Drone에게 비행 중지를 위한 비행 대기 메시지를 전송한다.
          */
-        if(flyingMessageType == FlyingMessageType.STATUS_NEED_STOP_FLYING){
+        if(flyingMessage == FlyingMessage.STATUS_NEED_STOP_FLYING){
             // TODO 누구로 부터 받은 메시지인지 표시 필요.
 
-            DroneRunner droneRunner = DroneController.droneRunnerRepository.sendMessageToDrone(FlyingMessageType.STATUS_NEED_STOP_FLYING,
-                    FlyingMessageType.DO_FLYING_WAIT_FOR_STOP_FLYING);
+            DroneRunner droneRunner = DroneController.droneRunnerRepository.sendMessageToDrone(FlyingMessage.STATUS_NEED_STOP_FLYING,
+                    FlyingMessage.DO_FLYING_WAIT_FOR_STOP_FLYING);
 
             if(droneRunner != null){
                 Drone drone = droneRunner.getDrone();
@@ -219,7 +220,7 @@ public class DroneControllerServer extends Thread {
          * 특정 팔로워로부터 비행 중지를 위한 비행 일시 중지 상태를 알리는 메시지를 전송 받았을 때,
          * - 해당 팔로워의 비행을 중지한다.
          */
-        if(flyingMessageType == FlyingMessageType.STATUS_FLYING_WAITED_FOR_STOP_FLYING){
+        if(flyingMessage == FlyingMessage.STATUS_FLYING_WAITED_FOR_STOP_FLYING){
 
             /**
              *  비행 중지를 위한 비행 대기중인 팔로워의 처리
@@ -228,7 +229,7 @@ public class DroneControllerServer extends Thread {
              *  - finalDroneInfoList에 비행정보 저장.
              *  - DroneRunnerRepository에서 제거
              */
-            this.doStopDroneFlight(FlyingMessageType.STATUS_NEED_STOP_FLYING, FlyingMessageType.DO_FLYING_STOP);
+            this.doStopDroneFlight(FlyingMessage.STATUS_NEED_STOP_FLYING, FlyingMessage.DO_FLYING_STOP);
         }
 
         /**
@@ -236,10 +237,10 @@ public class DroneControllerServer extends Thread {
          *
          * - 해당 Drone에게 비행 종료를 위한 비행 대기 메시지를 전송한다.
          */
-        if(flyingMessageType == FlyingMessageType.STATUS_NEED_FINISH_FLYING){
+        if(flyingMessage == FlyingMessage.STATUS_NEED_FINISH_FLYING){
 
-            DroneRunner droneRunner = DroneController.droneRunnerRepository.sendMessageToDrone(FlyingMessageType.STATUS_NEED_FINISH_FLYING,
-                    FlyingMessageType.DO_FLYING_WAIT_FOR_FINISH_FLYING);
+            DroneRunner droneRunner = DroneController.droneRunnerRepository.sendMessageToDrone(FlyingMessage.STATUS_NEED_FINISH_FLYING,
+                    FlyingMessage.DO_FLYING_WAIT_FOR_FINISH_FLYING);
 
             if(droneRunner != null){
                 Drone drone = droneRunner.getDrone();
@@ -259,7 +260,7 @@ public class DroneControllerServer extends Thread {
          * 특정 팔로워로부터 비행 종료를 위한 비행 일시 중지 상태를 알리는 메시지를 전송 받았을 때,
          * - 해당 팔로워의 비행을 중지한다.
          */
-        if(flyingMessageType == FlyingMessageType.STATUS_FLYING_WAITED_FOR_FINISH_FLYING){
+        if(flyingMessage == FlyingMessage.STATUS_FLYING_WAITED_FOR_FINISH_FLYING){
 
             /**
              *  비행 중지를 위한 비행 대기중인 팔로워의 처리
@@ -268,7 +269,7 @@ public class DroneControllerServer extends Thread {
              *  - finalDroneInfoList에 비행정보 저장.
              *  - DroneRunnerRepository에서 제거
              */
-            this.doStopDroneFlight(FlyingMessageType.STATUS_NEED_FINISH_FLYING, FlyingMessageType.DO_FLYING_FINISH);
+            this.doStopDroneFlight(FlyingMessage.STATUS_NEED_FINISH_FLYING, FlyingMessage.DO_FLYING_FINISH);
         }
     }
 
@@ -294,7 +295,7 @@ public class DroneControllerServer extends Thread {
                 System.out.println("===================================================================");
 
                 finalDroneInfoList.add(drone);
-                DroneController.droneRunnerRepository.sendMessageToLeader(FlyingMessageType.DO_FLYING_STOP);
+                DroneController.droneRunnerRepository.sendMessageToLeader(FlyingMessage.DO_FLYING_STOP);
                 DroneController.droneRunnerRepository.removeDroneRunner(droneRunner);
 
                 break;
@@ -310,10 +311,10 @@ public class DroneControllerServer extends Thread {
      *  - 비행 프로세스 종료 메시지 전송.
      *  - DroneRunnerRepository에서 제거
      */
-    private void doStopDroneFlight(FlyingMessageType flyingMessageTypeForMatch, FlyingMessageType flyingMessageTypeForOrder){
+    private void doStopDroneFlight(FlyingMessage flyingMessageForMatch, FlyingMessage flyingMessageForOrder){
 
-        DroneRunner droneRunner = DroneController.droneRunnerRepository.sendMessageToDrone(flyingMessageTypeForMatch,
-                flyingMessageTypeForOrder);
+        DroneRunner droneRunner = DroneController.droneRunnerRepository.sendMessageToDrone(flyingMessageForMatch,
+                flyingMessageForOrder);
 
         if(droneRunner != null){
             Drone drone = droneRunner.getDrone();
@@ -322,7 +323,7 @@ public class DroneControllerServer extends Thread {
             System.out.println("## 기존 Follower의 비행정보를 저장하고, 비행을 중단합니다.");
             System.out.println("===================================================================");
             System.out.println("++++ 송신 메시지: " + drone.getName() +
-                    "에게 비행 중지 또는 종료 명령(" + flyingMessageTypeForOrder + ") 메시지를 송신하였습니다..");
+                    "에게 비행 중지 또는 종료 명령(" + flyingMessageForOrder + ") 메시지를 송신하였습니다..");
             System.out.println("===================================================================");
 
             finalDroneInfoList.add(drone);

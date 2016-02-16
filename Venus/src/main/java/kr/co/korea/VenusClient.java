@@ -3,7 +3,8 @@ package kr.co.korea;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlyingInfo;
-import kr.co.korea.domain.FlyingMessageType;
+import kr.co.korea.domain.FlyingMessage;
+import kr.co.korea.thread.ClientReceiver;
 import kr.co.korea.thread.ClientSender;
 
 import java.net.ConnectException;
@@ -29,7 +30,7 @@ public class VenusClient {
             Drone initDrone = new Drone("venus", new DroneSetting(), new FlyingInfo());
 
             clientSender.sendMessageOrDrone(initDrone);
-            clientSender.sendMessageOrDrone(FlyingMessageType.STATUS_FLYING_READY);
+            clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_READY);
         } catch(ConnectException ce) {
             ce.printStackTrace();
         } catch(Exception e) {

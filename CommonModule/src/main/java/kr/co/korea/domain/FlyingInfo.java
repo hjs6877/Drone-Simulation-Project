@@ -15,11 +15,13 @@ import java.util.Map;
  *
  */
 public class FlyingInfo implements Serializable {
-    private FlyingMessage flyingMessage = new FlyingMessage();
+    private FlyingMessage message;
     private FlightStatus finalFlightStatus = new FlightStatus();
     private Map<String, Double> finalCoordination = new HashMap<String, Double>();
     private long finalFlightTime;
     private double remainDistance;
+
+
 
     public Map<String, Double> getFinalCoordination() {
         return finalCoordination;
@@ -53,11 +55,11 @@ public class FlyingInfo implements Serializable {
         this.finalFlightStatus = finalFlightStatus;
     }
 
-    public FlyingMessage getFlyingMessage() {
-        return flyingMessage;
+    public FlyingMessage getMessage() {
+        return message;
     }
 
-    public void setFlyingMessage(FlyingMessage flyingMessage) {
-        this.flyingMessage = flyingMessage;
+    public void setMessage(FlyingMessage message) {
+        this.message = message;
     }
 }

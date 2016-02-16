@@ -3,11 +3,13 @@ package kr.co.korea;
 import kr.co.korea.domain.Coordination;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
-import kr.co.korea.domain.FlyingMessageType;
+import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
 import kr.co.korea.repository.DroneControllerServerRepository;
+import kr.co.korea.repository.DroneRunnerRepository;
+import kr.co.korea.runner.DroneRunner;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.util.MathUtils;
 import kr.co.korea.validator.StringValidator;
@@ -20,8 +22,10 @@ import java.util.*;
  */
 public class DroneController {
     /**
-     * TODO 목적지에 도착한 Drone들에 대한 모든 Drone들의 비행 정보를 표시하는 처리. 한번 더 메시지를 전달 하도록 수정 필요.
-     * TODO 중간에 비행이 완전 중지 될 경우 Drone들의 비행 정보를 표시하는 처리.
+     * TODO 목적지에 도착한 Drone들에 대한 모든 Drone들의 비행 정보를 표시하는 처리.
+     * DroneControllerServer 241에서 DronRunner가 null이다. 여기를 해결하는 부분을 해보고 안되면 일단 보류. 마지막 종료는 그대로 종료하는걸로..
+     *
+     * TODO 중간에 비행이 완전 중지 될 경우 --> Drone들의 비행 정보를 표시하는 처리.
      * 팔로워에 심각한 장애가 발생하여 비행 대긴 시킨 시점과 리더에 심각한 장애가 발생하여
      * 모든 팔로워들을 비행 대기 시킨 시점이 겹칠 경우 syncronize 할 필요가 있음. TODO
      * 그렇지 않으면 팔로워가 심각한 장애로 비행 대기 중일 때, 리더 선출 후,
@@ -193,7 +197,7 @@ public class DroneController {
             System.out.println("비행 가능한 Drone은 최소 " + minNum + "대 이상이여야 합니다. Drone 프로세스 가동 후 Controller를 재 가동해주세요.");
 
             if(numberOfDrone != 0){
-                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessageType.DO_FLYING_STOP);
+                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_STOP);
             }
             System.exit(-1);
         }
@@ -562,7 +566,7 @@ public class DroneController {
             if(!input.toLowerCase().equals("y")){
                 System.out.println("비행 프로세스를 중단합니다.");
 
-                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessageType.DO_FLYING_STOP);
+                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_STOP);
 
                 System.exit(-1);
             }
@@ -584,6 +588,6 @@ public class DroneController {
     private void sendFlyingStartMessage() {
 
         System.out.println("## 비행 시작 메시지 전송.");
-        DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessageType.DO_FLYING_START);
+        DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_START);
     }
 }

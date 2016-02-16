@@ -3,7 +3,7 @@ package kr.co.korea;
 import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlyingInfo;
-import kr.co.korea.domain.FlyingMessageType;
+import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.thread.ClientReceiverSimpleTest;
 import kr.co.korea.thread.ClientSender;
 
@@ -31,7 +31,7 @@ public class MercuryClientSimpleTest {
             Drone initDrone = new Drone("mercury", new DroneSetting(), new FlyingInfo());
 
 
-            clientSender.sendMessageOrDrone(FlyingMessageType.STATUS_FLYING_READY);
+            clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_READY);
         } catch(ConnectException ce) {
             ce.printStackTrace();
         } catch(Exception e) {
