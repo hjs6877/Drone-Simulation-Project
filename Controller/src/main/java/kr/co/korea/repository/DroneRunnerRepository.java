@@ -73,7 +73,7 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
     }
 
     /**
-     * 해당 메시지를 가지는 특정 팔로워에게 메시지 전송.
+     * 해당 메시지를 가지는 특정 Drone 에게 메시지 전송.
      *
      * @param flyingMessageForMatch
      * @param flyingMessageForOrder
@@ -90,7 +90,8 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
             FlyingInfo flyingInfo = drone.getFlyingInfo();
 
             try {
-                if((leaderOrFollower.equals("F")) && (flyingMessageForMatch == flyingInfo.getMessage())){
+                // TODO 비행 종료 시, 이 부분이 매치 되지 않는 부분을 해결해야 함. DroneControllerServer 241 line과 연관 됨.
+                if(flyingMessageForMatch == flyingInfo.getMessage()){
                     droneRunner.sendMessageOrDrone(flyingMessageForOrder);
                     matchedDroneRunner = droneRunner;
                     break;
