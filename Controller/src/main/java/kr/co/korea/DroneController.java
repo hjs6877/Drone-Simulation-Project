@@ -8,8 +8,6 @@ import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
 import kr.co.korea.repository.DroneControllerServerRepository;
-import kr.co.korea.repository.DroneRunnerRepository;
-import kr.co.korea.runner.DroneRunner;
 import kr.co.korea.service.LocationProvider;
 import kr.co.korea.util.MathUtils;
 import kr.co.korea.validator.StringValidator;

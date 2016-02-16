@@ -1,7 +1,5 @@
 package kr.co.korea.repository;
 
-import kr.co.korea.runner.DroneRunner;
-
 import java.util.Vector;
 
 /**

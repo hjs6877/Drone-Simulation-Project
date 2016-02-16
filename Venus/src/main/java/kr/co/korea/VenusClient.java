@@ -4,7 +4,6 @@ import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.DroneSetting;
 import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessageType;
-import kr.co.korea.thread.ClientReceiver;
 import kr.co.korea.thread.ClientSender;
 
 import java.net.ConnectException;

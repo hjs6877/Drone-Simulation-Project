@@ -4,8 +4,6 @@ import kr.co.korea.domain.Drone;
 import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.domain.FlyingMessageType;
-import kr.co.korea.repository.DroneRunnerRepository;
-import kr.co.korea.runner.DroneRunner;
 
 import java.io.IOException;
 import java.net.ServerSocket;
