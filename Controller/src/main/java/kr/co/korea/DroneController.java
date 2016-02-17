@@ -582,7 +582,7 @@ public class DroneController {
             Drone drone = droneRunner.getDrone();
 
             drone.setDroneSetting(setting);
-//            droneRunner.setDrone(drone);
+            droneRunner.setDrone(drone);
         }
     }
     private void sendFlyingStartMessage() {

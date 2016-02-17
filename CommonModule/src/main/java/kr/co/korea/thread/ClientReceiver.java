@@ -14,7 +14,7 @@ public class ClientReceiver extends Thread {
     private Socket socket;
     private ClientSender clientSender;
     private ObjectInputStream objectInputStream;
-    private Drone drone;
+
 
     public ClientReceiver(Socket socket, ClientSender clientSender) {
         this.socket = socket;
@@ -31,27 +31,21 @@ public class ClientReceiver extends Thread {
             /**
              * TODO 비행을 수행하는 FlyRunner는 메시지의 상황에 맞게 시작되거나, 대기하거나, 재시작된다.
              */
-            Flyer flyerNew = new Flyer(socket, clientSender);      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
-            Thread flyRunner = new Thread(flyerNew);
+            Flyer flyer = new Flyer(socket, clientSender);      // TODO 보내는건 무조건 sendMessage를 이용하도록 수정 필요.
+            Thread flyRunner = new Thread(flyer);
 
             while (objectInputStream != null){
                 Object object = objectInputStream.readObject();
                 FlyingMessage flyingMessage = null;
-
-                if(object instanceof FlyingMessage){
-                    flyingMessage = (FlyingMessage) object;
-                }
-
-                if(object instanceof Drone){
-                    drone = (Drone) object;
-                }
+                Drone drone = (Drone) object;
+                flyingMessage = drone.getFlyingInfo().getMessage();
 
                 if(flyingMessage != null){
 
                     /**
                      * TODO 리더 교체 플래그 셋팅을 위한 중요 핵심 포인트.
                      */
-                    flyerNew.setDrone(drone);
+                    flyer.setDrone(drone);
 
                     /**
                      * FLYING_START 메시지가 넘어 온다면 비행 시작.
@@ -91,9 +85,9 @@ public class ClientReceiver extends Thread {
                         System.out.println("===================================================================");
 
                         /** 비행 대기 명령을 할당 **/
-                        flyerNew.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER;
+                        flyer.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER;
 
-                        drone = flyerNew.getDrone();
+                        drone = flyer.getDrone();
 
                         clientSender.sendMessageOrDrone(drone);
                         Thread.sleep(1000);
@@ -112,9 +106,9 @@ public class ClientReceiver extends Thread {
                         System.out.println("===================================================================");
 
                         /** 비행 대기 명령을 할당 **/
-                        flyerNew.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT_FOR_STOP_FLYING;
+                        flyer.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT_FOR_STOP_FLYING;
 
-                        drone = flyerNew.getDrone();
+                        drone = flyer.getDrone();
 
                         clientSender.sendMessageOrDrone(drone);
                         Thread.sleep(1000);
@@ -131,9 +125,9 @@ public class ClientReceiver extends Thread {
                         System.out.println("===================================================================");
                         System.out.println("## 비행을 재개합니다..");
                         System.out.println("===================================================================");
-                        flyerNew.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_RESUME;
-                        synchronized (flyerNew){
-                            flyerNew.notifyAll();
+                        flyer.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_RESUME;
+                        synchronized (flyer){
+                            flyer.notifyAll();
                         }
                     }
 

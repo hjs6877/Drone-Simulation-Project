@@ -32,7 +32,11 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
         while (iterator.hasNext()){
             DroneRunner droneRunner = iterator.next();
             try{
-                droneRunner.sendMessageOrDrone(flyingMessage);
+                Drone drone = droneRunner.getDrone();
+                drone.getFlyingInfo().setMessage(flyingMessage);
+                droneRunner.setDrone(drone);
+
+                droneRunner.sendDrone(drone);
 
             }catch (IOException ex){
                 System.out.println(droneRunner.toString() + "의 메시지 전송 에러");
@@ -42,34 +46,34 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
     }
 
     public synchronized void sendMessageToLeader(FlyingMessage flyingMessage){
-        Iterator<DroneRunner> iterator = this.iterator();
-        while (iterator.hasNext()){
-            DroneRunner droneRunner = iterator.next();
-            try{
-                Drone drone = droneRunner.getDrone();
-                if(drone.getLeaderOrFollower().equals("L")){
-                    droneRunner.sendMessageOrDrone(flyingMessage);
-                }
-
-            }catch (IOException ex){
-                System.out.println(droneRunner.toString() + "의 메시지 전송 에러");
-            }
-        }
+//        Iterator<DroneRunner> iterator = this.iterator();
+//        while (iterator.hasNext()){
+//            DroneRunner droneRunner = iterator.next();
+//            try{
+//                Drone drone = droneRunner.getDrone();
+//                if(drone.getLeaderOrFollower().equals("L")){
+//                    droneRunner.sendMessageOrDrone(flyingMessage);
+//                }
+//
+//            }catch (IOException ex){
+//                System.out.println(droneRunner.toString() + "의 메시지 전송 에러");
+//            }
+//        }
     }
 
     public synchronized void sendMessageToFollowers(FlyingMessage flyingMessage){
-        Iterator<DroneRunner> iterator = this.iterator();
-        while (iterator.hasNext()){
-            DroneRunner droneRunner = iterator.next();
-            try{
-                Drone drone = droneRunner.getDrone();
-                if(drone.getLeaderOrFollower().equals("F")){
-                    droneRunner.sendMessageOrDrone(flyingMessage);
-                }
-            }catch (IOException ex){
-                System.out.println(droneRunner.toString() + "의 메시지 전송 에러");
-            }
-        }
+//        Iterator<DroneRunner> iterator = this.iterator();
+//        while (iterator.hasNext()){
+//            DroneRunner droneRunner = iterator.next();
+//            try{
+//                Drone drone = droneRunner.getDrone();
+//                if(drone.getLeaderOrFollower().equals("F")){
+//                    droneRunner.sendMessageOrDrone(flyingMessage);
+//                }
+//            }catch (IOException ex){
+//                System.out.println(droneRunner.toString() + "의 메시지 전송 에러");
+//            }
+//        }
     }
 
     /**
@@ -79,28 +83,28 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
      * @param flyingMessageForOrder
      */
     public synchronized DroneRunner sendMessageToDrone(FlyingMessage flyingMessageForMatch, FlyingMessage flyingMessageForOrder) {
-        DroneRunner matchedDroneRunner = null;
+//        DroneRunner matchedDroneRunner = null;
+//
+//        Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
+//
+//        while(iterator.hasNext()){
+//            DroneRunner droneRunner = iterator.next();
+//            Drone drone = droneRunner.getDrone();
+//            String leaderOrFollower = drone.getLeaderOrFollower();
+//            FlyingInfo flyingInfo = drone.getFlyingInfo();
+//
+//            try {
+//                // TODO 비행 종료 시, 이 부분이 매치 되지 않는 부분을 해결해야 함. DroneControllerServer 241 line과 연관 됨.
+//                if(flyingMessageForMatch == flyingInfo.getMessage()){
+//                    droneRunner.sendMessageOrDrone(flyingMessageForOrder);
+//                    matchedDroneRunner = droneRunner;
+//                    break;
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
-        Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
-
-        while(iterator.hasNext()){
-            DroneRunner droneRunner = iterator.next();
-            Drone drone = droneRunner.getDrone();
-            String leaderOrFollower = drone.getLeaderOrFollower();
-            FlyingInfo flyingInfo = drone.getFlyingInfo();
-
-            try {
-                // TODO 비행 종료 시, 이 부분이 매치 되지 않는 부분을 해결해야 함. DroneControllerServer 241 line과 연관 됨.
-                if(flyingMessageForMatch == flyingInfo.getMessage()){
-                    droneRunner.sendMessageOrDrone(flyingMessageForOrder);
-                    matchedDroneRunner = droneRunner;
-                    break;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return matchedDroneRunner;
+        return null; //matchedDroneRunner;
     }
 }
