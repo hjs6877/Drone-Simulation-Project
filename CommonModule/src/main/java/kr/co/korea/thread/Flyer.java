@@ -2,6 +2,8 @@ package kr.co.korea.thread;
 
 import kr.co.korea.domain.*;
 import kr.co.korea.error.ErrorType;
+import kr.co.korea.util.DateUtils;
+import kr.co.korea.util.FlightRecoder;
 import kr.co.korea.util.MathUtils;
 
 import java.io.IOException;
@@ -19,6 +21,8 @@ public class Flyer extends Thread {
     Drone drone;
     TreeMap<Long, ErrorType> errorEventMap;
     DroneSetting setting;
+    private FlightRecoder flightRecoder;
+    private String fileName;
 
     public Flyer(Socket socket, ClientSender clientSender) throws IOException {
         this.socket = socket;
@@ -26,6 +30,7 @@ public class Flyer extends Thread {
     }
 
     public void run() {
+
         /**
          * 비행 시작..
          */
@@ -51,7 +56,17 @@ public class Flyer extends Thread {
         return drone.getLeaderOrFollower().equals("L");
     }
 
-    public void fly(){
+    public void fly() {
+        fileName = this.createFileName();
+
+        try {
+            flightRecoder = new FlightRecoder(fileName, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String droneName = drone.getName();
+        String defaultLeaderOrFollower = drone.getLeaderOrFollower();
         setting = drone.getDroneSetting();
         errorEventMap = drone.getErrorEvent();
 
@@ -64,15 +79,17 @@ public class Flyer extends Thread {
         Map<Long, ErrorType> errorEventMap = drone.getErrorEvent();
 
         long flightTime = setting.getFlightTime();
+        int speed = setting.getSpeed();
 
         System.out.println("===================================================================");
-        System.out.println("droneName: " + drone.getLeaderOrFollower());
-        System.out.println("초기 리더 여부: " + drone.getLeaderOrFollower());
+        System.out.println("droneName: " + droneName);
+        System.out.println("초기 리더 여부: " + defaultLeaderOrFollower);
         System.out.println("출발지: " + setting.getDeparture());
         System.out.println("목적지: " + setting.getDestination());
         System.out.println("비행시간: " + setting.getFlightTime());
         System.out.println("장애 이벤트: " + errorEventMap);
         System.out.println("===================================================================");
+
 
         int countDown = 3;
 
@@ -97,15 +114,69 @@ public class Flyer extends Thread {
             FlyingInfo flyingInfo = drone.getFlyingInfo();
             FlightStatus flightStatus = flyingInfo.getFinalFlightStatus();
 
+            String flightStartDate = DateUtils.getCurrentDateDefaultFormatted();
+
+
+            String flightInfoHeader = "비행시작일시"     + FlightRecoder.COMMA +
+                    "Drone 이름"                       + FlightRecoder.COMMA +
+                    "초기 리더/팔로워 구분"         + FlightRecoder.COMMA +
+                    "현재시점별 리더/팔로워 구분"         + FlightRecoder.COMMA +
+                    "비행속도"                           + FlightRecoder.COMMA +
+                    "비행 시점(초)"                       + FlightRecoder.COMMA +
+                    "시점별 비행 좌표(경도)"              + FlightRecoder.COMMA +
+                    "시점별 비행 좌표(위도)"               + FlightRecoder.COMMA +
+                    "장애 발생유무"               + FlightRecoder.COMMA +
+                    "장애 타입"                       + FlightRecoder.COMMA +
+                    "잔여 거리";
+            /**
+             * 비행정보 헤더 쓰기.
+             */
+            flightRecoder.writeToFile(flightInfoHeader);
+
             /**
              * 실제 비행하는 부분. 리더일때와 팔로워 일때의 프로세스가 달라야 함.
              * 리더인지를 체크해서 별도 로직을 적용해야 함.
              * // TODO 로깅 필요.
              */
             for(long atSeconds=startTime; atSeconds<=flightTime; atSeconds++){
-                Thread.sleep(1000);
+
+                String currentLeaderOrFollower = drone.getLeaderOrFollower();
+
+                Map<String, Double> coordinationMapAtSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
+                        destinationLongitude, destinationLatitude, flightTime, atSeconds);
+                ErrorType errorType = errorEventMap.get(atSeconds) != null ? ErrorType.NORMAL : errorEventMap.get(atSeconds);
+
+                boolean isExistErrorEvent = this.isExistErrorEvent(errorType);
+
+                double longitudeAtSeconds = coordinationMapAtSeconds.get("longitude");
+                double latitudeAtSeconds = coordinationMapAtSeconds.get("latitude");
+                double remainDistance = MathUtils.calculateDistanceByLngLat(longitudeAtSeconds, latitudeAtSeconds,
+                        longitudeAtSeconds, latitudeAtSeconds);
+
+                /**
+                 * 비행 시작 일시, Drone 이름, 초기 리더/팔로워 구분, 현재 시점별 리더/팔로워 구분,
+                 * 비행 속도, 비행 시점(초), 시점별 비행 좌표(경/위도), 장애 발생 유무, 장애 타입, 잔여 거리
+                 */
+                String flightInfo = flightStartDate     + FlightRecoder.COMMA +
+                        droneName                       + FlightRecoder.COMMA +
+                        defaultLeaderOrFollower         + FlightRecoder.COMMA +
+                        currentLeaderOrFollower         + FlightRecoder.COMMA +
+                        speed                           + FlightRecoder.COMMA +
+                        atSeconds                       + FlightRecoder.COMMA +
+                        longitudeAtSeconds              + FlightRecoder.COMMA +
+                        latitudeAtSeconds               + FlightRecoder.COMMA +
+                        isExistErrorEvent               + FlightRecoder.COMMA +
+                        errorType                       + FlightRecoder.COMMA +
+                        remainDistance;
+
                 System.out.println("## " + atSeconds + "초 비행");
-                System.out.println("## 현재 리더 여부: " + drone.getLeaderOrFollower());
+                System.out.println("## 현재 리더 여부: " + currentLeaderOrFollower);
+
+                /**
+                 * 비행 기록.
+                 */
+                flightRecoder.writeToFile(flightInfo);
+
                 /**
                  * 비행 대기 명령이 할당 되었을 때, 비행을 일시 중지한다.
                  *
@@ -115,15 +186,12 @@ public class Flyer extends Thread {
                     System.out.println("===================================================================");
                     System.out.println("## 비행 대기상태로 전환합니다..");
                     System.out.println("===================================================================");
+
                     this.waitFlight();
                 }
 
-                Map<String, Double> coordinationMapAtSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
-                        destinationLongitude, destinationLatitude, flightTime, atSeconds);
 
-                double longitude = coordinationMapAtSeconds.get("longitude");
-                double latitude = coordinationMapAtSeconds.get("latitude");
-                double remainDistance = MathUtils.calculateDistanceByLngLat(longitude, latitude, longitude, latitude);
+
 
                 /**
                  * 장애 이벤트가 해당 비행 시간(초)에 존재한다면(발생한다면)
@@ -139,10 +207,10 @@ public class Flyer extends Thread {
                  *      ㄴ 리더 교체 필요 메시지와 FlyingInfo 객체를 Drone 객체에 포함 시켜서 전송. TODO
                  *      ㄴ 로깅. TODO
                  */
-                ErrorType errorType = errorEventMap.get(atSeconds);
-                if(this.isExistErrorEvent(errorType)){
+
+                if(isExistErrorEvent){
                     System.out.println(atSeconds + "초에 에러 이벤트 발생: " + errorType);
-                    System.out.println("비행 시 좌표: " + longitude + ", " + latitude);
+                    System.out.println("비행 시 좌표: " + longitudeAtSeconds + ", " + latitudeAtSeconds);
 
                     flightStatus.addErrorEvent(errorType);
                     flightStatus.updateErrorEvent();
@@ -206,7 +274,12 @@ public class Flyer extends Thread {
                     flyingInfo.setFinalFlightStatus(flightStatus);
                 }
 
-            }
+
+                // 비행을 위한 1초 딜레이
+                Thread.sleep(1000);
+            }  // flight loop
+
+            flightRecoder.close();
 
             System.out.println("===================================================================");
             System.out.println("## 목적지 도착. 착륙 대기중..");
@@ -262,6 +335,13 @@ public class Flyer extends Thread {
 //            e.printStackTrace();
 //        }
 
+    }
+
+    private String createFileName() {
+        String dateStr = DateUtils.getCurrentDateForFileName();
+        String droneName = drone.getName();
+
+        return droneName.concat("-").concat(dateStr).concat(".csv");
     }
 
     private boolean isExistErrorEvent(ErrorType errorType) {
