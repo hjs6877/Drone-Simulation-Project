@@ -10,8 +10,8 @@ import java.io.IOException;
  */
 public class FlightRecoder {
     public static final String COMMA = ",";
-//    private final String path = "E://kr/ac/korea/drone-simulation/flight-info";
-    private final String path = "E:\\kr.ac.korea";
+//    private final String path = "E:\\kr.ac.korea";
+    private final String path = "D:\\kr.ac.korea";
     private String fileName;
     private File file;
     private FileWriter fileWriter;

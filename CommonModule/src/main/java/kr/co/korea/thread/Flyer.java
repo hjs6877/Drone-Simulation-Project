@@ -150,8 +150,7 @@ public class Flyer extends Thread {
 
                 double longitudeAtSeconds = coordinationMapAtSeconds.get("longitude");
                 double latitudeAtSeconds = coordinationMapAtSeconds.get("latitude");
-                double remainDistance = MathUtils.calculateDistanceByLngLat(longitudeAtSeconds, latitudeAtSeconds,
-                        longitudeAtSeconds, latitudeAtSeconds);
+                double remainDistance = this.calculateRemainDistance(setting, atSeconds);
 
                 /**
                  * 비행 시작 일시, Drone 이름, 초기 리더/팔로워 구분, 현재 시점별 리더/팔로워 구분,
@@ -335,6 +334,30 @@ public class Flyer extends Thread {
 //            e.printStackTrace();
 //        }
 
+    }
+
+    private double calculateRemainDistance(DroneSetting setting, long atSeconds) {
+        String departure = setting.getDeparture();
+        String destination = setting.getDestination();
+        double departureLongitude = setting.getDepartureCoordination().get(departure).getLongitude();
+        double departureLatitude = setting.getDepartureCoordination().get(departure).getLatitude();
+        double destinationLongitude = setting.getDestinationCoordination().get(destination).getLongitude();
+        double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
+        long flightTime = setting.getFlightTime();
+
+        Map<String, Double> coordinationMapAtSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
+                destinationLongitude, destinationLatitude, flightTime, atSeconds);
+        double longitudeAtSeconds = coordinationMapAtSeconds.get("longitude");
+        double latitudeAtSeconds = coordinationMapAtSeconds.get("latitude");
+
+        Map<String, Double> coordinationMapAtDestination = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
+                destinationLongitude, destinationLatitude, flightTime, flightTime);
+        double longitudeAtDestination = coordinationMapAtDestination.get("longitude");
+        double latitudeAtDestination = coordinationMapAtDestination.get("latitude");
+
+
+        return MathUtils.calculateDistanceByLngLat(longitudeAtSeconds, latitudeAtSeconds,
+                longitudeAtDestination, latitudeAtDestination);
     }
 
     private String createFileName() {
