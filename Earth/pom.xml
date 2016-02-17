@@ -5,8 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>kr.co.korea</groupId>
-    <artifactId>zTestDrone1Server</artifactId>
+    <artifactId>earth</artifactId>
     <version>1.0</version>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>kr.co.korea</groupId>
+            <artifactId>commonModule</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
 </project>
