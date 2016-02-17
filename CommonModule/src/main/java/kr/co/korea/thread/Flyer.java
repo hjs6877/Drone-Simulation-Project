@@ -72,6 +72,7 @@ public class Flyer extends Thread {
 
         String departure = setting.getDeparture();
         String destination = setting.getDestination();
+        double distance = setting.getDistance();
         double departureLongitude = setting.getDepartureCoordination().get(departure).getLongitude();
         double departureLatitude = setting.getDepartureCoordination().get(departure).getLatitude();
         double destinationLongitude = setting.getDestinationCoordination().get(destination).getLongitude();
@@ -125,8 +126,9 @@ public class Flyer extends Thread {
                     "비행 시점(초)"                       + FlightRecoder.COMMA +
                     "시점별 비행 좌표(경도)"              + FlightRecoder.COMMA +
                     "시점별 비행 좌표(위도)"               + FlightRecoder.COMMA +
-                    "장애 발생유무"               + FlightRecoder.COMMA +
-                    "장애 타입"                       + FlightRecoder.COMMA +
+                    "장애 발생유무"                       + FlightRecoder.COMMA +
+                    "장애 타입"                          + FlightRecoder.COMMA +
+                    "비행총거리"                         + FlightRecoder.COMMA +
                     "잔여 거리";
             /**
              * 비행정보 헤더 쓰기.
@@ -166,6 +168,7 @@ public class Flyer extends Thread {
                         latitudeAtSeconds               + FlightRecoder.COMMA +
                         isExistErrorEvent               + FlightRecoder.COMMA +
                         errorType                       + FlightRecoder.COMMA +
+                        distance                        + FlightRecoder.COMMA +
                         remainDistance;
 
                 System.out.println("## " + atSeconds + "초 비행");
@@ -364,7 +367,7 @@ public class Flyer extends Thread {
         String dateStr = DateUtils.getCurrentDateForFileName();
         String droneName = drone.getName();
 
-        return droneName.concat("-").concat(dateStr).concat(".csv");
+        return dateStr.concat("-").concat(droneName).concat(".csv");
     }
 
     private boolean isExistErrorEvent(ErrorType errorType) {
