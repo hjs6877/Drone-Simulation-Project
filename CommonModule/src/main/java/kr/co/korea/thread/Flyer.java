@@ -144,7 +144,7 @@ public class Flyer extends Thread {
 
                 Map<String, Double> coordinationMapAtSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
                         destinationLongitude, destinationLatitude, flightTime, atSeconds);
-                ErrorType errorType = errorEventMap.get(atSeconds) != null ? ErrorType.NORMAL : errorEventMap.get(atSeconds);
+                ErrorType errorType = errorEventMap.get(atSeconds) != null ? errorEventMap.get(atSeconds) : ErrorType.NORMAL;
 
                 boolean isExistErrorEvent = this.isExistErrorEvent(errorType);
 
