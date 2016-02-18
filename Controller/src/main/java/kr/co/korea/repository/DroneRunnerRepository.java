@@ -27,16 +27,35 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
         }
     }
 
-    public synchronized void sendMessageToAll(FlyingMessage flyingMessage){
+    public synchronized void sendMessageToAllClientFromController(FlyingMessage flyingMessage){
         Iterator<DroneRunner> iterator = this.iterator();
         while (iterator.hasNext()){
             DroneRunner droneRunner = iterator.next();
             try{
-                Drone drone = droneRunner.getDrone();
-                drone.getFlyingInfo().setMessage(flyingMessage);
-                droneRunner.setDrone(drone);
 
-                droneRunner.sendDrone(drone);
+                Drone droneToClient = droneRunner.getDroneToClient();
+                droneToClient.getFlyingInfo().setMessage(flyingMessage);
+                droneRunner.sendDroneToClient(droneToClient);
+
+            }catch (IOException ex){
+                System.out.println(droneRunner.toString() + "의 메시지 전송 에러");
+            }
+        }
+
+    }
+
+    public synchronized void sendMessageToAllClient(FlyingMessage flyingMessage){
+        Iterator<DroneRunner> iterator = this.iterator();
+        while (iterator.hasNext()){
+            DroneRunner droneRunner = iterator.next();
+            try{
+
+                Drone droneFromClient = droneRunner.getDroneFromClient();
+                droneFromClient.getFlyingInfo().setMessage(flyingMessage);
+
+                Drone droneToClient = droneFromClient;
+
+                droneRunner.sendDroneToClient(droneToClient);
 
             }catch (IOException ex){
                 System.out.println(droneRunner.toString() + "의 메시지 전송 에러");

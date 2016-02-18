@@ -47,8 +47,19 @@ public class DroneControllerServer extends Thread {
 
     }
 
-    public synchronized void setFlyingMessage(FlyingMessage flyingMessage) {
+    public synchronized void setDroneFromClient(Drone droneFromeClient) {
+
+        FlyingMessage flyingMessage = droneFromeClient.getFlyingInfo().getMessage();
+
         //  TODO 메시지에 따라서 DroneRunnerRepository의 메시지 호출 메서드가 달라짐.
+
+        /**
+         *  드론 클라이언트 접속 시, 전달 되는 메시지.
+         *  - 접속 확인 용.
+         */
+        if(flyingMessage == FlyingMessage.STATUS_FLYING_READY){
+//                        System.err.println(drone.getName() + " 비행 준비 완료..");
+        }
 
         /**
          * 장애로 인해 리더로부터 리더 교체 필요(STATUS_NEED_REPLACE_LEADER) 메시지를  전송 받았을 때,
@@ -67,7 +78,7 @@ public class DroneControllerServer extends Thread {
                         "모든 Drone 들에게 비행 대기 명령(DO_FLYING_WAIT_FOR_REPLACE_LEADER) 메시지를 송신하였습니다..");
                 System.out.println("===================================================================");
 
-                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER);
+                DroneController.droneRunnerRepository.sendMessageToAllClient(FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER);
             }else{
                 System.out.println("===================================================================");
                 System.out.println("## 교체 할 리더가 없습니다. ");
@@ -113,14 +124,14 @@ public class DroneControllerServer extends Thread {
                 DroneRunner droneRunnerNewLeader = null;
                 while(iterator.hasNext()){
                     DroneRunner droneRunner = iterator.next();
-                    Drone drone = droneRunner.getDrone();
-                    String leaderOrFollower = drone.getLeaderOrFollower();
-                    FlyingInfo flyingInfo = drone.getFlyingInfo();
+                    Drone droneFromClient = droneRunner.getDroneFromClient();
+                    String leaderOrFollower = droneFromClient.getLeaderOrFollower();
+                    FlyingInfo flyingInfo = droneFromClient.getFlyingInfo();
                     double totalErrorPoint = flyingInfo.getFinalFlightStatus().getTotalErrorPoint();
 
                     System.out.println("===================================================================");
-                    System.out.println("#### Drone 이름: " + drone.getName());
-                    System.out.println("#### 리더 여부: " + drone.getLeaderOrFollower());
+                    System.out.println("#### Drone 이름: " + droneFromClient.getName());
+                    System.out.println("#### 리더 여부: " + droneFromClient.getLeaderOrFollower());
                     System.out.println("###### 누적 업데이트 된 최종 장애 정보 출력..");
                     System.out.println("TRIVIAL: " + flyingInfo.getFinalFlightStatus().getTrivialList().size());
                     System.out.println("MINOR: " + flyingInfo.getFinalFlightStatus().getMinorList().size());
@@ -136,7 +147,7 @@ public class DroneControllerServer extends Thread {
                             continue;
                         }
 
-                        if(totalErrorPoint < droneRunnerNewLeader.getDrone().getFlyingInfo().getFinalFlightStatus().getTotalErrorPoint()){
+                        if(totalErrorPoint < droneRunnerNewLeader.getDroneFromClient().getFlyingInfo().getFinalFlightStatus().getTotalErrorPoint()){
                             droneRunnerNewLeader = droneRunner;
                             continue;
                         }
@@ -156,7 +167,7 @@ public class DroneControllerServer extends Thread {
 
                 System.out.println("===================================================================");
                 System.out.println("## New Leader가 선출되었습니다.");
-                System.out.println("## New Leader: " + droneRunnerNewLeader.getDrone().getName());
+                System.out.println("## New Leader: " + droneRunnerNewLeader.getDroneFromClient().getName());
                 System.out.println("===================================================================");
 
 
@@ -185,8 +196,8 @@ public class DroneControllerServer extends Thread {
                 System.out.println("===================================================================");
                 System.out.println("++++ 송신 메시지: 비행 재개 명령(DO_FLYING_RESUME) 메시지를 송신하였습니다..");
                 System.out.println("===================================================================");
-                droneRunnerNewLeader.getDrone().setLeaderOrFollower("L");
-                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_RESUME);
+                droneRunnerNewLeader.getDroneFromClient().setLeaderOrFollower("L");
+                DroneController.droneRunnerRepository.sendMessageToAllClient(FlyingMessage.DO_FLYING_RESUME);
             }
         }
 
@@ -202,7 +213,7 @@ public class DroneControllerServer extends Thread {
                     FlyingMessage.DO_FLYING_WAIT_FOR_STOP_FLYING);
 
             if(droneRunner != null){
-                Drone drone = droneRunner.getDrone();
+                Drone drone = droneRunner.getDroneFromClient();
 
                 System.out.println("===================================================================");
                 System.out.println("++++ 수신 메시지:  " + drone.getName() + "으로부터 비행 중지 필요(STATUS_NEED_STOP_FLYING) 메시지를 수신하였습니다..");
@@ -243,7 +254,7 @@ public class DroneControllerServer extends Thread {
                     FlyingMessage.DO_FLYING_WAIT_FOR_FINISH_FLYING);
 
             if(droneRunner != null){
-                Drone drone = droneRunner.getDrone();
+                Drone drone = droneRunner.getDroneFromClient();
 
                 System.out.println("===================================================================");
                 System.out.println("++++ 수신 메시지:  " + drone.getName() + "으로 부터 비행 종료 필요(STATUS_NEED_FINISH_FLYING) 메시지를 수신하였습니다..");
@@ -284,7 +295,7 @@ public class DroneControllerServer extends Thread {
         Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
         while(iterator.hasNext()) {
             DroneRunner droneRunner = iterator.next();
-            Drone drone = droneRunner.getDrone();
+            Drone drone = droneRunner.getDroneFromClient();
             String leaderOrFollower = drone.getLeaderOrFollower();
 
             if(leaderOrFollower.equals("L")){
@@ -317,7 +328,7 @@ public class DroneControllerServer extends Thread {
                 flyingMessageForOrder);
 
         if(droneRunner != null){
-            Drone drone = droneRunner.getDrone();
+            Drone drone = droneRunner.getDroneFromClient();
 
             System.out.println("===================================================================");
             System.out.println("## 기존 Follower의 비행정보를 저장하고, 비행을 중단합니다.");

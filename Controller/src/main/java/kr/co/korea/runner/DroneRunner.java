@@ -18,7 +18,8 @@ public class DroneRunner extends Thread {
     private Socket socket;
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
-    private Drone drone;
+    private Drone droneFromClient;
+    private Drone droneToClient;
 
     public DroneRunner(Socket socket) throws IOException {
         this.socket = socket;
@@ -31,31 +32,16 @@ public class DroneRunner extends Thread {
             while(objectInputStream != null){
                 Object object = objectInputStream.readObject();
                 FlyingMessage flyingMessage = null;
+                droneFromClient = (Drone) object;
+                flyingMessage = droneFromClient.getFlyingInfo().getMessage();
 
-                if(object instanceof FlyingMessage){
-                    flyingMessage = (FlyingMessage) object;
-                }
-
-                if(object instanceof Drone){
-                    drone = (Drone) object;
-                }
 
                 if(flyingMessage != null){
-
-
-
-                    /**
-                     *  드론 클라이언트 접속 시, 전달 되는 메시지.
-                     *  - 접속 확인 용.
-                     */
-                    if(flyingMessage == FlyingMessage.STATUS_FLYING_READY){
-//                        System.err.println(drone.getName() + " 비행 준비 완료..");
-                    }
 
                     /**
                      *  Drone Client 로부터 전송 받은 메시지 처리를 위해 DroneControllerServerNew 메시지 전달.
                      */
-                    DroneController.droneControllerServerRepository.get(0).setFlyingMessage(flyingMessage);
+                    DroneController.droneControllerServerRepository.get(0).setDroneFromClient(droneFromClient);
 
                 }else{
                     this.flag = true;
@@ -80,16 +66,24 @@ public class DroneRunner extends Thread {
         }
     }
 
-    public synchronized void sendDrone(Drone drone) throws IOException {
+    public synchronized void sendDroneToClient(Drone drone) throws IOException {
         this.objectOutputStream.writeObject(drone);
     }
 
-    public Drone getDrone() {
-        return drone;
+    public Drone getDroneFromClient() {
+        return droneFromClient;
     }
 
-    public void setDrone(Drone drone) {
-        this.drone = drone;
+    public void setDroneFromClient(Drone droneFromClient) {
+        this.droneFromClient = droneFromClient;
+    }
+
+    public Drone getDroneToClient() {
+        return droneToClient;
+    }
+
+    public void setDroneToClient(Drone droneToClient) {
+        this.droneToClient = droneToClient;
     }
 
     public String toString(){

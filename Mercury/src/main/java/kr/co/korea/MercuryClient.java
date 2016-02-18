@@ -28,9 +28,8 @@ public class MercuryClient {
             clientReceiver.start();
 
             Drone initDrone = new Drone("mercury", new DroneSetting(), new FlyingInfo());
-
-            clientSender.sendMessageOrDrone(initDrone);
-            clientSender.sendMessageOrDrone(FlyingMessage.STATUS_FLYING_READY);
+            initDrone.getFlyingInfo().setMessage(FlyingMessage.STATUS_FLYING_READY);
+            clientSender.sendDroneToController(initDrone);
         } catch(ConnectException ce) {
             ce.printStackTrace();
         } catch(Exception e) {

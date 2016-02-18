@@ -18,7 +18,8 @@ public class Flyer extends Thread {
     public FlyingMessage DO_FLYING_WAIT = null;
     private Socket socket;
     private ClientSender clientSender;
-    Drone drone;
+    private Drone droneToController;
+    private Drone droneFromController;
     TreeMap<Long, ErrorType> errorEventMap;
     DroneSetting setting;
     private FlightRecoder flightRecoder;
@@ -39,11 +40,12 @@ public class Flyer extends Thread {
 
 
     public void setDrone(Drone drone) {
-        this.drone = drone;
+
+        droneFromController = drone;
     }
 
     public Drone getDrone() {
-        return drone;
+        return droneToController;
     }
 
     /**
@@ -53,7 +55,7 @@ public class Flyer extends Thread {
      */
     private boolean isLeader(){
 
-        return drone.getLeaderOrFollower().equals("L");
+        return droneFromController.getLeaderOrFollower().equals("L");
     }
 
     public void fly() {
@@ -65,10 +67,10 @@ public class Flyer extends Thread {
             e.printStackTrace();
         }
 
-        String droneName = drone.getName();
-        String defaultLeaderOrFollower = drone.getLeaderOrFollower();
-        setting = drone.getDroneSetting();
-        errorEventMap = drone.getErrorEvent();
+        String droneName = droneFromController.getName();
+        String defaultLeaderOrFollower = droneFromController.getLeaderOrFollower();
+        setting = droneFromController.getDroneSetting();
+        errorEventMap = droneFromController.getErrorEvent();
 
         String departure = setting.getDeparture();
         String destination = setting.getDestination();
@@ -77,7 +79,7 @@ public class Flyer extends Thread {
         double departureLatitude = setting.getDepartureCoordination().get(departure).getLatitude();
         double destinationLongitude = setting.getDestinationCoordination().get(destination).getLongitude();
         double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
-        Map<Long, ErrorType> errorEventMap = drone.getErrorEvent();
+        Map<Long, ErrorType> errorEventMap = droneFromController.getErrorEvent();
 
         long flightTime = setting.getFlightTime();
         int speed = setting.getSpeed();
@@ -112,7 +114,7 @@ public class Flyer extends Thread {
 
             int startTime = 1;
 
-            FlyingInfo flyingInfo = drone.getFlyingInfo();
+            FlyingInfo flyingInfo = droneFromController.getFlyingInfo();
             FlightStatus flightStatus = flyingInfo.getFinalFlightStatus();
 
             String flightStartDate = DateUtils.getCurrentDateDefaultFormatted();
@@ -142,7 +144,7 @@ public class Flyer extends Thread {
              */
             for(long atSeconds=startTime; atSeconds<=flightTime; atSeconds++){
 
-                String currentLeaderOrFollower = drone.getLeaderOrFollower();
+                String currentLeaderOrFollower = droneFromController.getLeaderOrFollower();
 
                 Map<String, Double> coordinationMapAtSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
                         destinationLongitude, destinationLatitude, flightTime, atSeconds);
@@ -227,7 +229,7 @@ public class Flyer extends Thread {
                      * - 비행 대기 상태로 전환.
                      * TODO 여기서부터 리더에 대한 프로세스 진행.
                      */
-                    if(drone.getLeaderOrFollower().equals("L") && flightStatus.hasThreshholdErrorEvent()) {
+                    if(droneFromController.getLeaderOrFollower().equals("L") && flightStatus.hasThreshholdErrorEvent()) {
                         System.out.println("===================================================================");
                         System.out.println("## 심각한 장애 발생으로 인해 리더 교체 프로세스를 실시합니다!!!!!!!");
                         System.out.println("===================================================================");
@@ -237,16 +239,18 @@ public class Flyer extends Thread {
                         flyingInfo.setFinalFlightTime(atSeconds);
                         flyingInfo.setRemainDistance(remainDistance);
 
-                        drone.setFlyingInfo(flyingInfo);
+                        droneFromController.setFlyingInfo(flyingInfo);
+
+                        droneToController = droneFromController;
 
                         System.out.println("===================================================================");
                         System.out.println("++++ 송신 메시지: 리더 교체 필요(STATUS_NEED_REPLACE_LEADER) 메시지를 송신하였습니다..");
                         System.out.println("===================================================================");
 
                         /** 리더 교체 필요 메시지 전송 **/
-                        clientSender.sendMessageOrDrone(FlyingMessage.STATUS_NEED_REPLACE_LEADER);
+                        clientSender.sendDroneToController(droneToController);
 
-                    }else if(flightStatus.hasThreshholdErrorEvent()){      /** 팔로워들에게 적용되는 프로세스 **/
+                    } else if (flightStatus.hasThreshholdErrorEvent()){      /** 팔로워들에게 적용되는 프로세스 **/
                         System.out.println("===================================================================");
                         System.out.println("## 심각한 장애 발생으로 인해 팔로워 비행을 중단합니다.");
                         System.out.println("===================================================================");
@@ -257,7 +261,8 @@ public class Flyer extends Thread {
                         flyingInfo.setFinalFlightTime(atSeconds);
                         flyingInfo.setRemainDistance(remainDistance);
 
-                        drone.setFlyingInfo(flyingInfo);
+                        droneFromController.setFlyingInfo(flyingInfo);
+                        droneToController = droneFromController;
 
                         System.out.println("===================================================================");
                         System.out.println("++++ 송신 메시지: 비행 중지 필요(STATUS_NEED_STOP_FLYING) 메시지를 송신하였습니다..");
@@ -268,8 +273,7 @@ public class Flyer extends Thread {
                          * TODO 해당 팔로워만 DronRunnerRepository에서 선택하기 위해서는 STATUS_NEED_STOP_FLYING 메시지를 포함한
                          * TODO drone 객체를 함께 전송해주어야 한다.
                          **/
-                        clientSender.sendMessageOrDrone(FlyingMessage.STATUS_NEED_STOP_FLYING);
-                        clientSender.sendMessageOrDrone(drone);
+                        clientSender.sendDroneToController(droneToController);
                     }
 
                 }else{  /** 장애가 발생하지 않았을 경우 **/
@@ -308,11 +312,11 @@ public class Flyer extends Thread {
             flyingInfo.setFinalFlightTime(flightTime);
             flyingInfo.setRemainDistance(remainDistance);
 
-            drone.setFlyingInfo(flyingInfo);
+            droneFromController.setFlyingInfo(flyingInfo);
+            droneToController = droneFromController;
 
             /** 비행 도착 메시지 및 비행 정보 전송 // TODO 수정 필요.**/
-            clientSender.sendMessageOrDrone(FlyingMessage.STATUS_NEED_FINISH_FLYING);
-            clientSender.sendMessageOrDrone(drone);
+            clientSender.sendDroneToController(droneToController);
 
 
 //            System.out.println("===================================================================");
@@ -365,7 +369,7 @@ public class Flyer extends Thread {
 
     private String createFileName() {
         String dateStr = DateUtils.getCurrentDateForFileName();
-        String droneName = drone.getName();
+        String droneName = droneFromController.getName();
 
         return dateStr.concat("-").concat(droneName).concat(".csv");
     }

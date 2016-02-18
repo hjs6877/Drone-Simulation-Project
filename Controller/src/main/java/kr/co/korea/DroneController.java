@@ -197,7 +197,7 @@ public class DroneController {
             System.out.println("비행 가능한 Drone은 최소 " + minNum + "대 이상이여야 합니다. Drone 프로세스 가동 후 Controller를 재 가동해주세요.");
 
             if(numberOfDrone != 0){
-                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_STOP);
+                DroneController.droneRunnerRepository.sendMessageToAllClient(FlyingMessage.DO_FLYING_STOP);
             }
             System.exit(-1);
         }
@@ -244,7 +244,7 @@ public class DroneController {
         int i = 1;
         while(iterator.hasNext()){
             DroneRunner droneRunner = iterator.next();
-            Drone drone = droneRunner.getDrone();
+            Drone drone = droneRunner.getDroneFromClient();
             String droneName = drone.getName();
 
             System.out.println("## " + droneName + "의 정보 설정 시작.");
@@ -529,7 +529,7 @@ public class DroneController {
 
         while(iterator.hasNext()){
             DroneRunner droneRunner = iterator.next();
-            Drone drone = droneRunner.getDrone();
+            Drone drone = droneRunner.getDroneFromClient();
 
             String leaderOrFollower = drone.getLeaderOrFollower();
             long flightTime = setting.getFlightTime();
@@ -566,7 +566,7 @@ public class DroneController {
             if(!input.toLowerCase().equals("y")){
                 System.out.println("비행 프로세스를 중단합니다.");
 
-                DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_STOP);
+                DroneController.droneRunnerRepository.sendMessageToAllClient(FlyingMessage.DO_FLYING_STOP);
 
                 System.exit(-1);
             }
@@ -579,15 +579,16 @@ public class DroneController {
         Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
         while(iterator.hasNext()){
             DroneRunner droneRunner = iterator.next();
-            Drone drone = droneRunner.getDrone();
+            Drone droneFromClient = droneRunner.getDroneFromClient();
+            Drone droneToClient = droneFromClient;
 
-            drone.setDroneSetting(setting);
-            droneRunner.setDrone(drone);
+            droneToClient.setDroneSetting(setting);
+            droneRunner.setDroneToClient(droneToClient);
         }
     }
     private void sendFlyingStartMessage() {
 
         System.out.println("## 비행 시작 메시지 전송.");
-        DroneController.droneRunnerRepository.sendMessageToAll(FlyingMessage.DO_FLYING_START);
+        DroneController.droneRunnerRepository.sendMessageToAllClientFromController(FlyingMessage.DO_FLYING_START);
     }
 }
