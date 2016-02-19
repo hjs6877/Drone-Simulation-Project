@@ -43,8 +43,6 @@ public class DroneRunner extends Thread {
                      */
                     DroneController.droneControllerServerRepository.get(0).setDroneFromClient(droneFromClient);
 
-                }else{
-                    this.flag = true;
                 }
             }
 
@@ -67,7 +65,9 @@ public class DroneRunner extends Thread {
     }
 
     public synchronized void sendDroneToClient(Drone drone) throws IOException {
+        this.objectOutputStream.reset();
         this.objectOutputStream.writeObject(drone);
+        objectOutputStream.flush();
     }
 
     public Drone getDroneFromClient() {

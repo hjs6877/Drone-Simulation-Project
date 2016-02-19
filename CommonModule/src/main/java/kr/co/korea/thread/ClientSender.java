@@ -28,6 +28,7 @@ public class ClientSender extends Thread{
     } // run()
 
     public synchronized void sendDroneToController(Object object) throws IOException {
+        this.objectOutputStream.reset();
         objectOutputStream.writeObject(object);
         objectOutputStream.flush();
     }

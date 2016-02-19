@@ -89,7 +89,7 @@ public class ClientReceiver extends Thread {
                         flyer.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT_FOR_REPLACE_LEADER;
 
                         droneToController = flyer.getDrone();
-
+                        droneToController.getFlyingInfo().setMessage(FlyingMessage.STATUS_FLYING_WAITED_FOR_REPLACE_LEADER);
                         clientSender.sendDroneToController(droneToController);
 
                     }
@@ -128,6 +128,26 @@ public class ClientReceiver extends Thread {
                         synchronized (flyer){
                             flyer.notifyAll();
                         }
+                    }
+
+                    /**
+                     * 특정 팔로워의 비행 종료를 위해 DO_FLYING_WAIT_FOR_FINISH_FLYING 메시지가 넘어 온다면, 비행 대기. 쓰레드를 wait 시킨다.
+                     * - 해당 팔로워를 비행 대기 시킨다.
+                     * - 현재까지의 비행 정보를 DroneRunner에게 전송한다.
+                     * - 비행 중지를 위한 비행 대기 상태 메시지(STATUS_FLYING_WAITED_FOR_STOP_FLYING)를 송신한다.
+                     */
+                    if(flyingMessage == FlyingMessage.DO_FLYING_WAIT_FOR_FINISH_FLYING){
+                        System.out.println("===================================================================");
+                        System.out.println("++++ 수신 메시지: 비행 중지를 위한 비행 대기 명령(DO_FLYING_WAIT_FOR_STOP_FLYING) 메시지를 수신하였습니다..");
+                        System.out.println("===================================================================");
+
+                        /** 비행 대기 명령을 할당 **/
+                        flyer.DO_FLYING_WAIT = FlyingMessage.DO_FLYING_WAIT_FOR_STOP_FLYING;
+
+                        droneToController = flyer.getDrone();
+
+                        droneToController.getFlyingInfo().setMessage(FlyingMessage.STATUS_FLYING_WAITED_FOR_STOP_FLYING);
+                        clientSender.sendDroneToController(droneToController);
                     }
 
                     /**
