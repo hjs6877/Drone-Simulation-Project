@@ -286,7 +286,6 @@ public class DroneControllerServer extends Thread {
             System.out.println("++++ 수신 메시지:  비행 종료를 위한 대기 (STATUS_FLYING_WAITED_FOR_FINISH_FLYING) 메시지를 수신하였습니다..");
             System.out.println("===================================================================");
 
-            System.out.println("===================================================================");
 
             this.doStopDroneFlight(FlyingMessage.STATUS_FLYING_WAITED_FOR_FINISH_FLYING, FlyingMessage.DO_FLYING_FINISH);
         }

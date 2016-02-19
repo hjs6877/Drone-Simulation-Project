@@ -318,6 +318,10 @@ public class Flyer extends Thread {
 
 
             System.out.println("===================================================================");
+            System.out.println("++++ 송신 메시지:  비행 종료를 위한 대기 (STATUS_FLYING_WAITED_FOR_FINISH_FLYING) 메시지를 송신하였습니다..");
+            System.out.println("===================================================================");
+
+            System.out.println("===================================================================");
             System.out.println("## 도착 비행 정보..");
             System.out.println("최종 좌표: " + coordinationMapAtArraivedSeconds.get("longitude") + ", " + coordinationMapAtArraivedSeconds.get("latitude"));
             System.out.println("최종 비행 시간: " + flightTime + "초");
