@@ -30,24 +30,24 @@ public class ErrorEventProvider {
             ErrorType.CRITICAL, ErrorType.CRITICAL, ErrorType.CRITICAL,
             ErrorType.BLOCK
     };
-//    private ErrorType[] errorTypesStrong = {
-//            ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL,
-//            ErrorType.MINOR, ErrorType.MINOR, ErrorType.MINOR,
-//            ErrorType.MAJOR, ErrorType.MAJOR, ErrorType.MAJOR,
-//            ErrorType.CRITICAL, ErrorType.CRITICAL, ErrorType.CRITICAL,
-//            ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK
-//    };
+    private ErrorType[] errorTypesStrong = {
+            ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL,
+            ErrorType.MINOR, ErrorType.MINOR, ErrorType.MINOR,
+            ErrorType.MAJOR, ErrorType.MAJOR, ErrorType.MAJOR,
+            ErrorType.CRITICAL, ErrorType.CRITICAL, ErrorType.CRITICAL,
+            ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK
+    };
 
     /**
      * 테스트 용.
      */
-    private ErrorType[] errorTypesStrong = {
-        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
-        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
-        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
-        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
-            ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK
-    };
+//    private ErrorType[] errorTypesStrong = {
+//        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
+//        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
+//        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
+//        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
+//            ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK
+//    };
 
     private final int errorEventSize = 30;
 

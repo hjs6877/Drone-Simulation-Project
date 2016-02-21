@@ -297,9 +297,9 @@ public class DroneController {
 
         while(true){
             System.out.print("포메이션 타입 입력(1-Horizontal, 2-Vertical, 3-Triangle, 4-Diamond:");
-//            Scanner scanner = new Scanner(System.in);
-//            String input = scanner.nextLine();
-            String input = "1";
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+//            String input = "1";
             int startNum = 1;
             int endNum = 4;
 
@@ -335,10 +335,10 @@ public class DroneController {
             String departure = "";
 
             System.out.print("출발지 입력: ");
-//            Scanner scanner1 = new Scanner(System.in);
-//            departure = scanner1.nextLine();
+            Scanner scanner1 = new Scanner(System.in);
+            departure = scanner1.nextLine();
 
-            departure = "안암역";
+//            departure = "안암역";
             if(StringValidator.isEmpty(departure)){
                 System.out.println("출발지를 입력해주세요.");
                 continue;
@@ -372,10 +372,10 @@ public class DroneController {
             String destination = "";
 
             System.out.print("목적지 입력: ");
-//            Scanner scanner1 = new Scanner(System.in);
-//            destination = scanner1.nextLine();
+            Scanner scanner1 = new Scanner(System.in);
+            destination = scanner1.nextLine();
 
-            destination = "고려대역";
+//            destination = "고려대역";
 
             if(StringValidator.isEmpty(destination)){
                 System.out.println("목적지를 입력해주세요.");
@@ -433,9 +433,9 @@ public class DroneController {
 
         while(true){
             System.out.print("속도 입력: ");
-//            Scanner scanner = new Scanner(System.in);
-//            String input = scanner.nextLine();
-            String input = "60";
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+//            String input = "60";
             int num = 1;
 
 
@@ -537,9 +537,9 @@ public class DroneController {
             long flightTime = setting.getFlightTime();
 
             if(leaderOrFollower.equals("L")){
-                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.STRONG);
-            }else{
                 errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
+            }else{
+                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.STRONG);
             }
 
             drone.setErrorEvent(errorEvent);
@@ -556,9 +556,9 @@ public class DroneController {
 
         while(true){
             System.out.print("비행을 시작하시겠습니까? 시작하시려면 'y'를 중단하시려면 'n'을 입력하세요: ");
-//            Scanner scanner = new Scanner(System.in);
-//            String input = scanner.nextLine();
-            String input = "y";
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+//            String input = "y";
 
             if(StringValidator.isEmpty(input)){
                 System.out.println("'y' 또는 'n'을 입력해주세요");

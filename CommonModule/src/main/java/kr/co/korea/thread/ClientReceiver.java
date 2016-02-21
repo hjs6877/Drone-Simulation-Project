@@ -112,6 +112,10 @@ public class ClientReceiver extends Thread {
 
                         droneToController.getFlyingInfo().setMessage(FlyingMessage.STATUS_FLYING_WAITED_FOR_STOP_FLYING);
                         clientSender.sendDroneToController(droneToController);
+
+                        System.out.println("===================================================================");
+                        System.out.println("++++ 송신 메시지: 비행 중지 대기 상태(STATUS_FLYING_WAITED_FOR_STOP_FLYING) 메시지를 송신하였습니다..");
+                        System.out.println("===================================================================");
                     }
 
                     /**
@@ -138,7 +142,7 @@ public class ClientReceiver extends Thread {
                      */
                     if(flyingMessage == FlyingMessage.DO_FLYING_WAIT_FOR_FINISH_FLYING){
                         System.out.println("===================================================================");
-                        System.out.println("++++ 수신 메시지: 비행 중지를 위한 비행 대기 명령(DO_FLYING_WAIT_FOR_STOP_FLYING) 메시지를 수신하였습니다..");
+                        System.out.println("++++ 수신 메시지: 비행 종료를 위한 비행 대기 명령(DO_FLYING_WAIT_FOR_STOP_FLYING) 메시지를 수신하였습니다..");
                         System.out.println("===================================================================");
 
                         /** 비행 대기 명령을 할당 **/

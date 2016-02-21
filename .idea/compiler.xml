@@ -26,12 +26,11 @@
         <module name="Controller" />
         <module name="ControllerServer" />
         <module name="Drone2Client" />
+        <module name="Earth" />
+        <module name="Mars" />
         <module name="Mercury" />
         <module name="Mercy" />
         <module name="Venus" />
-        <module name="ZTestControllerServer" />
-        <module name="ZTestDrone1Server" />
-        <module name="ZTestDrone2Client" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -40,6 +39,8 @@
       <module name="ControllerServer" target="1.5" />
       <module name="Drone1Server" target="1.5" />
       <module name="Drone2Client" target="1.5" />
+      <module name="Earth" target="1.5" />
+      <module name="Mars" target="1.5" />
       <module name="Mercury" target="1.5" />
       <module name="Mercy" target="1.5" />
       <module name="Venus" target="1.5" />
