@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/CommonModule/CommonModule.iml" filepath="$PROJECT_DIR$/CommonModule/CommonModule.iml" />
       <module fileurl="file://$PROJECT_DIR$/Controller/Controller.iml" filepath="$PROJECT_DIR$/Controller/Controller.iml" />
       <module fileurl="file://$PROJECT_DIR$/Earth/Earth.iml" filepath="$PROJECT_DIR$/Earth/Earth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Jupiter/Jupiter.iml" filepath="$PROJECT_DIR$/Jupiter/Jupiter.iml" />
       <module fileurl="file://$PROJECT_DIR$/Mars/Mars.iml" filepath="$PROJECT_DIR$/Mars/Mars.iml" />
       <module fileurl="file://$PROJECT_DIR$/Mercury/Mercury.iml" filepath="$PROJECT_DIR$/Mercury/Mercury.iml" />
       <module fileurl="file://$PROJECT_DIR$/Venus/Venus.iml" filepath="$PROJECT_DIR$/Venus/Venus.iml" />

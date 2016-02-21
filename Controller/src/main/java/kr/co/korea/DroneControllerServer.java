@@ -242,7 +242,7 @@ public class DroneControllerServer extends Thread {
              *  - finalDroneInfoList에 비행정보 저장.
              *  - DroneRunnerRepository에서 제거
              */
-            this.doStopDroneFlight(FlyingMessage.STATUS_NEED_STOP_FLYING, FlyingMessage.DO_FLYING_STOP);
+            this.doStopDroneFlight(FlyingMessage.STATUS_FLYING_WAITED_FOR_STOP_FLYING, FlyingMessage.DO_FLYING_STOP);
         }
 
         /**
