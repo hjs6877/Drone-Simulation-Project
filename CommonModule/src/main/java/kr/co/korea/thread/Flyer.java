@@ -3,7 +3,7 @@ package kr.co.korea.thread;
 import kr.co.korea.domain.*;
 import kr.co.korea.error.ErrorType;
 import kr.co.korea.util.DateUtils;
-import kr.co.korea.util.FlightRecoder;
+import kr.co.korea.util.FlightRecorder;
 import kr.co.korea.util.MathUtils;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class Flyer extends Thread {
     private Drone droneFromController;
     TreeMap<Long, ErrorType> errorEventMap;
     DroneSetting setting;
-    private FlightRecoder flightRecoder;
+    private FlightRecorder flightRecorder;
     private String fileName;
 
     public Flyer(Socket socket, ClientSender clientSender) throws IOException {
@@ -62,7 +62,7 @@ public class Flyer extends Thread {
         fileName = this.createFileName();
 
         try {
-            flightRecoder = new FlightRecoder(fileName, true);
+            flightRecorder = new FlightRecorder(fileName, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -120,22 +120,9 @@ public class Flyer extends Thread {
             String flightStartDate = DateUtils.getCurrentDateDefaultFormatted();
 
 
-            String flightInfoHeader = "비행시작일시"     + FlightRecoder.COMMA +
-                    "Drone 이름"                       + FlightRecoder.COMMA +
-                    "초기 리더/팔로워 구분"         + FlightRecoder.COMMA +
-                    "현재시점별 리더/팔로워 구분"         + FlightRecoder.COMMA +
-                    "비행속도"                           + FlightRecoder.COMMA +
-                    "비행 시점(초)"                       + FlightRecoder.COMMA +
-                    "시점별 비행 좌표(경도)"              + FlightRecoder.COMMA +
-                    "시점별 비행 좌표(위도)"               + FlightRecoder.COMMA +
-                    "장애 발생유무"                       + FlightRecoder.COMMA +
-                    "장애 타입"                          + FlightRecoder.COMMA +
-                    "비행총거리"                         + FlightRecoder.COMMA +
-                    "잔여 거리";
-            /**
-             * 비행정보 헤더 쓰기.
-             */
-            flightRecoder.writeToFile(flightInfoHeader);
+            flightRecorder.writeFlyingInfoFileHeader();
+
+
 
             /**
              * 실제 비행하는 부분. 리더일때와 팔로워 일때의 프로세스가 달라야 함.
@@ -160,17 +147,17 @@ public class Flyer extends Thread {
                  * 비행 시작 일시, Drone 이름, 초기 리더/팔로워 구분, 현재 시점별 리더/팔로워 구분,
                  * 비행 속도, 비행 시점(초), 시점별 비행 좌표(경/위도), 장애 발생 유무, 장애 타입, 잔여 거리
                  */
-                String flightInfo = flightStartDate     + FlightRecoder.COMMA +
-                        droneName                       + FlightRecoder.COMMA +
-                        defaultLeaderOrFollower         + FlightRecoder.COMMA +
-                        currentLeaderOrFollower         + FlightRecoder.COMMA +
-                        speed                           + FlightRecoder.COMMA +
-                        atSeconds                       + FlightRecoder.COMMA +
-                        longitudeAtSeconds              + FlightRecoder.COMMA +
-                        latitudeAtSeconds               + FlightRecoder.COMMA +
-                        isExistErrorEvent               + FlightRecoder.COMMA +
-                        errorType                       + FlightRecoder.COMMA +
-                        distance                        + FlightRecoder.COMMA +
+                String flightInfo = flightStartDate     + FlightRecorder.COMMA +
+                        droneName                       + FlightRecorder.COMMA +
+                        defaultLeaderOrFollower         + FlightRecorder.COMMA +
+                        currentLeaderOrFollower         + FlightRecorder.COMMA +
+                        speed                           + FlightRecorder.COMMA +
+                        atSeconds                       + FlightRecorder.COMMA +
+                        longitudeAtSeconds              + FlightRecorder.COMMA +
+                        latitudeAtSeconds               + FlightRecorder.COMMA +
+                        isExistErrorEvent               + FlightRecorder.COMMA +
+                        errorType                       + FlightRecorder.COMMA +
+                        distance                        + FlightRecorder.COMMA +
                         remainDistance;
 
                 System.out.println("## " + atSeconds + "초 비행");
@@ -179,7 +166,7 @@ public class Flyer extends Thread {
                 /**
                  * 비행 기록.
                  */
-                flightRecoder.writeToFile(flightInfo);
+                flightRecorder.writeToFile(flightInfo, true);
 
                 /**
                  * 비행 대기 명령이 할당 되었을 때, 비행을 일시 중지한다.
@@ -286,7 +273,7 @@ public class Flyer extends Thread {
                 Thread.sleep(1000);
             }  // flight loop
 
-            flightRecoder.close();
+            flightRecorder.close();
 
             System.out.println("===================================================================");
             System.out.println("## 목적지 도착. 착륙 대기중..");
@@ -355,6 +342,7 @@ public class Flyer extends Thread {
 
     }
 
+
     private double calculateRemainDistance(DroneSetting setting, long atSeconds) {
         String departure = setting.getDeparture();
         String destination = setting.getDestination();
@@ -383,7 +371,8 @@ public class Flyer extends Thread {
         String dateStr = DateUtils.getCurrentDateForFileName();
         String droneName = droneFromController.getName();
 
-        return dateStr.concat("-").concat(droneName).concat(".csv");
+        return dateStr.concat(FlightRecorder.DASH).concat("flyingInfo").concat(FlightRecorder.DASH)
+                .concat("single").concat(FlightRecorder.DASH).concat(droneName).concat(".csv");
     }
 
     private boolean isExistErrorEvent(ErrorType errorType) {

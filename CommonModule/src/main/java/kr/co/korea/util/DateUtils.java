@@ -17,7 +17,7 @@ public class DateUtils {
 
     public static String getCurrentDateForFileName(){
         Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         String dateStr = simpleDateFormat.format(date);
 
         return dateStr;

@@ -11,6 +11,8 @@ import kr.co.korea.repository.DroneControllerServerRepository;
 import kr.co.korea.repository.DroneRunnerRepository;
 import kr.co.korea.runner.DroneRunner;
 import kr.co.korea.service.LocationProvider;
+import kr.co.korea.util.DateUtils;
+import kr.co.korea.util.FlightRecorder;
 import kr.co.korea.util.MathUtils;
 import kr.co.korea.validator.StringValidator;
 
@@ -576,6 +578,32 @@ public class DroneController {
     }
 
     private void setDroneSetting(DroneSetting setting){
+        int numberOfDrone = setting.getNumberOfDrone();
+        int formationType = setting.getFormationType();
+        String departure = setting.getDeparture();
+        String destination = setting.getDestination();
+        double departureLongitude = setting.getDepartureCoordination().get(departure).getLongitude();
+        double departureLatitude = setting.getDepartureCoordination().get(departure).getLatitude();
+        double destinationLongitude = setting.getDestinationCoordination().get(destination).getLongitude();
+        double destinationLatitude = setting.getDestinationCoordination().get(destination).getLatitude();
+        int speed = setting.getSpeed();
+        double distance = setting.getDistance();
+        double angle = setting.getAngle();
+
+        long flightTime = setting.getFlightTime();
+        String droneNames = "";
+
+        Map<String, Drone> droneMap = setting.getDroneMap();
+        Iterator<String> iteratorSetting = droneMap.keySet().iterator();
+        List<String> droneList = new ArrayList<String>();
+
+        while(iteratorSetting.hasNext()){
+            String droneName = iteratorSetting.next();
+            droneList.add(droneName);
+        }
+
+        droneNames = String.join("|", droneList);
+
         Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
         while(iterator.hasNext()){
             DroneRunner droneRunner = iterator.next();
@@ -585,10 +613,54 @@ public class DroneController {
             droneToClient.setDroneSetting(setting);
             droneRunner.setDroneToClient(droneToClient);
         }
+
+        /**
+         * Drone setting 정보를 기록.
+         */
+        String fileName = this.createFileName();
+
+        FlightRecorder flightRecorder = null;
+        try {
+            flightRecorder = new FlightRecorder(fileName, true);
+            flightRecorder.writeDroneSettingInfoFileHeader();
+
+            String flightStartDate = DateUtils.getCurrentDateDefaultFormatted();
+            String droneSettingInfo = flightStartDate   + FlightRecorder.COMMA +
+                    numberOfDrone                       + FlightRecorder.COMMA +
+                    droneNames                          + FlightRecorder.COMMA +
+                    formationType                       + FlightRecorder.COMMA +
+                    departure                           + FlightRecorder.COMMA +
+                    destination                         + FlightRecorder.COMMA +
+                    departureLongitude                  + FlightRecorder.COMMA +
+                    departureLatitude                   + FlightRecorder.COMMA +
+                    destinationLongitude                + FlightRecorder.COMMA +
+                    destinationLatitude                 + FlightRecorder.COMMA +
+                    distance                            + FlightRecorder.COMMA +
+                    speed                               + FlightRecorder.COMMA +
+                    angle                               + FlightRecorder.COMMA +
+                    flightTime;
+
+            /**
+             * Drone setting 정보 기록.
+             */
+            flightRecorder.writeToFile(droneSettingInfo, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            flightRecorder.close();
+        }
+
     }
+
     private void sendFlyingStartMessage() {
 
         System.out.println("## 비행 시작 메시지 전송.");
         DroneController.droneRunnerRepository.sendMessageToAllClientFromController(FlyingMessage.DO_FLYING_START);
+    }
+
+    private String createFileName() {
+        String dateStr = DateUtils.getCurrentDateForFileName();
+
+        return dateStr.concat(FlightRecorder.DASH).concat("droneSettingInfo").concat(FlightRecorder.DASH).concat(".csv");
     }
 }

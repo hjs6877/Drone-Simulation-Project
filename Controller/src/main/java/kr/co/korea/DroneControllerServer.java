@@ -5,8 +5,10 @@ import kr.co.korea.domain.FlyingInfo;
 import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.repository.DroneRunnerRepository;
 import kr.co.korea.runner.DroneRunner;
+import kr.co.korea.util.DateUtils;
+import kr.co.korea.util.FlightRecorder;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -318,7 +320,15 @@ public class DroneControllerServer extends Thread {
 
                 break;
             }
+        }
 
+        if(DroneController.droneRunnerRepository.size() == 0){
+            boolean isRecordFinalFlyingInfo = this.writeFinalFlyingInfo();
+            boolean isRecordResultFlying = this.writeResultFlying();
+            if(isRecordFinalFlyingInfo && isRecordResultFlying){
+                System.out.println("## 비행 시뮬레이션을 종료합니다.");
+                System.exit(-1);
+            }
         }
     }
 
@@ -349,8 +359,89 @@ public class DroneControllerServer extends Thread {
         }
 
         if(DroneController.droneRunnerRepository.size() == 0){
-            System.out.println("### 최종 비행 정보 출력 작업...."); // TODO
+            boolean isRecordFinalFlyingInfo = this.writeFinalFlyingInfo();
+            boolean isRecordResultFlying = this.writeResultFlying();
+            if(isRecordFinalFlyingInfo && isRecordResultFlying){
+                System.out.println("## 비행 시뮬레이션을 종료합니다.");
+                System.exit(-1);
+            }
         }
+    }
+
+    private boolean writeResultFlying() {
+        return true;
+    }
+
+    /**
+     * 최종 비행 정보를 기록하는 마지막 작업을 실시한다.
+     * - 비행 종료 된 Drone들의 비행 정보를 하나의 파일로 합쳐서 최종 기록한다.
+     * - Drone 별 비행 설정 정보를 기록한다.
+     * - Drone 별 비행 결과 정보를 기록한다.
+     */
+    private boolean writeFinalFlyingInfo(){
+        if(DroneController.droneRunnerRepository.size() == 0){
+            System.out.println("## 최종 비행 정보를 기록중입니다..");
+
+            final String singleFileNameFilterStr = DateUtils.getCurrentDateForFileName().concat(FlightRecorder.DASH)
+                    .concat("flyingInfo").concat(FlightRecorder.DASH).concat("single");
+            File dir = new File(FlightRecorder.path);
+            String[] singleFiles = dir.list(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.startsWith(singleFileNameFilterStr);
+                }
+            });
+
+            if(singleFiles.length > 0){
+                String dateStr = DateUtils.getCurrentDateForFileName();
+                String fileNameTotal = dateStr.concat(FlightRecorder.DASH).concat("flyingInfo").concat(FlightRecorder.DASH)
+                        .concat("total").concat(".csv");
+                String totalFileFullPath = FlightRecorder.path + File.separator + fileNameTotal;
+                FlightRecorder flightRecorder = null;
+
+                FileReader fileReader = null;
+                BufferedReader bufferedReader = null;
+
+                try {
+                    File totalFile = new File(totalFileFullPath);
+
+                    /**
+                     * 기존 total file이 있다면 새로 생성하고 기록하기 위해 먼저 삭제한다.
+                     */
+                    if(totalFile.exists()){
+                        totalFile.delete();
+                    }
+
+                    flightRecorder = new FlightRecorder(fileNameTotal, true);
+                    flightRecorder.writeFlyingInfoFileHeader();
+
+
+
+                    for(String fileName : singleFiles){
+                        String fileFullPath = FlightRecorder.path + File.separator + fileName;
+                        fileReader = new FileReader(fileFullPath);
+                        bufferedReader = new BufferedReader(fileReader);
+
+                        String line = "";
+                        int count = 0;
+                        while((line = bufferedReader.readLine())!=null){
+                            count++;
+                            if(count == 1)continue;   // 헤더는 merge 시,  제외한다.
+                            flightRecorder.writeToFile(line, true);
+
+                        }
+                        bufferedReader.close();
+                        fileReader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    flightRecorder.close();
+                }
+            }
+
+        }
+
+        return true;
     }
 
 }
