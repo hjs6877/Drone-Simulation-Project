@@ -1,4 +1,4 @@
-package kr.co.korea.service;
+package kr.co.korea;
 
 /**
  * Created by ideapad on 2016-02-20.
@@ -16,5 +16,8 @@ public class ReleaseNote {
      *                  - 최종 파일을 기록하기 전 기존 최종 파일을 먼저 지우고, 다시 생성하도록 로직 변경.
      *              - Drone 별 비행 설정 정보를 기록한다. (ㅇ)
      *              - Drone 별 비행 결과 정보를 기록한다. TODO
+     *      (3) 일자의 회차별로 파일이 생성 되도록 수정 필요 TODO
+     *      (4) 비행 시작 일자가 droneSetting 정보 파일에 시작되는 시간과 일치되도록 droneSetting 정보 파일 생성 시간을
+     *      저장해놓고, 실제 비행이 시작될 때 해당 시간을 할당해서 기록하는걸로 변경 필요 TODO
      */
 }

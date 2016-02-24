@@ -5,9 +5,6 @@
     <file url="file://$PROJECT_DIR$/Controller" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Mercury" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Venus" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/ZTestControllerServer" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/ZTestDrone1Server" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/ZTestDrone2Client" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
