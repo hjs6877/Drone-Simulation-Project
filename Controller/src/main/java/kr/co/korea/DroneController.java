@@ -7,6 +7,7 @@ import kr.co.korea.domain.FlyingMessage;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
+import kr.co.korea.error.ErrorTypeOld;
 import kr.co.korea.repository.DroneControllerServerRepository;
 import kr.co.korea.repository.DroneRunnerRepository;
 import kr.co.korea.runner.DroneRunner;

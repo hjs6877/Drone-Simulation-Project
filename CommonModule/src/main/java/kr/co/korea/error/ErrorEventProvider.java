@@ -13,53 +13,39 @@ import java.util.TreeMap;
 public class ErrorEventProvider {
     /**
      *  장애 타입을 weak, ordinary, strong 순으로 구분하여 생성. 높은 장애 등급이 많을 수록 strong. 갯수는 적절히 조정.
-     *  - errorTypesWeak : 4, 3, 2, 1, 0
+     *  - errorTypesWeakOld : 4, 3, 2, 1, 0
      *  - errorTypesOrdinary : 4, 4, 3, 3, 1
      *  - errorTypesStrong : 3, 3, 3, 3, 3
      */
-    private ErrorType[] errorTypesWeak = {
-            ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL,
-            ErrorType.MINOR, ErrorType.MINOR, ErrorType.MINOR,
-            ErrorType.MAJOR, ErrorType.MAJOR,
-            ErrorType.CRITICAL
-    };
-    private ErrorType[] errorTypesOrdinary = {
-            ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL,
-            ErrorType.MINOR, ErrorType.MINOR, ErrorType.MINOR, ErrorType.MINOR,
-            ErrorType.MAJOR, ErrorType.MAJOR, ErrorType.MAJOR,
-            ErrorType.CRITICAL, ErrorType.CRITICAL, ErrorType.CRITICAL,
-            ErrorType.BLOCK
-    };
-    private ErrorType[] errorTypesStrong = {
-            ErrorType.TRIVIAL, ErrorType.TRIVIAL, ErrorType.TRIVIAL,
-            ErrorType.MINOR, ErrorType.MINOR, ErrorType.MINOR,
-            ErrorType.MAJOR, ErrorType.MAJOR, ErrorType.MAJOR,
-            ErrorType.CRITICAL, ErrorType.CRITICAL, ErrorType.CRITICAL,
-            ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK
+    private ErrorType[] errorTypes = {ErrorType.BATTERY_LIFE,
+            ErrorType.BATTERY_LIFE, ErrorType.BATTERY_LOW, ErrorType.BATTERY_DEAD,
+            ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_CONTINUOUS_ERROR, ErrorType.MOTOR_BALANCE_PERMANENT_ERROR,
+            ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_CONTINUOUS_ERROR, ErrorType.MOTOR_RPM_PERMANENT_ERROR,
+            ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_CONTINUOUS_ERROR, ErrorType.SENSOR_GPS_PERMANENT_ERROR,
+            ErrorType.SENSOR_GYRO_PASSING_ERROR, ErrorType.SENSOR_GYRO_CONTINUOUS_ERROR, ErrorType.SENSOR_GYRO_PERMANENT_ERROR,
+            ErrorType.SENSOR_ACCELERATION_PASSING_ERROR, ErrorType.SENSOR_ACCELERATION_CONTINUOUS_ERROR, ErrorType.SENSOR_ACCELERATION_PERMANENT_ERROR,
+            ErrorType.SENSOR_ALTITUDE_PASSING_ERROR, ErrorType.SENSOR_ALTITUDE_CONTINUOUS_ERROR, ErrorType.SENSOR_ALTITUDE_PERMANENT_ERROR,
+            ErrorType.PROPELLER_LIGHT_DEMAGE, ErrorType.PROPELLER_INTERMEIDATE_DEMAGE, ErrorType.PROPELLER_HEAVY_DEMAGE,
+            ErrorType.FRAME_LIGHT_DEMAGE, ErrorType.FRAME_INTERMEIDATE_DEMAGE, ErrorType.FRAME_HEAVY_DEMAGE,
+            ErrorType.ESC_PASSING_ERROR, ErrorType.ESC_CONTINUOUS_ERROR, ErrorType.ESC_PERMANENT_ERROR,
+            ErrorType.MCU_CONTROL_PASSING_ERROR, ErrorType.MCU_CONTROL_CONTINUOUS_ERROR, ErrorType.MCU_CONTROL_PERMANENT_ERROR,
+            ErrorType.MCU_ARITHMETIC_PASSING_ERROR, ErrorType.MCU_ARITHMETIC_CONTINUOUS_ERROR, ErrorType.MCU_ARITHMETIC_PERMANENT_ERROR
     };
 
-    /**
-     * 테스트 용.
-     */
-//    private ErrorType[] errorTypesStrong = {
-//        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
-//        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
-//        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
-//        ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK,
-//            ErrorType.BLOCK, ErrorType.BLOCK, ErrorType.BLOCK
-//    };
 
-    private final int errorEventSize = 30;
+    private final int errorEventSize = 50;
 
-    /**
-     * count를 늘려주면 더 많은 에러 이벤트를 장애 이벤트 배열에 추가할 수 있다.
-     */
-    private final int errorEventCount = 15;
+
+
 
     public TreeMap<Long, ErrorType> createRandomErrorEvent(long flightTime, ErrorLevel errorLevel){
         Map<Long, ErrorType> errorEventMap = new HashMap<Long, ErrorType>();
 
-        ErrorType[] errorTypes = this.getErrorTypes(errorLevel);
+        /**
+         * count를 늘려주면 더 많은 에러 이벤트를 장애 이벤트 배열에 추가할 수 있다.
+         *
+         */
+        int errorEventCount = this.getErrorEventCount(errorLevel);
 
         ErrorType[] errorEvents = new ErrorType[errorEventSize];
         Arrays.fill(errorEvents, ErrorType.NORMAL);
@@ -67,7 +53,7 @@ public class ErrorEventProvider {
         /**
          * 테스트용. 초기 장애 이벤트 배열의 요소를 BLOCK 이벤트로 초기화 시킨다.
          */
-//        Arrays.fill(errorEvents, ErrorType.BLOCK);
+//        Arrays.fill(errorEvents, ErrorType.BATTERY_DEAD);
 
         for(int i=0; i < errorEventCount; i++){
             int minErrorTypeIndex = 0;
@@ -122,21 +108,16 @@ public class ErrorEventProvider {
         return treeMap;
     }
 
-    private ErrorType[] getErrorTypes(ErrorLevel errorLevel) {
-        ErrorType[] errorTypes = null;
-
+    private int getErrorEventCount(ErrorLevel errorLevel) {
+        int errorEventCount = 0;
         if(errorLevel == ErrorLevel.WEAK){
-            errorTypes = errorTypesWeak;
+            errorEventCount = (int) (errorEventSize * 0.3);
         }else if(errorLevel == ErrorLevel.ORDINARY){
-            errorTypes = errorTypesOrdinary;
+            errorEventCount = (int) (errorEventSize * 0.5);
         }else if(errorLevel == ErrorLevel.STRONG){
-            errorTypes = errorTypesStrong;
-        }else{
-            errorTypes = errorTypesWeak;
+            errorEventCount = (int) (errorEventSize * 0.8);
         }
-
-        return errorTypes;
+        return errorEventCount;
     }
-
 
 }

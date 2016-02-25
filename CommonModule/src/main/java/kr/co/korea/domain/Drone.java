@@ -2,9 +2,7 @@ package kr.co.korea.domain;
 
 import kr.co.korea.error.ErrorType;
 
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.TreeMap;
 
 /**

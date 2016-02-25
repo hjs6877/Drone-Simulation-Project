@@ -135,9 +135,9 @@ public class Flyer extends Thread {
 
                 Map<String, Double> coordinationMapAtSeconds = MathUtils.calculateCoordinateAtSeconds(departureLongitude, departureLatitude,
                         destinationLongitude, destinationLatitude, flightTime, atSeconds);
-                ErrorType errorType = errorEventMap.get(atSeconds) != null ? errorEventMap.get(atSeconds) : ErrorType.NORMAL;
+                ErrorType ErrorType = errorEventMap.get(atSeconds) != null ? errorEventMap.get(atSeconds) : kr.co.korea.error.ErrorType.NORMAL;
 
-                boolean isExistErrorEvent = this.isExistErrorEvent(errorType);
+                boolean isExistErrorEvent = this.isExistErrorEvent(ErrorType);
 
                 double longitudeAtSeconds = coordinationMapAtSeconds.get("longitude");
                 double latitudeAtSeconds = coordinationMapAtSeconds.get("latitude");
@@ -156,7 +156,7 @@ public class Flyer extends Thread {
                         longitudeAtSeconds              + FlightRecorder.COMMA +
                         latitudeAtSeconds               + FlightRecorder.COMMA +
                         isExistErrorEvent               + FlightRecorder.COMMA +
-                        errorType                       + FlightRecorder.COMMA +
+                        ErrorType + FlightRecorder.COMMA +
                         distance                        + FlightRecorder.COMMA +
                         remainDistance;
 
@@ -200,10 +200,10 @@ public class Flyer extends Thread {
                  */
 
                 if(isExistErrorEvent){
-                    System.out.println(atSeconds + "초에 에러 이벤트 발생: " + errorType);
+                    System.out.println(atSeconds + "초에 에러 이벤트 발생: " + ErrorType);
                     System.out.println("비행 시 좌표: " + longitudeAtSeconds + ", " + latitudeAtSeconds);
 
-                    flightStatus.addErrorEvent(errorType);
+                    flightStatus.addErrorEvent(ErrorType);
                     flightStatus.updateErrorEvent();
                     flightStatus.setTotalErrorPoint();
 
@@ -375,8 +375,8 @@ public class Flyer extends Thread {
                 .concat("single").concat(FlightRecorder.DASH).concat(droneName).concat(".csv");
     }
 
-    private boolean isExistErrorEvent(ErrorType errorType) {
-        return (errorType != null) && (errorType != ErrorType.NORMAL);
+    private boolean isExistErrorEvent(ErrorType ErrorType) {
+        return (ErrorType != null) && (ErrorType != kr.co.korea.error.ErrorType.NORMAL);
     }
 
 
