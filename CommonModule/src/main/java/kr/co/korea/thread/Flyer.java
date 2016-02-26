@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.List;
 
 /**
  * 비행을 처리하는 쓰레드
@@ -157,6 +158,8 @@ public class Flyer extends Thread {
                         latitudeAtSeconds               + FlightRecorder.COMMA +
                         isExistErrorEvent               + FlightRecorder.COMMA +
                         ErrorType + FlightRecorder.COMMA +
+                        ErrorType.getPoint() + FlightRecorder.COMMA +
+                        this.getWeightPoint(flightStatus, ErrorType) + FlightRecorder.COMMA +
                         distance                        + FlightRecorder.COMMA +
                         remainDistance;
 
@@ -204,8 +207,7 @@ public class Flyer extends Thread {
                     System.out.println("비행 시 좌표: " + longitudeAtSeconds + ", " + latitudeAtSeconds);
 
                     flightStatus.addErrorEvent(ErrorType);
-                    flightStatus.updateErrorEvent();
-                    flightStatus.setTotalErrorPoint();
+                    flightStatus.setTotalErrorPoint(ErrorType);
 
                     flyingInfo.setFinalFlightStatus(flightStatus);
 
@@ -315,11 +317,9 @@ public class Flyer extends Thread {
             System.out.println("최종 비행 잔여 거리: " + remainDistance);
             System.out.println("===================================================================");
             System.out.println("###### 누적 업데이트 된 최종 장애 정보 출력..");
-            System.out.println("TRIVIAL: " + flightStatus.getTrivialList().size());
-            System.out.println("MINOR: " + flightStatus.getMinorList().size());
-            System.out.println("MAJOR: " + flightStatus.getMajorList().size());
-            System.out.println("CRITICAL: " + flightStatus.getCriticalList().size());
-            System.out.println("BLOCK: " + flightStatus.getBlockList().size());
+            System.out.println("errorEventList: " + flightStatus.getErrorEventList());
+            System.out.println("ErrorEventPointList: " + flightStatus.getErrorEventPointList().size());
+            System.out.println("getTotalErrorPoint: " + flightStatus.getTotalErrorPoint());
             System.out.println("===================================================================");
 
 
@@ -339,6 +339,28 @@ public class Flyer extends Thread {
         }
 //            e.printStackTrace();
 //        }
+
+    }
+
+    private double getWeightPoint(FlightStatus flightStatus, ErrorType errorType) {
+        double defaultPoint = errorType.getPoint();
+        Map<ErrorType, Integer> happenedErrorEventCountMap = flightStatus.getHappenedErrorEventCountMap();
+        List<ErrorType> errorEventList = flightStatus.getErrorEventList();
+
+
+        /**
+         * 1. 기존에 발생한 장애 이벤트가 있다면,
+         *      로그 기록을 위한 가중치는 아직 happenedErrorEventCountMap에 count를 증가하기 전이므로
+         *      로그를 기록할 때는 기존 발생 횟수와 전체 발생한 장애 이벤트 횟수에 각각 1을 더해서 기록해줘야 한다.
+         * 2. 기존에 발생한 장애 이벤트가 없다면, 0.0 을 기록.
+         */
+        double weightPoint = 0.0;
+        if(happenedErrorEventCountMap.get(errorType) != null){
+            int happenedCount = happenedErrorEventCountMap.get(errorType);
+            weightPoint = (++happenedCount / errorEventList.size()) * defaultPoint;
+        }
+
+        return weightPoint;
 
     }
 

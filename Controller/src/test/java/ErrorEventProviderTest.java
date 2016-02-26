@@ -2,7 +2,6 @@ import kr.co.korea.domain.FlightStatus;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
-import kr.co.korea.error.ErrorTypeOld;
 import org.junit.Test;
 
 import java.util.Map;
@@ -38,7 +37,6 @@ public class ErrorEventProviderTest {
 
 
                 flightStatus.addErrorEvent(errorType);
-                flightStatus.updateErrorEvent();
 
                 if(flightStatus.hasThreshholdErrorEvent()){
                     System.out.println("심각한 장애 발생으로 인해 리더 교체 프로세스 실시!!!!!!!!!!!!!!!!!!!!!!");
@@ -48,11 +46,9 @@ public class ErrorEventProviderTest {
         }
 
         System.out.println("###### 장애 이벤트 현황 ######");
-        System.out.println("TRIVIAL: " + flightStatus.getTrivialList().size());
-        System.out.println("MINOR: " + flightStatus.getMinorList().size());
-        System.out.println("MAJOR: " + flightStatus.getMajorList().size());
-        System.out.println("CRITICAL: " + flightStatus.getCriticalList().size());
-        System.out.println("BLOCK: " + flightStatus.getBlockList().size());
+        System.out.println("errorEventList: " + flightStatus.getErrorEventList());
+        System.out.println("ErrorEventPointList: " + flightStatus.getErrorEventPointList().size());
+        System.out.println("getTotalErrorPoint: " + flightStatus.getTotalErrorPoint());
     }
 
     private boolean isExistErrorEvent(ErrorType errorType) {
