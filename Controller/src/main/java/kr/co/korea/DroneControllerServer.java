@@ -135,12 +135,9 @@ public class DroneControllerServer extends Thread {
                     System.out.println("#### Drone 이름: " + droneFromClient.getName());
                     System.out.println("#### 리더 여부: " + droneFromClient.getLeaderOrFollower());
                     System.out.println("###### 누적 업데이트 된 최종 장애 정보 출력..");
-                    System.out.println("TRIVIAL: " + flyingInfo.getFinalFlightStatus().getTrivialList().size());
-                    System.out.println("MINOR: " + flyingInfo.getFinalFlightStatus().getMinorList().size());
-                    System.out.println("MAJOR: " + flyingInfo.getFinalFlightStatus().getMajorList().size());
-                    System.out.println("CRITICAL: " + flyingInfo.getFinalFlightStatus().getCriticalList().size());
-                    System.out.println("BLOCK: " + flyingInfo.getFinalFlightStatus().getBlockList().size());
-                    System.out.println("Total Error Point: " + flyingInfo.getFinalFlightStatus().getTotalErrorPoint());
+                    System.out.println("errorEventList: " + flyingInfo.getFinalFlightStatus().getErrorEventList());
+                    System.out.println("ErrorEventPointList: " + flyingInfo.getFinalFlightStatus().getErrorEventPointList().size());
+                    System.out.println("getTotalErrorPoint: " + flyingInfo.getFinalFlightStatus().getTotalErrorPoint());
                     System.out.println("===================================================================");
 
                     if(!leaderOrFollower.equals("L")){

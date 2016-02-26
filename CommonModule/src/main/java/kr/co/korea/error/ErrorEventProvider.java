@@ -108,6 +108,15 @@ public class ErrorEventProvider {
         return treeMap;
     }
 
+    /**
+     * 에러 레벨을 통해서 에러 발생 카운트를 결정 한다.
+     * - 에러 레벨이 높을수록 에러 발생 카운트는 길어짐. 기본 에러 이벤트 사이즈는 50.
+     * - WEAK 일 때, 에러 카운트는 15회
+     * - ORDINARY 일 때, 에러 카운트는 25회
+     * - STRONG 일 때, 에러 카운트는 40회
+     * @param errorLevel
+     * @return
+     */
     private int getErrorEventCount(ErrorLevel errorLevel) {
         int errorEventCount = 0;
         if(errorLevel == ErrorLevel.WEAK){
