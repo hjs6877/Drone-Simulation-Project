@@ -38,17 +38,16 @@ public class FlightStatus implements Serializable {
         double defaultPoint = errorType.getPoint();
         int errorEventCount = happenedErrorEventCountMap.get(errorType);
 
-        if(errorEventCount == 1){
+        if(errorEventCount <= 1){
             totalErrorPoint = totalErrorPoint + defaultPoint;
         } else {
-            happenedErrorEventCountMap.put(errorType, ++errorEventCount);
-
             double weightPoint = this.getWeightPoint(errorType);
             double finalPoint = defaultPoint + weightPoint;
 
             totalErrorPoint = totalErrorPoint + finalPoint;
-
         }
+
+        happenedErrorEventCountMap.put(errorType, ++errorEventCount);
     }
 
     public double getWeightPoint(ErrorType errorType){

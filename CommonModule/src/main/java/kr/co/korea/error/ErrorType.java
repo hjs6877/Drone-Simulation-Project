@@ -43,7 +43,8 @@ public enum ErrorType {
     MCU_ARITHMETIC_PERMANENT_ERROR(10.0);
 
     private double point;
-    private ErrorType(double point){
+
+    ErrorType(double point){
         this.point = point;
     }
 

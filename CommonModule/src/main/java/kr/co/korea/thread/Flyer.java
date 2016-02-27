@@ -146,7 +146,7 @@ public class Flyer extends Thread {
 
                 /**
                  * 비행 시작 일시, Drone 이름, 초기 리더/팔로워 구분, 현재 시점별 리더/팔로워 구분,
-                 * 비행 속도, 비행 시점(초), 시점별 비행 좌표(경/위도), 장애 발생 유무, 장애 타입, 잔여 거리
+                 * 비행 속도, 비행 시점(초), 시점별 비행 좌표(경/위도), 장애 발생 유무, 장애 타입, 장애 포인트, 가중치 포인트, 거리, 잔여 거리
                  */
                 String flightInfo = flightStartDate     + FlightRecorder.COMMA +
                         droneName                       + FlightRecorder.COMMA +
@@ -357,7 +357,7 @@ public class Flyer extends Thread {
         double weightPoint = 0.0;
         if(happenedErrorEventCountMap.get(errorType) != null){
             int happenedCount = happenedErrorEventCountMap.get(errorType);
-            weightPoint = (++happenedCount / errorEventList.size()) * defaultPoint;
+            weightPoint = (++happenedCount / (errorEventList.size() + 1)) * defaultPoint;
         }
 
         return weightPoint;
