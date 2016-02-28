@@ -138,7 +138,7 @@ public class Flyer extends Thread {
                         destinationLongitude, destinationLatitude, flightTime, atSeconds);
                 ErrorType ErrorType = errorEventMap.get(atSeconds) != null ? errorEventMap.get(atSeconds) : kr.co.korea.error.ErrorType.NORMAL;
 
-                boolean isExistErrorEvent = this.isExistErrorEvent(ErrorType);
+                boolean isHappenedErrorEvent = this.isHappenedErrorEvent(ErrorType);
 
                 double longitudeAtSeconds = coordinationMapAtSeconds.get("longitude");
                 double latitudeAtSeconds = coordinationMapAtSeconds.get("latitude");
@@ -156,7 +156,7 @@ public class Flyer extends Thread {
                         atSeconds                       + FlightRecorder.COMMA +
                         longitudeAtSeconds              + FlightRecorder.COMMA +
                         latitudeAtSeconds               + FlightRecorder.COMMA +
-                        isExistErrorEvent               + FlightRecorder.COMMA +
+                        isHappenedErrorEvent               + FlightRecorder.COMMA +
                         ErrorType + FlightRecorder.COMMA +
                         ErrorType.getPoint() + FlightRecorder.COMMA +
                         this.getWeightPoint(flightStatus, ErrorType) + FlightRecorder.COMMA +
@@ -202,7 +202,7 @@ public class Flyer extends Thread {
                  *      ㄴ 로깅. TODO
                  */
 
-                if(isExistErrorEvent){
+                if(isHappenedErrorEvent){
                     System.out.println(atSeconds + "초에 에러 이벤트 발생: " + ErrorType);
                     System.out.println("비행 시 좌표: " + longitudeAtSeconds + ", " + latitudeAtSeconds);
 
@@ -356,8 +356,11 @@ public class Flyer extends Thread {
          */
         double weightPoint = 0.0;
         if(happenedErrorEventCountMap.get(errorType) != null){
-            int happenedCount = happenedErrorEventCountMap.get(errorType);
-            weightPoint = (++happenedCount / (errorEventList.size() + 1)) * defaultPoint;
+            double happenedCount = happenedErrorEventCountMap.get(errorType);
+            happenedCount = happenedCount + 1.0;
+            double totalErrorEventCount = errorEventList.size() + 1.0;
+            weightPoint = (happenedCount / totalErrorEventCount) * defaultPoint;
+            weightPoint = Math.round(weightPoint * 100.0) / 100.0;
         }
 
         return weightPoint;
@@ -397,7 +400,7 @@ public class Flyer extends Thread {
                 .concat("single").concat(FlightRecorder.DASH).concat(droneName).concat(".csv");
     }
 
-    private boolean isExistErrorEvent(ErrorType ErrorType) {
+    private boolean isHappenedErrorEvent(ErrorType ErrorType) {
         return (ErrorType != null) && (ErrorType != kr.co.korea.error.ErrorType.NORMAL);
     }
 

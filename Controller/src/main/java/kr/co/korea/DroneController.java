@@ -566,7 +566,17 @@ public class DroneController {
                 continue;
             }
 
-            if(!input.toLowerCase().equals("y")){
+            if(StringValidator.isEmpty(input)){
+                System.out.println("'y' 또는 'n'을 입력해주세요");
+                continue;
+            }
+
+            if((!input.toLowerCase().equals("y")) && (!input.toLowerCase().equals("n"))){
+                System.out.println("비행을 시작하시려면 y, 종료하시려면 n을 입력해주세요.");
+                continue;
+            }
+
+            if(input.toLowerCase().equals("n")){
                 System.out.println("비행 프로세스를 중단합니다.");
 
                 DroneController.droneRunnerRepository.sendMessageToAllClient(FlyingMessage.DO_FLYING_STOP);
@@ -574,7 +584,10 @@ public class DroneController {
                 System.exit(-1);
             }
 
-            break;
+            if(input.toLowerCase().equals("y")){
+                break;
+            }
+
         }
     }
 
@@ -662,6 +675,6 @@ public class DroneController {
     private String createFileName() {
         String dateStr = DateUtils.getCurrentDateForFileName();
 
-        return dateStr.concat(FlightRecorder.DASH).concat("droneSettingInfo").concat(FlightRecorder.DASH).concat(".csv");
+        return dateStr.concat(FlightRecorder.DASH).concat("droneSettingInfo").concat(".csv");
     }
 }

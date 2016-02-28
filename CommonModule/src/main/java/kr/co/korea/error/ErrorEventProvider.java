@@ -2,37 +2,196 @@ package kr.co.korea.error;
 
 import kr.co.korea.util.MathUtils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by ideapad on 2016-02-01.
  */
 public class ErrorEventProvider {
     /**
-     *  장애 타입을 weak, ordinary, strong 순으로 구분하여 생성. 높은 장애 등급이 많을 수록 strong. 갯수는 적절히 조정.
+     *  원본 장애 타입
      *
      */
-    private ErrorType[] errorTypes = {ErrorType.BATTERY_LIFE,
-            ErrorType.BATTERY_LIFE, ErrorType.BATTERY_LOW, ErrorType.BATTERY_DEAD,
-            ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_CONTINUOUS_ERROR, ErrorType.MOTOR_BALANCE_PERMANENT_ERROR,
-            ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_CONTINUOUS_ERROR, ErrorType.MOTOR_RPM_PERMANENT_ERROR,
-            ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_CONTINUOUS_ERROR, ErrorType.SENSOR_GPS_PERMANENT_ERROR,
-            ErrorType.SENSOR_GYRO_PASSING_ERROR, ErrorType.SENSOR_GYRO_CONTINUOUS_ERROR, ErrorType.SENSOR_GYRO_PERMANENT_ERROR,
-            ErrorType.SENSOR_ACCELERATION_PASSING_ERROR, ErrorType.SENSOR_ACCELERATION_CONTINUOUS_ERROR, ErrorType.SENSOR_ACCELERATION_PERMANENT_ERROR,
-            ErrorType.SENSOR_ALTITUDE_PASSING_ERROR, ErrorType.SENSOR_ALTITUDE_CONTINUOUS_ERROR, ErrorType.SENSOR_ALTITUDE_PERMANENT_ERROR,
-            ErrorType.PROPELLER_LIGHT_DEMAGE, ErrorType.PROPELLER_INTERMEIDATE_DEMAGE, ErrorType.PROPELLER_HEAVY_DEMAGE,
-            ErrorType.FRAME_LIGHT_DEMAGE, ErrorType.FRAME_INTERMEIDATE_DEMAGE, ErrorType.FRAME_HEAVY_DEMAGE,
-            ErrorType.ESC_PASSING_ERROR, ErrorType.ESC_CONTINUOUS_ERROR, ErrorType.ESC_PERMANENT_ERROR,
-            ErrorType.MCU_CONTROL_PASSING_ERROR, ErrorType.MCU_CONTROL_CONTINUOUS_ERROR, ErrorType.MCU_CONTROL_PERMANENT_ERROR,
-            ErrorType.MCU_ARITHMETIC_PASSING_ERROR, ErrorType.MCU_ARITHMETIC_CONTINUOUS_ERROR, ErrorType.MCU_ARITHMETIC_PERMANENT_ERROR
+//    private ErrorType[] errorTypes = {
+//            ErrorType.BATTERY_LIFE, ErrorType.BATTERY_LOW, ErrorType.BATTERY_DEAD,
+//            ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_CONTINUOUS_ERROR, ErrorType.MOTOR_BALANCE_PERMANENT_ERROR,
+//            ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_CONTINUOUS_ERROR, ErrorType.MOTOR_RPM_PERMANENT_ERROR,
+//            ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_CONTINUOUS_ERROR, ErrorType.SENSOR_GPS_PERMANENT_ERROR,
+//            ErrorType.SENSOR_GYRO_PASSING_ERROR, ErrorType.SENSOR_GYRO_CONTINUOUS_ERROR, ErrorType.SENSOR_GYRO_PERMANENT_ERROR,
+//            ErrorType.SENSOR_ACCELERATION_PASSING_ERROR, ErrorType.SENSOR_ACCELERATION_CONTINUOUS_ERROR, ErrorType.SENSOR_ACCELERATION_PERMANENT_ERROR,
+//            ErrorType.SENSOR_ALTITUDE_PASSING_ERROR, ErrorType.SENSOR_ALTITUDE_CONTINUOUS_ERROR, ErrorType.SENSOR_ALTITUDE_PERMANENT_ERROR,
+//            ErrorType.PROPELLER_LIGHT_DEMAGE, ErrorType.PROPELLER_INTERMEIDATE_DEMAGE, ErrorType.PROPELLER_HEAVY_DEMAGE,
+//            ErrorType.FRAME_LIGHT_DEMAGE, ErrorType.FRAME_INTERMEIDATE_DEMAGE, ErrorType.FRAME_HEAVY_DEMAGE,
+//            ErrorType.ESC_PASSING_ERROR, ErrorType.ESC_CONTINUOUS_ERROR, ErrorType.ESC_PERMANENT_ERROR,
+//            ErrorType.MCU_CONTROL_PASSING_ERROR, ErrorType.MCU_CONTROL_CONTINUOUS_ERROR, ErrorType.MCU_CONTROL_PERMANENT_ERROR,
+//            ErrorType.MCU_ARITHMETIC_PASSING_ERROR, ErrorType.MCU_ARITHMETIC_CONTINUOUS_ERROR, ErrorType.MCU_ARITHMETIC_PERMANENT_ERROR
+//    };
+
+    private ErrorType[] errorTypesWeak = {
+            ErrorType.BATTERY_LIFE, ErrorType.BATTERY_LIFE,
+            ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR,
+            ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR,
+            ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_PASSING_ERROR,
+            ErrorType.SENSOR_GYRO_PASSING_ERROR, ErrorType.SENSOR_GYRO_PASSING_ERROR, ErrorType.SENSOR_GYRO_PASSING_ERROR,
+            ErrorType.SENSOR_ACCELERATION_PASSING_ERROR, ErrorType.SENSOR_ACCELERATION_PASSING_ERROR, ErrorType.SENSOR_ACCELERATION_PASSING_ERROR,
+            ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,  ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,  ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,
+            ErrorType.PROPELLER_LIGHT_DEMAGE, ErrorType.PROPELLER_LIGHT_DEMAGE, ErrorType.PROPELLER_LIGHT_DEMAGE,
+            ErrorType.FRAME_LIGHT_DEMAGE, ErrorType.FRAME_LIGHT_DEMAGE, ErrorType.FRAME_LIGHT_DEMAGE,
+            ErrorType.ESC_PASSING_ERROR, ErrorType.ESC_PASSING_ERROR, ErrorType.ESC_PASSING_ERROR,
+            ErrorType.MCU_CONTROL_PASSING_ERROR, ErrorType.MCU_CONTROL_PASSING_ERROR, ErrorType.MCU_CONTROL_PASSING_ERROR,
+            ErrorType.MCU_ARITHMETIC_PASSING_ERROR, ErrorType.MCU_ARITHMETIC_PASSING_ERROR, ErrorType.MCU_ARITHMETIC_PASSING_ERROR,
+            ErrorType.BATTERY_LIFE, ErrorType.BATTERY_LIFE,
+            ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR,
+            ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR,
+            ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_PASSING_ERROR,
+            ErrorType.SENSOR_GYRO_PASSING_ERROR, ErrorType.SENSOR_GYRO_PASSING_ERROR, ErrorType.SENSOR_GYRO_PASSING_ERROR,
+            ErrorType.SENSOR_ACCELERATION_PASSING_ERROR, ErrorType.SENSOR_ACCELERATION_PASSING_ERROR, ErrorType.SENSOR_ACCELERATION_PASSING_ERROR,
+            ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,  ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,  ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,
+            ErrorType.PROPELLER_LIGHT_DEMAGE, ErrorType.PROPELLER_LIGHT_DEMAGE, ErrorType.PROPELLER_LIGHT_DEMAGE,
+            ErrorType.FRAME_LIGHT_DEMAGE, ErrorType.FRAME_LIGHT_DEMAGE, ErrorType.FRAME_LIGHT_DEMAGE,
+            ErrorType.ESC_PASSING_ERROR, ErrorType.ESC_PASSING_ERROR, ErrorType.ESC_PASSING_ERROR,
+            ErrorType.MCU_CONTROL_PASSING_ERROR, ErrorType.MCU_CONTROL_PASSING_ERROR, ErrorType.MCU_CONTROL_PASSING_ERROR,
+            ErrorType.MCU_ARITHMETIC_PASSING_ERROR, ErrorType.MCU_ARITHMETIC_PASSING_ERROR, ErrorType.MCU_ARITHMETIC_PASSING_ERROR,
+            ErrorType.BATTERY_LIFE, ErrorType.BATTERY_LIFE,
+            ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR,
+            ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR,
+            ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_PASSING_ERROR,
+            ErrorType.SENSOR_GYRO_PASSING_ERROR, ErrorType.SENSOR_GYRO_PASSING_ERROR, ErrorType.SENSOR_GYRO_PASSING_ERROR,
+            ErrorType.SENSOR_ACCELERATION_PASSING_ERROR, ErrorType.SENSOR_ACCELERATION_PASSING_ERROR, ErrorType.SENSOR_ACCELERATION_PASSING_ERROR,
+            ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,  ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,  ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,
+            ErrorType.PROPELLER_LIGHT_DEMAGE, ErrorType.PROPELLER_LIGHT_DEMAGE, ErrorType.PROPELLER_LIGHT_DEMAGE,
+            ErrorType.FRAME_LIGHT_DEMAGE, ErrorType.FRAME_LIGHT_DEMAGE, ErrorType.FRAME_LIGHT_DEMAGE,
+            ErrorType.ESC_PASSING_ERROR, ErrorType.ESC_PASSING_ERROR, ErrorType.ESC_PASSING_ERROR,
+            ErrorType.MCU_CONTROL_PASSING_ERROR, ErrorType.MCU_CONTROL_PASSING_ERROR, ErrorType.MCU_CONTROL_PASSING_ERROR,
+            ErrorType.MCU_ARITHMETIC_PASSING_ERROR, ErrorType.MCU_ARITHMETIC_PASSING_ERROR, ErrorType.MCU_ARITHMETIC_PASSING_ERROR,
+            ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR,
+            ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR,
+            ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_PASSING_ERROR,
+            ErrorType.SENSOR_GYRO_PASSING_ERROR, ErrorType.SENSOR_GYRO_PASSING_ERROR, ErrorType.SENSOR_GYRO_PASSING_ERROR,
+            ErrorType.SENSOR_ACCELERATION_PASSING_ERROR, ErrorType.SENSOR_ACCELERATION_PASSING_ERROR, ErrorType.SENSOR_ACCELERATION_PASSING_ERROR,
+            ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,  ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,  ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,
+            ErrorType.PROPELLER_LIGHT_DEMAGE, ErrorType.PROPELLER_LIGHT_DEMAGE, ErrorType.PROPELLER_LIGHT_DEMAGE,
+            ErrorType.FRAME_LIGHT_DEMAGE, ErrorType.FRAME_LIGHT_DEMAGE, ErrorType.FRAME_LIGHT_DEMAGE,
+            ErrorType.ESC_PASSING_ERROR, ErrorType.ESC_PASSING_ERROR, ErrorType.ESC_PASSING_ERROR,
+            ErrorType.MCU_CONTROL_PASSING_ERROR, ErrorType.MCU_CONTROL_PASSING_ERROR, ErrorType.MCU_CONTROL_PASSING_ERROR,
+            ErrorType.MCU_ARITHMETIC_PASSING_ERROR, ErrorType.MCU_ARITHMETIC_PASSING_ERROR, ErrorType.MCU_ARITHMETIC_PASSING_ERROR,
+            ErrorType.BATTERY_LOW,
+            ErrorType.MOTOR_BALANCE_CONTINUOUS_ERROR,
+            ErrorType.MOTOR_RPM_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_GPS_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_GYRO_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_ACCELERATION_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_ALTITUDE_CONTINUOUS_ERROR,
+            ErrorType.PROPELLER_INTERMEIDATE_DEMAGE,
+            ErrorType.FRAME_INTERMEIDATE_DEMAGE,
+            ErrorType.ESC_CONTINUOUS_ERROR,
+            ErrorType.MCU_CONTROL_CONTINUOUS_ERROR,
+            ErrorType.MCU_ARITHMETIC_CONTINUOUS_ERROR,
+            ErrorType.BATTERY_DEAD
+//            ErrorType.MOTOR_BALANCE_PERMANENT_ERROR,
+//            ErrorType.MOTOR_RPM_PERMANENT_ERROR,
+//            ErrorType.SENSOR_GPS_PERMANENT_ERROR,
+//            ErrorType.SENSOR_GYRO_PERMANENT_ERROR,
+//            ErrorType.SENSOR_ACCELERATION_PERMANENT_ERROR,
+//            ErrorType.SENSOR_ALTITUDE_PERMANENT_ERROR,
+//            ErrorType.PROPELLER_HEAVY_DEMAGE,
+//            ErrorType.FRAME_HEAVY_DEMAGE,
+//            ErrorType.ESC_PERMANENT_ERROR,
+//            ErrorType.MCU_CONTROL_PERMANENT_ERROR,
+//            ErrorType.MCU_ARITHMETIC_PERMANENT_ERROR
     };
 
+    // 테스트 용.
+//    private ErrorType[] errorTypesWeak = {
+//            ErrorType.BATTERY_LIFE, ErrorType.BATTERY_LIFE, ErrorType.BATTERY_LIFE,
+//            ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR, ErrorType.MOTOR_BALANCE_PASSING_ERROR,
+//            ErrorType.MOTOR_BALANCE_PASSING_ERROR,
+//            ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR,
+//            ErrorType.MOTOR_RPM_PASSING_ERROR, ErrorType.MOTOR_RPM_PASSING_ERROR,
+//            ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_PASSING_ERROR, ErrorType.SENSOR_GPS_PASSING_ERROR,
+//            ErrorType.SENSOR_GPS_PASSING_ERROR
+//    };
 
-    private final int errorEventSize = 50;
+    private ErrorType[] errorTypesOrdinary = {
+            ErrorType.BATTERY_LIFE,
+            ErrorType.MOTOR_BALANCE_PASSING_ERROR,
+            ErrorType.MOTOR_RPM_PASSING_ERROR,
+            ErrorType.SENSOR_GPS_PASSING_ERROR,
+            ErrorType.SENSOR_GYRO_PASSING_ERROR,
+            ErrorType.SENSOR_ACCELERATION_PASSING_ERROR,
+            ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,
+            ErrorType.PROPELLER_LIGHT_DEMAGE,
+            ErrorType.FRAME_LIGHT_DEMAGE,
+            ErrorType.ESC_PASSING_ERROR,
+            ErrorType.MCU_CONTROL_PASSING_ERROR,
+            ErrorType.MCU_ARITHMETIC_PASSING_ERROR,
+            ErrorType.BATTERY_LOW,
+            ErrorType.MOTOR_BALANCE_CONTINUOUS_ERROR,
+            ErrorType.MOTOR_RPM_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_GPS_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_GYRO_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_ACCELERATION_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_ALTITUDE_CONTINUOUS_ERROR,
+            ErrorType.PROPELLER_INTERMEIDATE_DEMAGE,
+            ErrorType.FRAME_INTERMEIDATE_DEMAGE,
+            ErrorType.ESC_CONTINUOUS_ERROR,
+            ErrorType.MCU_CONTROL_CONTINUOUS_ERROR,
+            ErrorType.MCU_ARITHMETIC_CONTINUOUS_ERROR,
+            ErrorType.BATTERY_DEAD,
+            ErrorType.MOTOR_BALANCE_PERMANENT_ERROR,
+            ErrorType.MOTOR_RPM_PERMANENT_ERROR,
+            ErrorType.SENSOR_GPS_PERMANENT_ERROR,
+            ErrorType.SENSOR_GYRO_PERMANENT_ERROR,
+            ErrorType.SENSOR_ACCELERATION_PERMANENT_ERROR,
+            ErrorType.SENSOR_ALTITUDE_PERMANENT_ERROR,
+            ErrorType.PROPELLER_HEAVY_DEMAGE,
+            ErrorType.FRAME_HEAVY_DEMAGE,
+            ErrorType.ESC_PERMANENT_ERROR,
+            ErrorType.MCU_CONTROL_PERMANENT_ERROR,
+            ErrorType.MCU_ARITHMETIC_PERMANENT_ERROR
+    };
 
+    private ErrorType[] errorTypesStrong = {
+            ErrorType.BATTERY_LIFE,
+            ErrorType.MOTOR_BALANCE_PASSING_ERROR,
+            ErrorType.MOTOR_RPM_PASSING_ERROR,
+            ErrorType.SENSOR_GPS_PASSING_ERROR,
+            ErrorType.SENSOR_GYRO_PASSING_ERROR,
+            ErrorType.SENSOR_ACCELERATION_PASSING_ERROR,
+            ErrorType.SENSOR_ALTITUDE_PASSING_ERROR,
+            ErrorType.PROPELLER_LIGHT_DEMAGE,
+            ErrorType.FRAME_LIGHT_DEMAGE,
+            ErrorType.ESC_PASSING_ERROR,
+            ErrorType.MCU_CONTROL_PASSING_ERROR,
+            ErrorType.MCU_ARITHMETIC_PASSING_ERROR,
+            ErrorType.BATTERY_LOW,
+            ErrorType.MOTOR_BALANCE_CONTINUOUS_ERROR,
+            ErrorType.MOTOR_RPM_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_GPS_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_GYRO_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_ACCELERATION_CONTINUOUS_ERROR,
+            ErrorType.SENSOR_ALTITUDE_CONTINUOUS_ERROR,
+            ErrorType.PROPELLER_INTERMEIDATE_DEMAGE,
+            ErrorType.FRAME_INTERMEIDATE_DEMAGE,
+            ErrorType.ESC_CONTINUOUS_ERROR,
+            ErrorType.MCU_CONTROL_CONTINUOUS_ERROR,
+            ErrorType.MCU_ARITHMETIC_CONTINUOUS_ERROR,
+            ErrorType.BATTERY_DEAD, ErrorType.BATTERY_DEAD,
+            ErrorType.MOTOR_BALANCE_PERMANENT_ERROR, ErrorType.MOTOR_BALANCE_PERMANENT_ERROR,
+            ErrorType.MOTOR_RPM_PERMANENT_ERROR, ErrorType.MOTOR_RPM_PERMANENT_ERROR,
+            ErrorType.SENSOR_GPS_PERMANENT_ERROR, ErrorType.SENSOR_GPS_PERMANENT_ERROR,
+            ErrorType.SENSOR_GYRO_PERMANENT_ERROR, ErrorType.SENSOR_GYRO_PERMANENT_ERROR,
+            ErrorType.SENSOR_ACCELERATION_PERMANENT_ERROR, ErrorType.SENSOR_ACCELERATION_PERMANENT_ERROR,
+            ErrorType.SENSOR_ALTITUDE_PERMANENT_ERROR, ErrorType.SENSOR_ALTITUDE_PERMANENT_ERROR,
+            ErrorType.PROPELLER_HEAVY_DEMAGE, ErrorType.PROPELLER_HEAVY_DEMAGE,
+            ErrorType.FRAME_HEAVY_DEMAGE, ErrorType.FRAME_HEAVY_DEMAGE,
+            ErrorType.ESC_PERMANENT_ERROR, ErrorType.ESC_PERMANENT_ERROR,
+            ErrorType.MCU_CONTROL_PERMANENT_ERROR, ErrorType.MCU_CONTROL_PERMANENT_ERROR,
+            ErrorType.MCU_ARITHMETIC_PERMANENT_ERROR, ErrorType.MCU_ARITHMETIC_PERMANENT_ERROR
+    };
+
+    private final int errorEventSize = 60;
+    private final int errorEventCount = 20;
 
 
 
@@ -43,7 +202,7 @@ public class ErrorEventProvider {
          * count를 늘려주면 더 많은 에러 이벤트를 장애 이벤트 배열에 추가할 수 있다.
          *
          */
-        int errorEventCount = this.getErrorEventCount(errorLevel);
+        ErrorType[] errorTypes = this.getErrorTypes(errorLevel);
 
         ErrorType[] errorEvents = new ErrorType[errorEventSize];
         Arrays.fill(errorEvents, ErrorType.NORMAL);
@@ -106,6 +265,26 @@ public class ErrorEventProvider {
         return treeMap;
     }
 
+    private ErrorType[] getErrorTypes(ErrorLevel errorLevel) {
+        ErrorType[] errorTypes = null;
+
+        if(errorLevel == ErrorLevel.WEAK){
+            errorTypes = errorTypesWeak;
+        }else if(errorLevel == ErrorLevel.ORDINARY){
+            errorTypes = errorTypesOrdinary;
+        }else if(errorLevel == ErrorLevel.STRONG){
+            errorTypes = errorTypesStrong;
+        }else{
+            errorTypes = errorTypesWeak;
+        }
+
+        List<ErrorType> list = Arrays.asList(errorTypes);
+        Collections.shuffle(list);
+        ErrorType[] errorTypesShuffled = list.toArray(new ErrorType[list.size()]);
+
+        return errorTypesShuffled;
+    }
+
     /**
      * 에러 레벨을 통해서 에러 발생 카운트를 결정 한다.
      * - 에러 레벨이 높을수록 에러 발생 카운트는 길어짐. 기본 에러 이벤트 사이즈는 50.
@@ -115,16 +294,17 @@ public class ErrorEventProvider {
      * @param errorLevel
      * @return
      */
-    private int getErrorEventCount(ErrorLevel errorLevel) {
-        int errorEventCount = 0;
-        if(errorLevel == ErrorLevel.WEAK){
-            errorEventCount = (int) (errorEventSize * 0.3);
-        }else if(errorLevel == ErrorLevel.ORDINARY){
-            errorEventCount = (int) (errorEventSize * 0.5);
-        }else if(errorLevel == ErrorLevel.STRONG){
-            errorEventCount = (int) (errorEventSize * 0.8);
-        }
-        return errorEventCount;
-    }
+//    private int getErrorEventCount(ErrorLevel errorLevel) {
+//        int errorEventCount = 0;
+//        if(errorLevel == ErrorLevel.WEAK){
+//            errorEventCount = (int) (errorEventSize * 0.3);
+//        }else if(errorLevel == ErrorLevel.ORDINARY){
+//            errorEventCount = (int) (errorEventSize * 0.5);
+//        }else if(errorLevel == ErrorLevel.STRONG){
+//            errorEventCount = (int) (errorEventSize * 0.8);
+//        }
+//        return errorEventCount;
+//    }
+
 
 }
