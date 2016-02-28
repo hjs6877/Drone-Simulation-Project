@@ -13,9 +13,7 @@ import java.util.TreeMap;
 public class ErrorEventProvider {
     /**
      *  장애 타입을 weak, ordinary, strong 순으로 구분하여 생성. 높은 장애 등급이 많을 수록 strong. 갯수는 적절히 조정.
-     *  - errorTypesWeakOld : 4, 3, 2, 1, 0
-     *  - errorTypesOrdinary : 4, 4, 3, 3, 1
-     *  - errorTypesStrong : 3, 3, 3, 3, 3
+     *
      */
     private ErrorType[] errorTypes = {ErrorType.BATTERY_LIFE,
             ErrorType.BATTERY_LIFE, ErrorType.BATTERY_LOW, ErrorType.BATTERY_DEAD,

@@ -11,8 +11,8 @@ import java.io.IOException;
 public class FlightRecorder {
     public static final String COMMA = ",";
     public static final String DASH = "-";
-    public static final String path = "F:\\kr.ac.korea";
-//    public static final String path = "D:\\kr.ac.korea";
+//    public static final String path = "F:\\kr.ac.korea";
+    public static final String path = "D:\\kr.ac.korea";
     private String fileName;
     private File file;
     private FileWriter fileWriter;
@@ -94,7 +94,9 @@ public class FlightRecorder {
                 "시점별 비행 좌표(위도)"               + FlightRecorder.COMMA +
                 "장애 발생유무"                       + FlightRecorder.COMMA +
                 "장애 타입"                          + FlightRecorder.COMMA +
-                "비행총거리"                         + FlightRecorder.COMMA +
+                "장애 점수"                          + FlightRecorder.COMMA +
+                "장애 가중치 점수"                          + FlightRecorder.COMMA +
+                "비행 총거리"                         + FlightRecorder.COMMA +
                 "잔여 거리";
 
         /**
