@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class DroneSetting implements Serializable {
     private int numberOfDrone;
+    private LeaderMode leaderMode;
     private Map<String, Drone> droneMap;
     private int formationType;
     private String departure;
@@ -23,6 +24,14 @@ public class DroneSetting implements Serializable {
 
     public int getNumberOfDrone() {
         return numberOfDrone;
+    }
+
+    public LeaderMode getLeaderMode() {
+        return leaderMode;
+    }
+
+    public void setLeaderMode(LeaderMode leaderMode) {
+        this.leaderMode = leaderMode;
     }
 
     public void setNumberOfDrone(int numberOfDrone) {

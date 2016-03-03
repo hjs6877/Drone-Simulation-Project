@@ -144,6 +144,17 @@ public class Flyer extends Thread {
                 double latitudeAtSeconds = coordinationMapAtSeconds.get("latitude");
                 double remainDistance = this.calculateRemainDistance(setting, atSeconds);
 
+                String isArrivedDestination = "";
+
+                /**
+                 * 최종 비행 성공률을 계산하기 위해서 필요.
+                 * 얼마나 많은 Drone들이 비행에 성공했는지의 여부도 필요 할때는 모든 Drone들의 잔여거리가 0.0일때 "SUCCESS"를 기록한다.
+                 */
+                if(currentLeaderOrFollower.equals("L") && remainDistance == 0.0){
+                    isArrivedDestination = "SUCCESS";
+                }
+
+
                 /**
                  * 비행 시작 일시, Drone 이름, 초기 리더/팔로워 구분, 현재 시점별 리더/팔로워 구분,
                  * 비행 속도, 비행 시점(초), 시점별 비행 좌표(경/위도), 장애 발생 유무, 장애 타입, 장애 포인트, 가중치 포인트, 거리, 잔여 거리
@@ -161,6 +172,7 @@ public class Flyer extends Thread {
                         ErrorType.getPoint() + FlightRecorder.COMMA +
                         this.getWeightPoint(flightStatus, ErrorType) + FlightRecorder.COMMA +
                         distance                        + FlightRecorder.COMMA +
+                        isArrivedDestination             + FlightRecorder.COMMA +
                         remainDistance;
 
                 System.out.println("## " + atSeconds + "초 비행");
@@ -218,7 +230,11 @@ public class Flyer extends Thread {
                      * - 비행 대기 상태로 전환.
                      * TODO 여기서부터 리더에 대한 프로세스 진행.
                      */
-                    if(droneFromController.getLeaderOrFollower().equals("L") && flightStatus.hasThreshholdErrorEvent()) {
+                    boolean hasThresholdErrorEvent = flightStatus.hasThresholdErrorEvent();
+                    boolean isLeader = droneFromController.getLeaderOrFollower().equals("L");
+                    LeaderMode leaderMode = droneFromController.getDroneSetting().getLeaderMode();
+
+                    if(isLeader && (leaderMode == LeaderMode.DYNAMIC_LEADER_REPLACE_MODE) && hasThresholdErrorEvent) {
                         System.out.println("===================================================================");
                         System.out.println("## 심각한 장애 발생으로 인해 리더 교체 프로세스를 실시합니다!!!!!!!");
                         System.out.println("===================================================================");
@@ -239,7 +255,27 @@ public class Flyer extends Thread {
                         /** 리더 교체 필요 메시지 전송 **/
                         clientSender.sendDroneToController(droneToController);
 
-                    } else if (flightStatus.hasThreshholdErrorEvent()){      /** 팔로워들에게 적용되는 프로세스 **/
+                    }else if(isLeader && (leaderMode == LeaderMode.STATIC_LEADER_MODE) && hasThresholdErrorEvent){
+                        System.out.println("===================================================================");
+                        System.out.println("## 심각한 장애 발생으로 인해 정적인 리더의 비행을 중단합니다!!!!!!!!");
+                        System.out.println("===================================================================");
+
+                        flyingInfo.setMessage(FlyingMessage.STATUS_NEED_STOP_STATIC_LEADER_FLYING);
+                        flyingInfo.setFinalCoordination(coordinationMapAtSeconds);
+                        flyingInfo.setFinalFlightTime(atSeconds);
+                        flyingInfo.setRemainDistance(remainDistance);
+
+                        droneFromController.setFlyingInfo(flyingInfo);
+
+                        droneToController = droneFromController;
+
+                        System.out.println("===================================================================");
+                        System.out.println("++++ 송신 메시지: 정적인 리더 비행 중지 필요(STATUS_NEED_STOP_STATIC_LEADER_FLYING) 메시지를 송신하였습니다..");
+                        System.out.println("===================================================================");
+
+                        /** 정적인 리더 비행 중지 필요 메시지 전송 **/
+                        clientSender.sendDroneToController(droneToController);
+                    }  else if (hasThresholdErrorEvent){      /** 팔로워들에게 적용되는 프로세스 **/
                         System.out.println("===================================================================");
                         System.out.println("## 심각한 장애 발생으로 인해 팔로워 비행을 중단합니다.");
                         System.out.println("===================================================================");

@@ -12,12 +12,12 @@ public enum FlyingMessage implements Serializable{
     STATUS_FLYING_WAITED_FOR_STOP_FLYING,           /** 비행 중지를 위한 비행 대기 상태 **/
     STATUS_FLYING_WAITED_FOR_FINISH_FLYING,           /** 비행 종료를 위한 비행 대기 상태 **/
     STATUS_NEED_STOP_FLYING,                         /** 비행 중지 필요 상태 **/
-    STATUS_NEED_FINISH_FLYING,                        /** 비행 종료 필요 상태 **/
-    DO_FLYING_START,            /** 비행을 시작하라 **/
+    STATUS_NEED_STOP_STATIC_LEADER_FLYING,           /** 정적인 리더의 비행 중지 필요 상태 **/
+    DO_FLYING_START,                                /** 비행을 시작하라 **/
     DO_FLYING_WAIT_FOR_REPLACE_LEADER,             /** 리더 교체를 위해 비행을 일시중지 대기하라 **/
     DO_FLYING_WAIT_FOR_STOP_FLYING,             /** 비행 중지를 위해 비행을 일시중지 대기하라 **/
     DO_FLYING_WAIT_FOR_FINISH_FLYING,             /** 비행 종료를 위해 비행을 일시중지 대기하라 **/
-    DO_FLYING_RESUME,           /** 중지 된 비행을 재개하라 **/
-    DO_FLYING_STOP,             /** 비행을 완전 중지하라 **/
-    DO_FLYING_FINISH            /** 착륙 후, 비행을 종료하라 **/
+    DO_FLYING_RESUME,                            /** 중지 된 비행을 재개하라 **/
+    DO_FLYING_STOP,                                  /** 비행을 완전 중지하라 **/
+    DO_FLYING_FINISH                                 /** 착륙 후, 비행을 종료하라 **/
 }

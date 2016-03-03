@@ -84,20 +84,21 @@ public class FlightRecorder {
     }
 
     public void writeFlyingInfoFileHeader() {
-        String flightInfoHeader = "비행시작일자"     + FlightRecorder.COMMA +
-                "Drone 이름"                       + FlightRecorder.COMMA +
-                "초기 리더/팔로워 구분"         + FlightRecorder.COMMA +
-                "현재시점별 리더/팔로워 구분"         + FlightRecorder.COMMA +
-                "비행속도"                           + FlightRecorder.COMMA +
-                "비행 시점(초)"                       + FlightRecorder.COMMA +
-                "시점별 비행 좌표(경도)"              + FlightRecorder.COMMA +
-                "시점별 비행 좌표(위도)"               + FlightRecorder.COMMA +
-                "장애 발생유무"                       + FlightRecorder.COMMA +
-                "장애 타입"                          + FlightRecorder.COMMA +
-                "장애 점수"                          + FlightRecorder.COMMA +
-                "장애 가중치 점수"                          + FlightRecorder.COMMA +
-                "비행 총거리"                         + FlightRecorder.COMMA +
-                "잔여 거리";
+        String flightInfoHeader = "startDate"     + FlightRecorder.COMMA +
+                "droneName"                       + FlightRecorder.COMMA +
+                "leaderOrFollower"         + FlightRecorder.COMMA +
+                "leaderOrFollowerAtSeconds"         + FlightRecorder.COMMA +
+                "speed"                           + FlightRecorder.COMMA +
+                "atSeconds"                       + FlightRecorder.COMMA +
+                "longitude"              + FlightRecorder.COMMA +
+                "latitude"               + FlightRecorder.COMMA +
+                "isHappenedErrorEvent"                       + FlightRecorder.COMMA +
+                "errorEventType"                          + FlightRecorder.COMMA +
+                "errorPoint"                          + FlightRecorder.COMMA +
+                "errorWeight"                          + FlightRecorder.COMMA +
+                "totalDistance"                         + FlightRecorder.COMMA +
+                "isArrivedDestination"                         + FlightRecorder.COMMA +
+                "remainDistance";
 
         /**
          * 오늘 일자의 파일이 존재하는지 확인.
@@ -111,20 +112,20 @@ public class FlightRecorder {
     }
 
     public void writeDroneSettingInfoFileHeader() {
-        String droneSettingInfoHeader = "비행시작일자"     + FlightRecorder.COMMA +
-                "드론 비행대수"     + FlightRecorder.COMMA +
-                "Drone 이름"                       + FlightRecorder.COMMA +
-                "포메이션 타입"         + FlightRecorder.COMMA +
-                "출발지"         + FlightRecorder.COMMA +
-                "목적지"                           + FlightRecorder.COMMA +
-                "출발지 좌표(경도)"                       + FlightRecorder.COMMA +
-                "출발지 좌표(위도)"              + FlightRecorder.COMMA +
-                "목적지 좌표(경도)"               + FlightRecorder.COMMA +
-                "목적지 좌표(위도)"                       + FlightRecorder.COMMA +
-                "비행 거리"                          + FlightRecorder.COMMA +
-                "비행 속도"                         + FlightRecorder.COMMA +
-                "방위각"                         + FlightRecorder.COMMA +
-                "비행시간";
+        String droneSettingInfoHeader = "startDate"     + FlightRecorder.COMMA +
+                "aNumberOfDrone"     + FlightRecorder.COMMA +
+                "droneName"                       + FlightRecorder.COMMA +
+                "formationType"         + FlightRecorder.COMMA +
+                "departure"         + FlightRecorder.COMMA +
+                "destination"                           + FlightRecorder.COMMA +
+                "departure longitude"                       + FlightRecorder.COMMA +
+                "departure latitude"              + FlightRecorder.COMMA +
+                "destination longitude"               + FlightRecorder.COMMA +
+                "destination latitude"                       + FlightRecorder.COMMA +
+                "distance"                          + FlightRecorder.COMMA +
+                "speed"                         + FlightRecorder.COMMA +
+                "angle"                         + FlightRecorder.COMMA +
+                "flightTime";
 
         /**
          * 오늘 일자의 파일이 존재하는지 확인.

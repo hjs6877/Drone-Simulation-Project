@@ -227,6 +227,15 @@ public class DroneControllerServer extends Thread {
 
 
         /**
+         * 정적인 리더로부터 비행 중지 필요(STATUS_NEED_STOP_STATIC_LEADER_FLYING) 메시지를 전송 받았을 때,
+         *
+         * - 모든 Drone의 비행을 중지한다.
+         */
+        if(flyingMessage == FlyingMessage.STATUS_NEED_STOP_STATIC_LEADER_FLYING){
+            this.doStopAllDrone(flyingMessage);
+        }
+
+        /**
          * 특정 팔로워로부터 비행 중지를 위한 비행 일시 중지 상태를 알리는 메시지를 전송 받았을 때,
          * - 해당 팔로워의 비행을 중지한다.
          */
@@ -242,31 +251,7 @@ public class DroneControllerServer extends Thread {
             this.doStopDroneFlight(FlyingMessage.STATUS_FLYING_WAITED_FOR_STOP_FLYING, FlyingMessage.DO_FLYING_STOP);
         }
 
-        /**
-         * 팔로워로부터 비행 종료 필요(STATUS_NEED_FINISH_FLYING) 메시지를 전송 받았을 때,
-         *
-         * - 해당 Drone에게 비행 종료를 위한 비행 대기 메시지를 전송한다.
-         * TODO 이 단계를 거치지 않고, 바로 비행 종료 시켜도 될것 같음.
-         */
-//        if(flyingMessage == FlyingMessage.STATUS_FLYING_WAITED_FOR_FINISH_FLYING){
-//
-//            DroneRunner droneRunner = DroneController.droneRunnerRepository.sendMessageToDrone(FlyingMessage.STATUS_NEED_FINISH_FLYING,
-//                    FlyingMessage.DO_FLYING_FINISH);
-//
-//            //
-//            if(droneRunner != null){
-//                Drone drone = droneRunner.getDroneFromClient();
-//
-//                System.out.println("===================================================================");
-//                System.out.println("++++ 수신 메시지:  " + drone.getName() + "으로 부터 비행 종료 필요(STATUS_NEED_FINISH_FLYING) 메시지를 수신하였습니다..");
-//                System.out.println("===================================================================");
-//
-//                System.out.println("===================================================================");
-//                System.out.println("++++ 송신 메시지:  비행 종료 필요 상황이 발생하여 " + drone.getName() +
-//                        "에게 비행 종료를 위한 비행 대기 명령(DO_FLYING_WAIT_FOR_FINISH_FLYING) 메시지를 송신하였습니다..");
-//                System.out.println("===================================================================");
-//            }
-//        }
+
 
         /**
          * 특정 팔로워로부터 비행 종료를 위한 비행 일시 중지 상태를 알리는 메시지를 전송 받았을 때,
@@ -354,6 +339,53 @@ public class DroneControllerServer extends Thread {
             finalDroneInfoList.add(drone);
             DroneController.droneRunnerRepository.removeDroneRunner(droneRunner);
         }
+
+        if(DroneController.droneRunnerRepository.size() == 0){
+            boolean isRecordFinalFlyingInfo = this.writeFinalFlyingInfo();
+            boolean isRecordResultFlying = this.writeResultFlying();
+            if(isRecordFinalFlyingInfo && isRecordResultFlying){
+                System.out.println("## 비행 시뮬레이션을 종료합니다.");
+                System.exit(-1);
+            }
+        }
+    }
+
+    private void doStopAllDrone(FlyingMessage flyingMessage){
+        DroneRunner matchedDroneRunner = null;
+
+        Iterator<DroneRunner> iterator = DroneController.droneRunnerRepository.iterator();
+
+        while(iterator.hasNext()){
+            DroneRunner droneRunner = iterator.next();
+            Drone drone = droneRunner.getDroneFromClient();
+
+            if(flyingMessage == FlyingMessage.STATUS_NEED_STOP_STATIC_LEADER_FLYING){
+
+                matchedDroneRunner = droneRunner;
+            }
+
+            finalDroneInfoList.add(drone);
+        }
+
+        if(matchedDroneRunner != null){
+            Drone drone = matchedDroneRunner.getDroneFromClient();
+
+            System.out.println("===================================================================");
+            System.out.println("++++ 수신 메시지:  " + drone.getName() + "으로부터 정적인 리더 비행 중지 필요(STATUS_NEED_STOP_STATIC_LEADER_FLYING) 메시지를 수신하였습니다..");
+            System.out.println("===================================================================");
+
+
+            DroneController.droneRunnerRepository.sendMessageToAllClient(FlyingMessage.DO_FLYING_STOP);
+
+
+            System.out.println("===================================================================");
+            System.out.println("++++ 송신 메시지:  모든 Drone의 비행 중지 필요 상황이 발생하여 " +
+                    "비행 중지 명령(DO_FLYING_STOP) 메시지를 송신하였습니다..");
+            System.out.println("===================================================================");
+        }
+
+
+        DroneController.droneRunnerRepository.removeAllDroneRunner();
 
         if(DroneController.droneRunnerRepository.size() == 0){
             boolean isRecordFinalFlyingInfo = this.writeFinalFlyingInfo();

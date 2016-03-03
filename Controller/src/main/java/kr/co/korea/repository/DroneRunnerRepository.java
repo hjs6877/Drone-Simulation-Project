@@ -27,6 +27,10 @@ public class DroneRunnerRepository extends Vector<DroneRunner> {
         }
     }
 
+    public synchronized void removeAllDroneRunner(){
+        this.clear();
+    }
+
     public synchronized void sendMessageToAllClientFromController(FlyingMessage flyingMessage){
         Iterator<DroneRunner> iterator = this.iterator();
         while (iterator.hasNext()){
