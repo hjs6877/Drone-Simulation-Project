@@ -1,9 +1,6 @@
 package kr.co.korea;
 
-import kr.co.korea.domain.Coordination;
-import kr.co.korea.domain.Drone;
-import kr.co.korea.domain.DroneSetting;
-import kr.co.korea.domain.FlyingMessage;
+import kr.co.korea.domain.*;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
@@ -103,6 +100,7 @@ public class DroneController {
          */
         controller.setQuestionForConfiguration();
         controller.setNumberOfDrone(setting);
+        controller.setLeaderMode(setting);
         controller.setDroneInfo(setting);
         controller.setFormationType(setting);
         controller.setDeparture(setting);
@@ -230,6 +228,44 @@ public class DroneController {
 //        }
     }
 
+
+    /**
+     * 리더 교체가 없는 정적인 모드로 비행할 것인지, 리더 교체가 있는 동적인 모드로 비행할 것인지 설정.
+     *
+     * @param setting
+     * @throws IOException
+     */
+    private void setLeaderMode(DroneSetting setting) throws IOException {
+        LeaderMode leaderMode;
+
+        while(true){
+            System.out.print("리더 모드 입력(1-리더 교체 없음, 2-리더 교체 있음):");
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+
+            int startNum = 1;
+            int endNum = 2;
+
+
+            if(!StringValidator.isNumber(input)){
+                System.out.println("리더 모드는 숫자로 입력해주세요.");
+                continue;
+            }
+
+            if(!StringValidator.isBetween(input, startNum, endNum)){
+                System.out.println("리더 모드는 " + startNum + " 또는 " + endNum + "를 입력해주세요");
+                continue;
+            }
+
+            int leaderModeInput = Integer.parseInt(input);
+            leaderMode = leaderModeInput == LeaderMode.STATIC_LEADER_MODE.getValue() ?
+                    LeaderMode.STATIC_LEADER_MODE : (leaderModeInput == LeaderMode.DYNAMIC_LEADER_REPLACE_MODE.getValue()
+                    ? LeaderMode.DYNAMIC_LEADER_REPLACE_MODE : LeaderMode.STATIC_LEADER_MODE);
+            break;
+        }
+
+        setting.setLeaderMode(leaderMode);
+    }
 
     /**
      * 드론 이름, 리더/팔로워 구분 등의 드론 입력 설정.
