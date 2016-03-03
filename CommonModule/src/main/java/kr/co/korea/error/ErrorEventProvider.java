@@ -95,9 +95,9 @@ public class ErrorEventProvider {
             ErrorType.SENSOR_GYRO_PERMANENT_ERROR,
             ErrorType.SENSOR_ACCELERATION_PERMANENT_ERROR,
             ErrorType.SENSOR_ALTITUDE_PERMANENT_ERROR,
-//            ErrorType.PROPELLER_HEAVY_DEMAGE,
-//            ErrorType.FRAME_HEAVY_DEMAGE,
-//            ErrorType.ESC_PERMANENT_ERROR,
+            ErrorType.PROPELLER_HEAVY_DEMAGE,
+            ErrorType.FRAME_HEAVY_DEMAGE,
+            ErrorType.ESC_PERMANENT_ERROR,
 //            ErrorType.MCU_CONTROL_PERMANENT_ERROR,
 //            ErrorType.MCU_ARITHMETIC_PERMANENT_ERROR
     };

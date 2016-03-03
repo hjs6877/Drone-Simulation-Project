@@ -479,7 +479,7 @@ public class DroneController {
             System.out.print("속도 입력: ");
             Scanner scanner = new Scanner(System.in);
 //            String input = scanner.nextLine();
-            String input = "55";
+            String input = "60";
             int num = 1;
 
 
