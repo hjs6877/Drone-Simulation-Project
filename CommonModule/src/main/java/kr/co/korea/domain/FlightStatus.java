@@ -71,7 +71,7 @@ public class FlightStatus implements Serializable {
     }
 
 
-    public boolean hasThreshholdErrorEvent(){
+    public boolean hasThresholdErrorEvent(){
         return this.getTotalErrorPoint() >= 10.0;
     }
 

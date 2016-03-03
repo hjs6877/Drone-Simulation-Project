@@ -38,7 +38,7 @@ public class ErrorEventProviderTest {
 
                 flightStatus.addErrorEvent(errorType);
 
-                if(flightStatus.hasThreshholdErrorEvent()){
+                if(flightStatus.hasThresholdErrorEvent()){
                     System.out.println("심각한 장애 발생으로 인해 리더 교체 프로세스 실시!!!!!!!!!!!!!!!!!!!!!!");
                     break;
                 }
