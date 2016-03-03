@@ -129,8 +129,10 @@ public class DroneController {
         double angle = setting.getAngle();
 
         long flightTime = setting.getFlightTime();
+        LeaderMode leaderMode = setting.getLeaderMode();
 
         System.out.println("드론 비행 대수: " + numberOfDrone);
+        System.out.println("리더 모드: " + leaderMode);
         System.out.println("포메이션 타입: " + formationType);
         System.out.println("출발지: " + departure);
         System.out.println("출발지 좌표: " + departureLongitude + ", " + departureLatitude);
@@ -241,7 +243,12 @@ public class DroneController {
         while(true){
             System.out.print("리더 모드 입력(1-리더 교체 없음, 2-리더 교체 있음):");
             Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
+//            String input = scanner.nextLine();
+
+            /**
+             * 정적 모드로 먼저 테스트
+             */
+            String input = "1";
 
             int startNum = 1;
             int endNum = 2;
@@ -294,8 +301,8 @@ public class DroneController {
             while(true){
                 System.out.print("Leader 설정(Leader일 경우 'L', Follower일 경우 'F' 입력): ");
                 Scanner scanner2 = new Scanner(System.in);
-                String leaderOrFollower = scanner2.nextLine();
-
+//                String leaderOrFollower = scanner2.nextLine();
+                String leaderOrFollower = i ==1 ? "L" : "F";
                 if(!StringValidator.isLeaderOrFollower(leaderOrFollower)){
                     System.out.println("Leader/Follower는 'L' 또는 'F'로 입력해주세요.");
                     continue;
@@ -335,8 +342,8 @@ public class DroneController {
         while(true){
             System.out.print("포메이션 타입 입력(1-Horizontal, 2-Vertical, 3-Triangle, 4-Diamond:");
             Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
-//            String input = "1";
+//            String input = scanner.nextLine();
+            String input = "3";
             int startNum = 1;
             int endNum = 4;
 
@@ -373,9 +380,9 @@ public class DroneController {
 
             System.out.print("출발지 입력: ");
             Scanner scanner1 = new Scanner(System.in);
-            departure = scanner1.nextLine();
+//            departure = scanner1.nextLine();
 
-//            departure = "안암역";
+            departure = "안암역";
             if(StringValidator.isEmpty(departure)){
                 System.out.println("출발지를 입력해주세요.");
                 continue;
@@ -410,9 +417,9 @@ public class DroneController {
 
             System.out.print("목적지 입력: ");
             Scanner scanner1 = new Scanner(System.in);
-            destination = scanner1.nextLine();
+//            destination = scanner1.nextLine();
 
-//            destination = "고려대역";
+            destination = "고려대역";
 
             if(StringValidator.isEmpty(destination)){
                 System.out.println("목적지를 입력해주세요.");
@@ -471,8 +478,8 @@ public class DroneController {
         while(true){
             System.out.print("속도 입력: ");
             Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
-//            String input = "60";
+//            String input = scanner.nextLine();
+            String input = "60";
             int num = 1;
 
 
@@ -574,7 +581,7 @@ public class DroneController {
             long flightTime = setting.getFlightTime();
 
             if(leaderOrFollower.equals("L")){
-                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.STRONG);
+                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.ORDINARY);
             }else{
                 errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
             }
@@ -594,8 +601,8 @@ public class DroneController {
         while(true){
             System.out.print("비행을 시작하시겠습니까? 시작하시려면 'y'를 중단하시려면 'n'을 입력하세요: ");
             Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
-//            String input = "y";
+//            String input = scanner.nextLine();
+            String input = "y";
 
             if(StringValidator.isEmpty(input)){
                 System.out.println("'y' 또는 'n'을 입력해주세요");
