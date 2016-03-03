@@ -11,8 +11,8 @@ import java.io.IOException;
 public class FlightRecorder {
     public static final String COMMA = ",";
     public static final String DASH = "-";
-//    public static final String path = "F:\\kr.ac.korea";
-    public static final String path = "D:\\kr.ac.korea";
+    public static final String path = "F:\\kr.ac.korea";
+//    public static final String path = "D:\\kr.ac.korea";
     private String fileName;
     private File file;
     private FileWriter fileWriter;
