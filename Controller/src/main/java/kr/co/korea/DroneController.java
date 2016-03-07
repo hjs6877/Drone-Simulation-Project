@@ -4,7 +4,6 @@ import kr.co.korea.domain.*;
 import kr.co.korea.error.ErrorEventProvider;
 import kr.co.korea.error.ErrorLevel;
 import kr.co.korea.error.ErrorType;
-import kr.co.korea.error.ErrorTypeOld;
 import kr.co.korea.repository.DroneControllerServerRepository;
 import kr.co.korea.repository.DroneRunnerRepository;
 import kr.co.korea.runner.DroneRunner;
@@ -248,7 +247,12 @@ public class DroneController {
             /**
              * 정적 모드로 먼저 테스트
              */
-            String input = "1";
+//            String input = "1";
+
+            /**
+             * 동적 모드로 다음 테스트
+             */
+            String input = "2";
 
             int startNum = 1;
             int endNum = 2;
