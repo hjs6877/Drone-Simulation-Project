@@ -585,7 +585,7 @@ public class DroneController {
             long flightTime = setting.getFlightTime();
 
             if(leaderOrFollower.equals("L")){
-                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.ORDINARY);
+                errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
             }else{
                 errorEvent = errorEventProvider.createRandomErrorEvent(flightTime, ErrorLevel.WEAK);
             }
